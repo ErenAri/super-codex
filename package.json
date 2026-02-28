@@ -1,6 +1,6 @@
 {
   "name": "@erenari/supercodex",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "description": "SuperClaude-style config framework for Codex CLI with safe, idempotent merges.",
   "bin": {
     "supercodex": "dist/cli.js"
