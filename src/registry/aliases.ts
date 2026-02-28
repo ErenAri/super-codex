@@ -18,7 +18,8 @@ export const RESERVED_TOP_LEVEL_COMMAND_NAMES = new Set<string>([
   "mode",
   "persona",
   "mcp",
-  "run"
+  "run",
+  "shell"
 ]);
 
 export const BUILTIN_ALIAS_PACKS: Record<string, AliasPackDefinition> = {

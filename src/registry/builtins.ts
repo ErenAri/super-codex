@@ -99,7 +99,11 @@ export const BUILTIN_COMMANDS: Record<string, CommandDefinition> = {
   "run.plan": command("run.plan", "Resolve context for planning workflow"),
   "run.review": command("run.review", "Resolve context for review workflow"),
   "run.refactor": command("run.refactor", "Resolve context for refactor workflow"),
-  "run.debug": command("run.debug", "Resolve context for debugging workflow")
+  "run.debug": command("run.debug", "Resolve context for debugging workflow"),
+  "shell.install": command("shell.install", "Install SuperCodex shell bridge"),
+  "shell.remove": command("shell.remove", "Remove SuperCodex shell bridge"),
+  "shell.status": command("shell.status", "Inspect SuperCodex shell bridge"),
+  "shell.script": command("shell.script", "Print SuperCodex shell bridge script")
 };
 
 export const BUILTIN_CATALOG: Record<string, CatalogEntry> = {

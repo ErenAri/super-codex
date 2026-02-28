@@ -6,4 +6,5 @@ export * from "./mcp";
 export * from "./mode";
 export * from "./persona";
 export * from "./run";
+export * from "./shell";
 export * from "./validate";

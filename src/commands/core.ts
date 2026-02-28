@@ -8,6 +8,7 @@ import {
   uninstallSupercodex
 } from "../operations";
 import { initProjectTemplate } from "../project-init";
+import { getShellBridgeStatus } from "../shell-bridge";
 import { runCommand, printWarnings } from "./utils";
 
 export function registerCoreCommands(program: Command): void {
@@ -31,6 +32,8 @@ export function registerCoreCommands(program: Command): void {
             ? `Prompt pack installed at ${result.paths.promptPackDir}.`
             : `Prompt pack already current at ${result.paths.promptPackDir}.`
         );
+        console.log("Alias usage: supercodex /sc:research <args...>");
+        console.log("Optional shell shortcut bridge: supercodex shell install");
 
         printWarnings(result.warnings);
       })
@@ -91,9 +94,12 @@ export function registerCoreCommands(program: Command): void {
         const result = await getSupercodexStatus(options.codexHome as string | undefined);
 
         if (Boolean(options.json)) {
-          console.log(JSON.stringify(result, null, 2));
+          const shellBridge = await getShellBridgeStatus();
+          console.log(JSON.stringify({ ...result, shellBridge }, null, 2));
           return;
         }
+
+        const shellBridge = await getShellBridgeStatus();
 
         console.log(`Codex home: ${result.codexHome}`);
         console.log(`Config path: ${result.configPath}`);
@@ -124,6 +130,10 @@ export function registerCoreCommands(program: Command): void {
           result.overridePaths.length > 0
             ? `Pending overrides: ${result.overridePaths.join(", ")}`
             : "Pending overrides: (none)"
+        );
+        console.log(
+          `Shell bridge: ${shellBridge.installed ? "installed" : "missing"} ` +
+            `(${shellBridge.shell}: ${shellBridge.profilePath})`
         );
       })
     );

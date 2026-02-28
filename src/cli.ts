@@ -11,6 +11,7 @@ import {
   registerModeCommands,
   registerPersonaCommands,
   registerRunCommands,
+  registerShellCommands,
   registerValidateCommand
 } from "./commands";
 import { dispatchAliasArgv } from "./runtime";
@@ -31,6 +32,7 @@ export function createProgram(): Command {
   registerPersonaCommands(program);
   registerMcpCommands(program);
   registerRunCommands(program);
+  registerShellCommands(program);
 
   return program;
 }

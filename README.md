@@ -79,6 +79,7 @@ Modes and personas:
 ```bash
 supercodex mode list|show|set|unset
 supercodex persona list|show|set|unset
+supercodex shell install|remove|status|script
 ```
 
 MCP:
@@ -123,6 +124,18 @@ Supported invocation forms:
 - `/sc:<name>`
 - `sc:<name>`
 - `<name>` (plain alias form; command names still take precedence)
+
+Important:
+
+- `/sc:*` aliases are parsed by `supercodex` arguments (for example: `supercodex /sc:research`).
+- Codex interactive native slash commands are not currently extensible through this package.
+- For terminal shorthand, install the shell bridge and use `sc`.
+
+```bash
+supercodex shell install
+sc research "scope and risks"
+sc /sc:brainstorming "new architecture options"
+```
 
 Inspect alias packs:
 
