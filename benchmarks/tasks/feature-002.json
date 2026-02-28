@@ -1,0 +1,18 @@
+{
+  "id": "feature-002",
+  "title": "Implement typed response helper",
+  "category": "feature",
+  "repo_fixture": "benchmarks/fixtures/minimal",
+  "prompt": "Add a typed helper to improve response shaping.",
+  "mode_cmds": {
+    "codex_native": ["codex", "--version"],
+    "supercodex": ["{NODE_PATH}", "{REPO_ROOT}/dist/cli.js", "status", "--json"]
+  },
+  "verify": {
+    "type": "command",
+    "target": ["{NODE_PATH}", "-e", "process.exit(0)"]
+  },
+  "timeout_seconds": 30,
+  "tags": ["starter", "feature"],
+  "risk_level": "low"
+}

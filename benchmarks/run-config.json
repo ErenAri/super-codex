@@ -1,0 +1,8 @@
+{
+  "seed": "m0-default",
+  "max_parallel": 2,
+  "modes": ["codex_native", "supercodex"],
+  "task_glob": "benchmarks/tasks/*.json",
+  "output_dir": "benchmarks/results",
+  "fail_fast": false
+}

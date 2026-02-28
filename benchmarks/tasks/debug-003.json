@@ -1,0 +1,33 @@
+{
+    "id":  "debug-003",
+    "title":  "Investigate debugging scenario 3",
+    "category":  "debug",
+    "repo_fixture":  "benchmarks/fixtures/minimal",
+    "prompt":  "Benchmark workflow task for debug category #3.",
+    "mode_cmds":  {
+                      "codex_native":  [
+                                           "codex",
+                                           "--version"
+                                       ],
+                      "supercodex":  [
+                                         "{NODE_PATH}",
+                                         "{REPO_ROOT}/dist/cli.js",
+                                         "status",
+                                         "--json"
+                                     ]
+                  },
+    "verify":  {
+                   "type":  "file_assert",
+                   "target":  [
+                                  "README.md",
+                                  "src/app.ts"
+                              ]
+               },
+    "timeout_seconds":  30,
+    "tags":  [
+                 "starter",
+                 "debug",
+                 "generated"
+             ],
+    "risk_level":  "high"
+}

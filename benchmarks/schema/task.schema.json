@@ -1,0 +1,93 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://supercodex.dev/schemas/benchmark-task.schema.json",
+  "title": "SuperCodex Benchmark Task",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id",
+    "title",
+    "category",
+    "repo_fixture",
+    "prompt",
+    "verify",
+    "timeout_seconds"
+  ],
+  "properties": {
+    "id": { "type": "string", "minLength": 1 },
+    "title": { "type": "string", "minLength": 1 },
+    "category": {
+      "type": "string",
+      "enum": ["bugfix", "feature", "refactor", "migration", "review", "debug"]
+    },
+    "repo_fixture": { "type": "string", "minLength": 1 },
+    "prompt": { "type": "string", "minLength": 1 },
+    "setup_cmds": {
+      "type": "array",
+      "items": {
+        "type": "array",
+        "minItems": 1,
+        "items": { "type": "string", "minLength": 1 }
+      }
+    },
+    "run_cmd": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "mode_cmds": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "codex_native": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "supercodex": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
+    "verify": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type", "target"],
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": ["tests", "command", "file_assert"]
+        },
+        "target": {
+          "oneOf": [
+            { "type": "string", "minLength": 1 },
+            {
+              "type": "array",
+              "minItems": 1,
+              "items": { "type": "string", "minLength": 1 }
+            }
+          ]
+        }
+      }
+    },
+    "timeout_seconds": { "type": "integer", "minimum": 1 },
+    "tags": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "risk_level": {
+      "type": "string",
+      "enum": ["low", "medium", "high"]
+    }
+  },
+  "allOf": [
+    {
+      "anyOf": [
+        { "required": ["run_cmd"] },
+        { "required": ["mode_cmds"] }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://supercodex.dev/schemas/benchmark-run-config.schema.json",
+  "title": "SuperCodex Benchmark Run Config",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "seed",
+    "max_parallel",
+    "modes",
+    "task_glob",
+    "output_dir",
+    "fail_fast"
+  ],
+  "properties": {
+    "seed": { "type": "string", "minLength": 1 },
+    "max_parallel": { "type": "integer", "minimum": 1 },
+    "modes": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string",
+        "enum": ["codex_native", "supercodex"]
+      },
+      "uniqueItems": true
+    },
+    "task_glob": { "type": "string", "minLength": 1 },
+    "output_dir": { "type": "string", "minLength": 1 },
+    "fail_fast": { "type": "boolean" }
+  }
+}

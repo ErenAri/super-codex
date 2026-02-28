@@ -1,0 +1,18 @@
+{
+  "id": "refactor-002",
+  "title": "Simplify branching in service adapter",
+  "category": "refactor",
+  "repo_fixture": "benchmarks/fixtures/minimal",
+  "prompt": "Simplify branching and improve readability without changing outputs.",
+  "mode_cmds": {
+    "codex_native": ["codex", "--version"],
+    "supercodex": ["{NODE_PATH}", "{REPO_ROOT}/dist/cli.js", "status", "--json"]
+  },
+  "verify": {
+    "type": "command",
+    "target": ["{NODE_PATH}", "-e", "process.exit(0)"]
+  },
+  "timeout_seconds": 30,
+  "tags": ["starter", "refactor"],
+  "risk_level": "medium"
+}

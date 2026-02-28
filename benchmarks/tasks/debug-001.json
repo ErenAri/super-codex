@@ -1,0 +1,18 @@
+{
+  "id": "debug-001",
+  "title": "Investigate intermittent timeout issue",
+  "category": "debug",
+  "repo_fixture": "benchmarks/fixtures/minimal",
+  "prompt": "Investigate intermittent timeout and isolate reproducible cause.",
+  "mode_cmds": {
+    "codex_native": ["codex", "--version"],
+    "supercodex": ["{NODE_PATH}", "{REPO_ROOT}/dist/cli.js", "status", "--json"]
+  },
+  "verify": {
+    "type": "file_assert",
+    "target": ["README.md", "src/app.ts"]
+  },
+  "timeout_seconds": 30,
+  "tags": ["starter", "debug"],
+  "risk_level": "high"
+}

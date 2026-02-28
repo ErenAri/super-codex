@@ -1,0 +1,18 @@
+{
+  "id": "feature-001",
+  "title": "Add support for optional configuration flag",
+  "category": "feature",
+  "repo_fixture": "benchmarks/fixtures/minimal",
+  "prompt": "Implement optional configuration support with backward compatibility.",
+  "mode_cmds": {
+    "codex_native": ["codex", "--version"],
+    "supercodex": ["{NODE_PATH}", "{REPO_ROOT}/dist/cli.js", "status", "--json"]
+  },
+  "verify": {
+    "type": "file_assert",
+    "target": ["README.md", "src/app.ts"]
+  },
+  "timeout_seconds": 30,
+  "tags": ["starter", "feature"],
+  "risk_level": "low"
+}

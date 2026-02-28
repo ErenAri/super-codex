@@ -1,0 +1,18 @@
+{
+  "id": "review-002",
+  "title": "Run performance and maintainability review",
+  "category": "review",
+  "repo_fixture": "benchmarks/fixtures/minimal",
+  "prompt": "Assess performance and maintainability impact of proposed patch.",
+  "mode_cmds": {
+    "codex_native": ["codex", "--version"],
+    "supercodex": ["{NODE_PATH}", "{REPO_ROOT}/dist/cli.js", "status", "--json"]
+  },
+  "verify": {
+    "type": "command",
+    "target": ["{NODE_PATH}", "-e", "process.exit(0)"]
+  },
+  "timeout_seconds": 30,
+  "tags": ["starter", "review"],
+  "risk_level": "low"
+}

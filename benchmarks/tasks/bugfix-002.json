@@ -1,0 +1,18 @@
+{
+  "id": "bugfix-002",
+  "title": "Fix incorrect fallback behavior",
+  "category": "bugfix",
+  "repo_fixture": "benchmarks/fixtures/minimal",
+  "prompt": "Fix fallback logic to prevent incorrect default behavior.",
+  "mode_cmds": {
+    "codex_native": ["codex", "--version"],
+    "supercodex": ["{NODE_PATH}", "{REPO_ROOT}/dist/cli.js", "status", "--json"]
+  },
+  "verify": {
+    "type": "command",
+    "target": ["{NODE_PATH}", "-e", "process.exit(0)"]
+  },
+  "timeout_seconds": 30,
+  "tags": ["starter", "bugfix"],
+  "risk_level": "medium"
+}

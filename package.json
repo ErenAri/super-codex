@@ -1,0 +1,57 @@
+{
+  "name": "@erenari/supercodex",
+  "version": "0.2.0",
+  "description": "SuperClaude-style config framework for Codex CLI with safe, idempotent merges.",
+  "bin": {
+    "supercodex": "dist/cli.js"
+  },
+  "main": "dist/cli.js",
+  "types": "dist/cli.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "test": "vitest run",
+    "dev": "tsx src/cli.ts",
+    "bench": "tsx benchmarks/harness.ts --config benchmarks/run-config.json",
+    "bench:score": "tsx benchmarks/scorecard.ts",
+    "bench:check": "tsx benchmarks/scorecard.ts --enforce-thresholds",
+    "bench:tune-thresholds": "tsx benchmarks/tune-thresholds.ts",
+    "bench:tune-thresholds:last5": "tsx benchmarks/tune-thresholds.ts --last=5",
+    "bench:tune-thresholds:last5:write": "tsx benchmarks/tune-thresholds.ts --last=5 --write"
+  },
+  "keywords": [
+    "codex",
+    "cli",
+    "toml",
+    "mcp"
+  ],
+  "author": "ErenAri",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ErenAri/super-codex.git"
+  },
+  "bugs": {
+    "url": "https://github.com/ErenAri/super-codex/issues"
+  },
+  "homepage": "https://github.com/ErenAri/super-codex#readme",
+  "publishConfig": {
+    "access": "public"
+  },
+  "type": "commonjs",
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "@iarna/toml": "^2.2.5",
+    "commander": "^14.0.3"
+  },
+  "devDependencies": {
+    "@types/node": "^25.3.2",
+    "tsx": "^4.20.5",
+    "typescript": "^5.9.3",
+    "vitest": "^4.0.18"
+  }
+}

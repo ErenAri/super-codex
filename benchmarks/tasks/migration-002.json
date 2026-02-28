@@ -1,0 +1,18 @@
+{
+  "id": "migration-002",
+  "title": "Add compatibility bridge for schema transition",
+  "category": "migration",
+  "repo_fixture": "benchmarks/fixtures/minimal",
+  "prompt": "Implement compatibility bridge for schema transition phase.",
+  "mode_cmds": {
+    "codex_native": ["codex", "--version"],
+    "supercodex": ["{NODE_PATH}", "{REPO_ROOT}/dist/cli.js", "status", "--json"]
+  },
+  "verify": {
+    "type": "command",
+    "target": ["{NODE_PATH}", "-e", "process.exit(0)"]
+  },
+  "timeout_seconds": 30,
+  "tags": ["starter", "migration"],
+  "risk_level": "high"
+}
