@@ -1,12 +1,17 @@
 # @erenari/supercodex
 
-SuperClaude-style configuration framework for Codex CLI with:
+SuperCodex is a safety-first workflow layer for Codex CLI.
+It installs a curated prompt pack, manages a deterministic command/mode/persona registry, and merges config into `~/.codex/config.toml` without destructive overwrites.
 
-- safe backup-first config merges
-- command/mode/persona registry system
-- bundled MCP catalog + doctor workflows
+## Why SuperCodex
 
-## Quickstart
+- Backup-first config changes (timestamped backup on every mutating command)
+- Scoped config ownership (`[supercodex]` plus optional managed `agents` and `mcp_servers` entries)
+- Idempotent install behavior
+- Built-in workflow aliases, modes, personas, MCP catalog, and diagnostics
+- Cross-platform support (Windows, macOS, Linux)
+
+## 2-Minute Quickstart
 
 ```bash
 npm install -g @erenari/supercodex
@@ -14,159 +19,115 @@ supercodex install
 supercodex status
 ```
 
+After install:
+
+- Prompt pack: `~/.codex/prompts/supercodex/`
+- Interactive prompt wrappers: `~/.codex/prompts/sc-*.md`
+- Config merge target: `~/.codex/config.toml`
+
+## Alias Invocation: Which Syntax Works Where
+
+| Context | Use this syntax | Example |
+| --- | --- | --- |
+| Codex interactive chat | `/prompts:<name>` | `/prompts:sc-research "map migration risks"` |
+| SuperCodex CLI | `/sc:<name>` or `sc:<name>` | `supercodex /sc:research "map migration risks"` |
+| SuperCodex CLI (plain alias) | `<name>` | `supercodex research "map migration risks"` |
+| Shell shortcut (optional bridge) | `sc <name>` | `sc research "map migration risks"` |
+
+Notes:
+
+- Codex interactive custom commands are exposed under `/prompts:*`.
+- `/sc:*` is a SuperCodex CLI alias parser, not a native Codex interactive namespace.
+
+## Install, List, Uninstall
+
+```bash
+supercodex install [--force] [--codex-home <path>]
+supercodex list [--codex-home <path>]
+supercodex status [--json] [--codex-home <path>]
+supercodex uninstall [--codex-home <path>]
+```
+
+## Shell Bridge (Optional)
+
+Install a lightweight shell function named `sc` for shorthand alias use:
+
+```bash
+supercodex shell install
+supercodex shell status
+```
+
+Then use:
+
+```bash
+sc research "scope and constraints"
+sc /sc:brainstorming "alternatives"
+```
+
 ## Safety Model
 
-- Never overwrites `~/.codex/config.toml` blindly.
-- Always creates timestamped backups in:
-  - `~/.codex/backups/YYYY-MM-DD-HHMMSS/`
+SuperCodex never blindly overwrites `config.toml`.
+
+- Backup location: `~/.codex/backups/YYYY-MM-DD-HHMMSS/`
 - Managed merge scope:
   - `[supercodex]`
   - optional `[agents.*]`
   - optional `[mcp_servers.*]`
-- Idempotent installs.
-- Conflict policy:
-  - preserve existing differing values
-  - record desired values in `[supercodex.overrides]`
-  - use `--force` to apply in standard locations
+- Conflict behavior (default):
+  - preserve existing differing value
+  - record desired value under `[supercodex.overrides]`
+- Use `--force` to apply desired values into conflicting locations
 
 ## Prompt Pack
 
-Installed in `~/.codex/prompts/supercodex/`:
+Installed under `~/.codex/prompts/supercodex/`:
 
 - `plan.md`
 - `review.md`
 - `refactor.md`
 - `debug.md`
+- overlays: `modes/*`, `personas/*`
 
-Additional overlays:
-
-- `modes/deep.md`
-- `modes/fast.md`
-- `personas/architect.md`
-- `personas/reviewer.md`
-
-Interactive Codex wrappers (installed in `~/.codex/prompts/` top-level):
+Interactive wrappers installed under `~/.codex/prompts/`:
 
 - `sc-research.md` -> `/prompts:sc-research`
 - `sc-brainstorming.md` -> `/prompts:sc-brainstorming`
-- plus wrappers for all built-in SuperCodex aliases
+- wrappers for all built-in aliases
 
-## Command Surface
-
-Core:
+## Core Command Groups
 
 ```bash
-supercodex install [--force] [--codex-home <path>]
-supercodex uninstall [--codex-home <path>]
-supercodex list [--codex-home <path>]
-supercodex status [--json] [--codex-home <path>]
-supercodex init [--dir <path>]
-supercodex validate [--strict] [--json] [--codex-home <path>]
+supercodex validate [--strict] [--json]
 supercodex doctor [--fix] [--strict] [--json] [--mcp-connectivity]
-```
-
-Catalog:
-
-```bash
-supercodex catalog list|search|show|sync
-```
-
-SuperClaude compatibility aliases:
-
-```bash
+supercodex init [--dir <path>]
 supercodex aliases list|show|packs|search
-supercodex /sc:research [args...]
-supercodex sc:brainstorming [args...]
-supercodex research [args...]
-```
-
-Modes and personas:
-
-```bash
 supercodex mode list|show|set|unset
 supercodex persona list|show|set|unset
-supercodex shell install|remove|status|script
-```
-
-MCP:
-
-```bash
-supercodex mcp add <name> <command...> [--env KEY=VALUE] [--force]
-supercodex mcp add <name> --http <url> [--env KEY=VALUE] [--force]
-supercodex mcp list
-supercodex mcp install <catalog-id>
-supercodex mcp remove <name>
-supercodex mcp test <name>
-supercodex mcp doctor [--connectivity]
-supercodex mcp catalog list|search|show
-```
-
-Workflow context:
-
-```bash
 supercodex run plan|review|refactor|debug [--mode <name>] [--persona <name>] [--json]
+supercodex catalog list|search|show|sync
+supercodex mcp add|list|install|remove|test|doctor|catalog
 ```
 
-## SuperClaude Alias Mapping
+For detailed examples, see [docs/COMMANDS.md](docs/COMMANDS.md).
 
-Built-in aliases (focused v2, grouped by pack):
+## Project Template
 
-- `core-planning`: `research`, `brainstorming`, `plan`, `spec`, `investigate`, `synthesize`
-- `quality-review`: `review`, `audit`, `security`, `perf`, `test`, `checklist`
-- `debug-investigation`: `debug`, `trace`, `repro`, `rootcause`, `triage`, `fixplan`
-- `refactor-delivery`: `refactor`, `simplify`, `migrate`, `architect`, `doc`, `ship`
-
-Key mappings:
-
-- `/sc:research` -> `run plan --mode deep --persona architect`
-- `/sc:brainstorming` -> `run plan --mode balanced --persona educator`
-- `/sc:security` -> `run review --mode safe --persona reviewer`
-- `/sc:rootcause` -> `run debug --mode deep --persona debugger`
-- `/sc:migrate` -> `run refactor --mode safe --persona architect`
-- `/sc:ship` -> `run refactor --mode fast --persona shipper`
-
-Supported invocation forms:
-
-- `/sc:<name>`
-- `sc:<name>`
-- `<name>` (plain alias form; command names still take precedence)
-
-Important:
-
-- `/sc:*` aliases are parsed by `supercodex` arguments (for example: `supercodex /sc:research`).
-- Codex interactive custom commands are exposed as `/prompts:<name>`.
-- SuperCodex installs top-level prompt wrappers like `/prompts:sc-research`.
-- For terminal shorthand outside Codex chat, install the shell bridge and use `sc`.
+Create a project-scoped layer:
 
 ```bash
-supercodex shell install
-sc research "scope and risks"
-sc /sc:brainstorming "new architecture options"
-codex
-# inside Codex:
-/prompts:sc-research "scope and risks"
+supercodex init
 ```
 
-Inspect alias packs:
-
-```bash
-supercodex aliases packs
-supercodex aliases list --pack quality-review
-supercodex aliases search security
-```
-
-## Project Template (`supercodex init`)
-
-Creates:
+This creates:
 
 - `.codex/config.toml`
 - `.codex/README.md`
 
 `init` is additive and preserves existing keys.
 
-## MCP Examples
+## MCP Quick Examples
 
-Install from catalog:
+Catalog install:
 
 ```bash
 supercodex mcp install filesystem
@@ -189,9 +150,9 @@ supercodex mcp add internal-api --http http://localhost:3333/mcp --env API_TOKEN
 ```toml
 [supercodex]
 enabled = true
-version = "0.2.0"
+version = "<installed-version>"
 prompt_pack = "supercodex"
-prompts_dir = "/home/user/.codex/prompts/supercodex"
+prompts_dir = "C:/Users/you/.codex/prompts/supercodex"
 
 [supercodex.runtime]
 default_mode = "balanced"
@@ -203,24 +164,21 @@ source = "local"
 installed_ids = ["filesystem"]
 ```
 
-Conflict capture:
+Conflict capture example:
 
 ```toml
 [supercodex.overrides]
 "agents.supercodex_planner" = { description = "SuperCodex structured planning profile", prompt = "supercodex/plan.md" }
 ```
 
-## Prompt Invocation Examples
+## Docs
 
-```bash
-codex --prompt-file ~/.codex/prompts/supercodex/plan.md "Plan a safe migration from v1 to v2"
-codex --prompt-file ~/.codex/prompts/supercodex/review.md "Review this branch for regressions"
-codex --prompt-file ~/.codex/prompts/supercodex/debug.md "Debug intermittent timeout in API tests"
-```
+- [Command Reference](docs/COMMANDS.md)
+- [Troubleshooting](docs/TROUBLESHOOTING.md)
 
 ## Benchmarking
 
-M0 benchmarking compares `codex_native` vs `supercodex` using the task corpus in `benchmarks/tasks/`.
+Run evaluation harness and scorecards:
 
 ```bash
 npm run bench
@@ -236,16 +194,3 @@ Artifacts:
 - `benchmarks/results/<run_id>/results.json`
 - `benchmarks/results/<run_id>/scorecard.json`
 - `benchmarks/results/latest.md`
-
-Threshold policy is locked in:
-
-- `benchmarks/thresholds.json`
-
-Tune policy from historical runs:
-
-```bash
-npx tsx benchmarks/tune-thresholds.ts --last=5
-npx tsx benchmarks/tune-thresholds.ts --last=5 --write
-```
-
-If `codex` is not available on PATH, harness preflight records it and baseline entries are marked as `infra_error`.
