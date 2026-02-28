@@ -23,8 +23,12 @@ import {
 import { getCodexPaths } from "./paths";
 import {
   installPromptPack,
+  installInteractivePromptCommands,
   listBundledPrompts,
+  listBundledInteractivePromptCommands,
   listInstalledPrompts,
+  listInstalledInteractivePromptCommands,
+  removeInteractivePromptCommands,
   removePromptPack
 } from "./prompts";
 import { BUILTIN_CATALOG_VERSION, type CatalogEntry } from "./registry";
@@ -60,17 +64,23 @@ export interface AddMcpResult {
 }
 
 export interface PromptListResult {
+  promptsDir: string;
   promptPackDir: string;
   bundled: string[];
   installed: string[];
+  interactiveBundled: string[];
+  interactiveInstalled: string[];
 }
 
 export interface StatusResult {
   codexHome: string;
   configPath: string;
+  promptsDir: string;
   promptPackDir: string;
   configExists: boolean;
   promptPackInstalled: boolean;
+  interactivePromptCommandsInstalled: string[];
+  interactivePromptCommandsMissing: string[];
   supercodexInstalled: boolean;
   managedAgents: string[];
   managedMcpServers: string[];
@@ -141,12 +151,13 @@ export async function installSupercodex(options: OperationOptions = {}): Promise
   }
 
   const promptInstall = await installPromptPack(paths.promptPackDir);
+  const interactivePromptInstall = await installInteractivePromptCommands(paths.promptsDir);
 
   return {
     paths,
     backup,
     configChanged: merged.changed,
-    promptChanged: promptInstall.changed,
+    promptChanged: promptInstall.changed || interactivePromptInstall.changed,
     warnings: merged.warnings
   };
 }
@@ -164,12 +175,13 @@ export async function uninstallSupercodex(options: OperationOptions = {}): Promi
   }
 
   const promptRemoved = await removePromptPack(paths.promptPackDir);
+  const interactivePromptRemoved = await removeInteractivePromptCommands(paths.promptsDir);
 
   return {
     paths,
     backup,
     configChanged: removed.changed,
-    promptRemoved,
+    promptRemoved: promptRemoved || interactivePromptRemoved,
     removedAgents: removed.removedAgents,
     removedMcpServers: removed.removedMcpServers
   };
@@ -223,9 +235,12 @@ export async function listPromptPackStatus(codexHome?: string): Promise<PromptLi
   const paths = getCodexPaths(codexHome);
 
   return {
+    promptsDir: paths.promptsDir,
     promptPackDir: paths.promptPackDir,
     bundled: listBundledPrompts(),
-    installed: await listInstalledPrompts(paths.promptPackDir)
+    installed: await listInstalledPrompts(paths.promptPackDir),
+    interactiveBundled: listBundledInteractivePromptCommands(),
+    interactiveInstalled: await listInstalledInteractivePromptCommands(paths.promptsDir)
   };
 }
 
@@ -247,13 +262,20 @@ export async function getSupercodexStatus(codexHome?: string): Promise<StatusRes
         .filter((value): value is string => typeof value === "string" && value.trim().length > 0)
         .sort()
     : [];
+  const interactiveBundled = listBundledInteractivePromptCommands();
+  const interactiveInstalled = await listInstalledInteractivePromptCommands(paths.promptsDir);
+  const interactiveInstalledSet = new Set(interactiveInstalled);
+  const interactiveMissing = interactiveBundled.filter((item) => !interactiveInstalledSet.has(item));
 
   return {
     codexHome: paths.home,
     configPath: paths.configPath,
+    promptsDir: paths.promptsDir,
     promptPackDir: paths.promptPackDir,
     configExists,
     promptPackInstalled,
+    interactivePromptCommandsInstalled: interactiveInstalled,
+    interactivePromptCommandsMissing: interactiveMissing,
     supercodexInstalled: Boolean(supercodex),
     managedAgents: managed.agents,
     managedMcpServers: managed.mcpServers,

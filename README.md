@@ -45,6 +45,12 @@ Additional overlays:
 - `personas/architect.md`
 - `personas/reviewer.md`
 
+Interactive Codex wrappers (installed in `~/.codex/prompts/` top-level):
+
+- `sc-research.md` -> `/prompts:sc-research`
+- `sc-brainstorming.md` -> `/prompts:sc-brainstorming`
+- plus wrappers for all built-in SuperCodex aliases
+
 ## Command Surface
 
 Core:
@@ -128,13 +134,17 @@ Supported invocation forms:
 Important:
 
 - `/sc:*` aliases are parsed by `supercodex` arguments (for example: `supercodex /sc:research`).
-- Codex interactive native slash commands are not currently extensible through this package.
-- For terminal shorthand, install the shell bridge and use `sc`.
+- Codex interactive custom commands are exposed as `/prompts:<name>`.
+- SuperCodex installs top-level prompt wrappers like `/prompts:sc-research`.
+- For terminal shorthand outside Codex chat, install the shell bridge and use `sc`.
 
 ```bash
 supercodex shell install
 sc research "scope and risks"
 sc /sc:brainstorming "new architecture options"
+codex
+# inside Codex:
+/prompts:sc-research "scope and risks"
 ```
 
 Inspect alias packs:

@@ -2,6 +2,8 @@ import path from "node:path";
 import { mkdir, readFile, readdir, rm, writeFile } from "node:fs/promises";
 
 import { pathExists } from "./fs-utils";
+import { BUILTIN_ALIASES } from "./registry/aliases";
+import type { AliasDefinition } from "./registry/types";
 
 export const BUNDLED_PROMPTS: Record<string, string> = {
   "plan.md": `# SuperCodex Plan
@@ -94,6 +96,8 @@ export const BUNDLED_PROMPTS: Record<string, string> = {
 `
 };
 
+const PROMPT_WRAPPER_MARKER = "<!-- supercodex:managed-prompt-wrapper -->";
+
 export interface PromptInstallResult {
   changed: boolean;
   writtenFiles: string[];
@@ -101,6 +105,10 @@ export interface PromptInstallResult {
 
 export function listBundledPrompts(): string[] {
   return Object.keys(BUNDLED_PROMPTS).sort();
+}
+
+export function listBundledInteractivePromptCommands(): string[] {
+  return Object.keys(getBundledInteractivePromptFiles()).sort();
 }
 
 export async function installPromptPack(promptPackDir: string): Promise<PromptInstallResult> {
@@ -129,6 +137,35 @@ export async function installPromptPack(promptPackDir: string): Promise<PromptIn
   return { changed, writtenFiles };
 }
 
+export async function installInteractivePromptCommands(promptsDir: string): Promise<PromptInstallResult> {
+  await mkdir(promptsDir, { recursive: true });
+
+  let changed = false;
+  const writtenFiles: string[] = [];
+  const bundled = getBundledInteractivePromptFiles();
+
+  for (const fileName of Object.keys(bundled).sort()) {
+    const targetPath = path.join(promptsDir, fileName);
+    const nextContent = bundled[fileName];
+    let currentContent: string | null = null;
+
+    if (await pathExists(targetPath)) {
+      currentContent = await readFile(targetPath, "utf8");
+      if (currentContent !== nextContent && !currentContent.includes(PROMPT_WRAPPER_MARKER)) {
+        continue;
+      }
+    }
+
+    if (currentContent !== nextContent) {
+      await writeFile(targetPath, nextContent, "utf8");
+      changed = true;
+      writtenFiles.push(targetPath);
+    }
+  }
+
+  return { changed, writtenFiles };
+}
+
 export async function removePromptPack(promptPackDir: string): Promise<boolean> {
   if (!(await pathExists(promptPackDir))) {
     return false;
@@ -138,12 +175,47 @@ export async function removePromptPack(promptPackDir: string): Promise<boolean> 
   return true;
 }
 
+export async function removeInteractivePromptCommands(promptsDir: string): Promise<boolean> {
+  let changed = false;
+  const bundled = listBundledInteractivePromptCommands();
+
+  for (const fileName of bundled) {
+    const targetPath = path.join(promptsDir, fileName);
+    if (!(await pathExists(targetPath))) {
+      continue;
+    }
+
+    const content = await readFile(targetPath, "utf8");
+    if (!content.includes(PROMPT_WRAPPER_MARKER)) {
+      continue;
+    }
+
+    await rm(targetPath, { force: true });
+    changed = true;
+  }
+
+  return changed;
+}
+
 export async function listInstalledPrompts(promptPackDir: string): Promise<string[]> {
   if (!(await pathExists(promptPackDir))) {
     return [];
   }
 
   return walkPromptFiles(promptPackDir, "");
+}
+
+export async function listInstalledInteractivePromptCommands(promptsDir: string): Promise<string[]> {
+  const files = listBundledInteractivePromptCommands();
+  const installed: string[] = [];
+
+  for (const fileName of files) {
+    if (await pathExists(path.join(promptsDir, fileName))) {
+      installed.push(fileName);
+    }
+  }
+
+  return installed.sort();
 }
 
 async function walkPromptFiles(baseDir: string, relativeDir: string): Promise<string[]> {
@@ -165,4 +237,73 @@ async function walkPromptFiles(baseDir: string, relativeDir: string): Promise<st
   }
 
   return files.sort();
+}
+
+function getBundledInteractivePromptFiles(): Record<string, string> {
+  const files: Record<string, string> = {};
+
+  for (const aliasName of Object.keys(BUILTIN_ALIASES).sort()) {
+    const alias = BUILTIN_ALIASES[aliasName];
+    const workflow = resolveWorkflowFromTarget(alias.target);
+    if (!workflow) {
+      continue;
+    }
+
+    const fileName = `sc-${alias.name}.md`;
+    files[fileName] = renderInteractivePrompt(alias, workflow);
+  }
+
+  return files;
+}
+
+function resolveWorkflowFromTarget(target: string): "plan" | "review" | "refactor" | "debug" | null {
+  if (target === "run.plan") {
+    return "plan";
+  }
+
+  if (target === "run.review") {
+    return "review";
+  }
+
+  if (target === "run.refactor") {
+    return "refactor";
+  }
+
+  if (target === "run.debug") {
+    return "debug";
+  }
+
+  return null;
+}
+
+function renderInteractivePrompt(
+  alias: AliasDefinition,
+  workflow: "plan" | "review" | "refactor" | "debug"
+): string {
+  const mode = alias.default_mode ?? "balanced";
+  const persona = alias.default_persona ?? "architect";
+  const scaffold = BUNDLED_PROMPTS[`${workflow}.md`];
+
+  return [
+    "---",
+    `description: SuperCodex alias /sc:${alias.name}`,
+    'argument-hint: "<task>"',
+    "---",
+    "",
+    PROMPT_WRAPPER_MARKER,
+    `# SuperCodex Alias: /sc:${alias.name}`,
+    "",
+    `- Workflow: ${workflow}`,
+    `- Mode: ${mode}`,
+    `- Persona: ${persona}`,
+    "",
+    "Use the workflow scaffold below and focus on the user task.",
+    "",
+    "## User Task",
+    "$ARGUMENTS",
+    "",
+    "## Workflow Scaffold",
+    scaffold.trimEnd(),
+    ""
+  ].join("\n");
 }

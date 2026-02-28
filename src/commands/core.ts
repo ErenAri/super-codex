@@ -33,6 +33,7 @@ export function registerCoreCommands(program: Command): void {
             : `Prompt pack already current at ${result.paths.promptPackDir}.`
         );
         console.log("Alias usage: supercodex /sc:research <args...>");
+        console.log("Codex interactive usage: /prompts:sc-research <task>");
         console.log("Optional shell shortcut bridge: supercodex shell install");
 
         printWarnings(result.warnings);
@@ -80,6 +81,14 @@ export function registerCoreCommands(program: Command): void {
         for (const promptName of result.bundled) {
           const state = installed.has(promptName) ? "installed" : "missing";
           console.log(`- ${promptName} (${state})`);
+        }
+        const interactiveInstalled = new Set(result.interactiveInstalled);
+        console.log(`Interactive prompt command directory: ${result.promptsDir}`);
+        console.log("Interactive prompt commands:");
+        for (const fileName of result.interactiveBundled) {
+          const state = interactiveInstalled.has(fileName) ? "installed" : "missing";
+          const slashName = fileName.replace(/\.md$/i, "");
+          console.log(`- /prompts:${slashName} (${state})`);
         }
       })
     );
@@ -131,6 +140,17 @@ export function registerCoreCommands(program: Command): void {
             ? `Pending overrides: ${result.overridePaths.join(", ")}`
             : "Pending overrides: (none)"
         );
+        console.log(
+          result.interactivePromptCommandsInstalled.length > 0
+            ? `Interactive prompt commands installed: ${result.interactivePromptCommandsInstalled.length}`
+            : "Interactive prompt commands installed: 0"
+        );
+        console.log(
+          result.interactivePromptCommandsMissing.length > 0
+            ? `Interactive prompt commands missing: ${result.interactivePromptCommandsMissing.length}`
+            : "Interactive prompt commands missing: 0"
+        );
+        console.log("Codex slash invocation format: /prompts:sc-research <task>");
         console.log(
           `Shell bridge: ${shellBridge.installed ? "installed" : "missing"} ` +
             `(${shellBridge.shell}: ${shellBridge.profilePath})`
