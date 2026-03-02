@@ -16,11 +16,7 @@ export function isPlainObject(value: unknown): value is Record<string, unknown> 
 }
 
 export function deepClone<T>(value: T): T {
-  if (typeof globalThis.structuredClone === "function") {
-    return globalThis.structuredClone(value);
-  }
-
-  return JSON.parse(JSON.stringify(value)) as T;
+  return structuredClone(value);
 }
 
 export function deepEqual(a: unknown, b: unknown): boolean {

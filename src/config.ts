@@ -70,7 +70,7 @@ export async function loadConfig(configPath: string): Promise<TomlTable> {
 
 export async function writeConfig(configPath: string, config: TomlTable): Promise<void> {
   await mkdir(path.dirname(configPath), { recursive: true });
-  const serialized = TOML.stringify(config as never);
+  const serialized = TOML.stringify(config as Parameters<typeof TOML.stringify>[0]);
   await writeFile(configPath, serialized, "utf8");
 }
 
@@ -123,6 +123,11 @@ export function createInstallSpec(promptPackDir: string, version = SUPERCODEX_VE
       modes: modeTable,
       personas: personaTable,
       commands: commandTable,
+      framework: {
+        principles: "supercodex/framework/PRINCIPLES.md",
+        rules: "supercodex/framework/RULES.md",
+        flags: "supercodex/framework/FLAGS.md"
+      },
       catalog: {
         source: "local",
         installed_ids: []

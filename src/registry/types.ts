@@ -14,6 +14,8 @@ export interface ModeDefinition {
   prompt_overlay?: string;
   temperature?: number;
   reasoning_budget?: "low" | "medium" | "high";
+  content_file?: string;
+  behavioral_rules?: string[];
 }
 
 export interface PersonaDefinition {
@@ -64,6 +66,40 @@ export interface AliasPackDefinition {
   aliases: string[];
 }
 
+export interface AgentDefinition {
+  name: string;
+  description: string;
+  triggers?: string[];
+  primary_persona?: PersonaName;
+  primary_mode?: ModeName;
+  content_file?: string;
+  capabilities?: string[];
+}
+
+export interface SkillDefinition {
+  id: string;
+  name: string;
+  description: string;
+  version: string;
+  content_file: string;
+  triggers?: string[];
+  required_confidence?: number;
+  enabled: boolean;
+}
+
+export type FlagCategory = "mode" | "mcp" | "depth" | "output";
+
+export interface FlagDefinition {
+  name: string;
+  flag: string;
+  category: FlagCategory;
+  description: string;
+  activates_mode?: string;
+  activates_mcp?: string[];
+  reasoning_budget?: string;
+  conflicts_with?: string[];
+}
+
 export interface RegistryData {
   modes: Record<string, ModeDefinition>;
   personas: Record<string, PersonaDefinition>;
@@ -71,6 +107,9 @@ export interface RegistryData {
   catalog: Record<string, CatalogEntry>;
   aliases: Record<string, AliasDefinition>;
   alias_packs: Record<string, AliasPackDefinition>;
+  agent_definitions: Record<string, AgentDefinition>;
+  skills: Record<string, SkillDefinition>;
+  flags: Record<string, FlagDefinition>;
 }
 
 export interface RegistryValidationIssue {
@@ -86,4 +125,7 @@ export interface RegistryOverlayFile {
   catalog?: Record<string, TomlTable>;
   aliases?: Record<string, TomlTable>;
   alias_packs?: Record<string, TomlTable>;
+  agent_definitions?: Record<string, TomlTable>;
+  skills?: Record<string, TomlTable>;
+  flags?: Record<string, TomlTable>;
 }

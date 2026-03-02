@@ -24,7 +24,7 @@ describe("cli contract", () => {
     expect(result.code).toBe(0);
     const payload = JSON.parse(result.stdout);
     expect(payload.valid).toBe(true);
-    expect(payload.command_count).toBeGreaterThanOrEqual(26);
+    expect(payload.command_count).toBeGreaterThanOrEqual(56);
   });
 
   it("validate --strict fails on alias warnings from overlays", async () => {
@@ -93,7 +93,7 @@ describe("cli contract", () => {
 
     expect(result.code).toBe(0);
     const payload = JSON.parse(result.stdout);
-    expect(payload.workflow).toBe("plan");
+    expect(payload.workflow).toBe("research");
     expect(payload.mode).toBe("deep");
     expect(payload.persona).toBe("architect");
   });
@@ -104,7 +104,7 @@ describe("cli contract", () => {
 
     expect(result.code).toBe(0);
     const payload = JSON.parse(result.stdout);
-    expect(payload.workflow).toBe("plan");
+    expect(payload.workflow).toBe("brainstorm");
     expect(payload.mode).toBe("balanced");
     expect(payload.persona).toBe("educator");
   });
@@ -115,7 +115,7 @@ describe("cli contract", () => {
 
     expect(result.code).toBe(0);
     const payload = JSON.parse(result.stdout);
-    expect(payload.workflow).toBe("plan");
+    expect(payload.workflow).toBe("research");
   });
 
   it("returns friendly error for unknown /sc alias", async () => {
@@ -138,7 +138,7 @@ describe("cli contract", () => {
     expect(showResult.code).toBe(0);
     const showPayload = JSON.parse(showResult.stdout);
     expect(showPayload.name).toBe("research");
-    expect(showPayload.target).toBe("run.plan");
+    expect(showPayload.target).toBe("run.research");
     expect(showPayload.pack).toBe("core-planning");
     expect(showPayload.risk_level).toBe("medium");
   });

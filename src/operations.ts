@@ -524,10 +524,10 @@ export async function updateDoctorState(
 }
 
 export function validateSupercodexCommandCount(commandIds: string[]): ValidateResult {
-  if (commandIds.length < 26) {
+  if (commandIds.length < 56) {
     return {
       valid: false,
-      errors: [`Expected at least 26 commands but found ${commandIds.length}.`]
+      errors: [`Expected at least 56 commands but found ${commandIds.length}.`]
     };
   }
 

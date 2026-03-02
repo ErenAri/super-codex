@@ -3,15 +3,18 @@ import { Command, CommanderError } from "commander";
 
 import { SUPERCODEX_VERSION } from "./constants";
 import {
+  registerAgentCommands,
   registerAliasCommands,
   registerCatalogCommands,
   registerCoreCommands,
   registerDoctorCommands,
+  registerFlagCommands,
   registerMcpCommands,
   registerModeCommands,
   registerPersonaCommands,
   registerRunCommands,
   registerShellCommands,
+  registerSkillCommands,
   registerValidateCommand
 } from "./commands";
 import { dispatchAliasArgv } from "./runtime";
@@ -33,6 +36,9 @@ export function createProgram(): Command {
   registerMcpCommands(program);
   registerRunCommands(program);
   registerShellCommands(program);
+  registerAgentCommands(program);
+  registerSkillCommands(program);
+  registerFlagCommands(program);
 
   return program;
 }

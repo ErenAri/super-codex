@@ -7,11 +7,11 @@ import type { RegistryData } from "../registry";
 import { resolveRuntimeContext, type RuntimeContextOptions } from "./context";
 
 export interface WorkflowResolutionOptions extends RuntimeContextOptions {
-  workflow: "plan" | "review" | "refactor" | "debug";
+  workflow: string;
 }
 
 export interface WorkflowResolution {
-  workflow: "plan" | "review" | "refactor" | "debug";
+  workflow: string;
   promptPath: string;
   mode: string;
   persona: string;
@@ -21,6 +21,12 @@ export interface WorkflowResolution {
     modePrompt?: string;
     personaPrompt?: string;
   };
+}
+
+const BASE_WORKFLOWS = new Set(["plan", "review", "refactor", "debug"]);
+
+export function isBaseWorkflow(name: string): boolean {
+  return BASE_WORKFLOWS.has(name);
 }
 
 export async function resolveWorkflow(
@@ -51,6 +57,23 @@ export async function resolveWorkflow(
 
 function resolvePromptPath(config: TomlTable, promptPackDir: string, workflow: string): string {
   const supercodex = isPlainObject(config.supercodex) ? (config.supercodex as TomlTable) : null;
+
+  // First check for command-specific prompt in commands/ subdirectory
+  if (!isBaseWorkflow(workflow)) {
+    const commandPromptPath = path.join(promptPackDir, "commands", `${workflow}.md`);
+    // If there's a config entry for this command, use it; otherwise default to commands/ path
+    if (supercodex && isPlainObject(supercodex.prompts)) {
+      const prompts = supercodex.prompts as TomlTable;
+      const relative = prompts[workflow];
+      if (typeof relative === "string" && relative.trim()) {
+        const normalized = relative.replaceAll("\\", "/").replace(/^supercodex\//, "");
+        return path.join(promptPackDir, normalized);
+      }
+    }
+    return commandPromptPath;
+  }
+
+  // Base workflow: check config, then fall back to default path
   if (!supercodex || !isPlainObject(supercodex.prompts)) {
     return path.join(promptPackDir, `${workflow}.md`);
   }

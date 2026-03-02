@@ -1,7 +1,7 @@
 import path from "node:path";
 
 import { loadConfig } from "../config";
-import { deepClone, isPlainObject, pathExists } from "../fs-utils";
+import { deepClone, deepEqual, isPlainObject, pathExists } from "../fs-utils";
 import { getCodexPaths } from "../paths";
 import {
   BUILTIN_ALIASES,
@@ -10,21 +10,27 @@ import {
   normalizeAliasToken
 } from "./aliases";
 import {
+  BUILTIN_AGENT_DEFINITIONS,
   BUILTIN_CATALOG,
   BUILTIN_COMMANDS,
+  BUILTIN_FLAGS,
   BUILTIN_MODES,
-  BUILTIN_PERSONAS
+  BUILTIN_PERSONAS,
+  BUILTIN_SKILLS
 } from "./builtins";
 import type {
+  AgentDefinition,
   AliasDefinition,
   AliasPackDefinition,
   CatalogEntry,
   CommandDefinition,
+  FlagDefinition,
   ModeDefinition,
   PersonaDefinition,
   RegistryData,
   RegistryOverlayFile,
-  RegistryValidationIssue
+  RegistryValidationIssue,
+  SkillDefinition
 } from "./types";
 
 export interface RegistryLoadOptions {
@@ -51,7 +57,10 @@ export async function loadRegistry(options: RegistryLoadOptions = {}): Promise<R
     commands: deepClone(BUILTIN_COMMANDS),
     catalog: deepClone(BUILTIN_CATALOG),
     aliases: deepClone(BUILTIN_ALIASES),
-    alias_packs: deepClone(BUILTIN_ALIAS_PACKS)
+    alias_packs: deepClone(BUILTIN_ALIAS_PACKS),
+    agent_definitions: deepClone(BUILTIN_AGENT_DEFINITIONS),
+    skills: deepClone(BUILTIN_SKILLS),
+    flags: deepClone(BUILTIN_FLAGS)
   };
   const issues: RegistryValidationIssue[] = [];
 
@@ -496,6 +505,51 @@ function applyOverlay(
       registry.alias_packs[name] = normalized;
     }
   }
+
+  if (isPlainObject(overlay.agent_definitions)) {
+    for (const [name, raw] of Object.entries(overlay.agent_definitions)) {
+      const normalized = normalizeAgentDefinition(name, raw);
+      if (!normalized) {
+        issues.push({
+          level: "warn",
+          path: `${sourcePath}:agent_definitions.${name}`,
+          message: "Skipped invalid agent definition entry."
+        });
+        continue;
+      }
+      registry.agent_definitions[name] = normalized;
+    }
+  }
+
+  if (isPlainObject(overlay.skills)) {
+    for (const [id, raw] of Object.entries(overlay.skills)) {
+      const normalized = normalizeSkillDefinition(id, raw);
+      if (!normalized) {
+        issues.push({
+          level: "warn",
+          path: `${sourcePath}:skills.${id}`,
+          message: "Skipped invalid skill definition entry."
+        });
+        continue;
+      }
+      registry.skills[id] = normalized;
+    }
+  }
+
+  if (isPlainObject(overlay.flags)) {
+    for (const [name, raw] of Object.entries(overlay.flags)) {
+      const normalized = normalizeFlagDefinition(name, raw);
+      if (!normalized) {
+        issues.push({
+          level: "warn",
+          path: `${sourcePath}:flags.${name}`,
+          message: "Skipped invalid flag definition entry."
+        });
+        continue;
+      }
+      registry.flags[name] = normalized;
+    }
+  }
 }
 
 function normalizeMode(name: string, raw: unknown): ModeDefinition | null {
@@ -757,7 +811,7 @@ function dedupeStrings(values: string[]): string[] {
 }
 
 function isValidCommandId(value: string): boolean {
-  return /^[a-z][a-z0-9]*(\.[a-z][a-z0-9]*)*$/.test(value);
+  return /^[a-z][a-z0-9-]*(\.[a-z][a-z0-9-]*)*$/.test(value);
 }
 
 function isCompatibleMode(command: CommandDefinition, modeName: string): boolean {
@@ -775,9 +829,133 @@ function isCompatiblePersona(command: CommandDefinition, personaName: string): b
 }
 
 function areAliasesEquivalent(a: AliasDefinition, b: AliasDefinition): boolean {
-  return JSON.stringify(a) === JSON.stringify(b);
+  return deepEqual(a, b);
 }
 
 function areAliasPacksEquivalent(a: AliasPackDefinition, b: AliasPackDefinition): boolean {
-  return JSON.stringify(a) === JSON.stringify(b);
+  return deepEqual(a, b);
+}
+
+function normalizeAgentDefinition(name: string, raw: unknown): AgentDefinition | null {
+  if (!isPlainObject(raw)) {
+    return null;
+  }
+
+  const description = asString(raw.description);
+  if (!description) {
+    return null;
+  }
+
+  const agent: AgentDefinition = {
+    name,
+    description
+  };
+
+  const triggers = asStringArray(raw.triggers);
+  if (triggers.length > 0) {
+    agent.triggers = triggers;
+  }
+
+  const primaryPersona = asString(raw.primary_persona);
+  if (primaryPersona) {
+    agent.primary_persona = primaryPersona;
+  }
+
+  const primaryMode = asString(raw.primary_mode);
+  if (primaryMode) {
+    agent.primary_mode = primaryMode;
+  }
+
+  const contentFile = asString(raw.content_file);
+  if (contentFile) {
+    agent.content_file = contentFile;
+  }
+
+  const capabilities = asStringArray(raw.capabilities);
+  if (capabilities.length > 0) {
+    agent.capabilities = capabilities;
+  }
+
+  return agent;
+}
+
+function normalizeSkillDefinition(id: string, raw: unknown): SkillDefinition | null {
+  if (!isPlainObject(raw)) {
+    return null;
+  }
+
+  const name = asString(raw.name);
+  const description = asString(raw.description);
+  const version = asString(raw.version) ?? "1.0.0";
+  const contentFile = asString(raw.content_file);
+  if (!name || !description || !contentFile) {
+    return null;
+  }
+
+  const skill: SkillDefinition = {
+    id,
+    name,
+    description,
+    version,
+    content_file: contentFile,
+    enabled: raw.enabled !== false
+  };
+
+  const triggers = asStringArray(raw.triggers);
+  if (triggers.length > 0) {
+    skill.triggers = triggers;
+  }
+
+  const requiredConfidence = asNumber(raw.required_confidence);
+  if (typeof requiredConfidence === "number") {
+    skill.required_confidence = requiredConfidence;
+  }
+
+  return skill;
+}
+
+function normalizeFlagDefinition(name: string, raw: unknown): FlagDefinition | null {
+  if (!isPlainObject(raw)) {
+    return null;
+  }
+
+  const flag = asString(raw.flag);
+  const description = asString(raw.description);
+  const category = asString(raw.category);
+  if (!flag || !description || !category) {
+    return null;
+  }
+
+  if (category !== "mode" && category !== "mcp" && category !== "depth" && category !== "output") {
+    return null;
+  }
+
+  const flagDef: FlagDefinition = {
+    name,
+    flag,
+    category,
+    description
+  };
+
+  const activatesMode = asString(raw.activates_mode);
+  if (activatesMode) {
+    flagDef.activates_mode = activatesMode;
+  }
+
+  const activatesMcp = asStringArray(raw.activates_mcp);
+  if (activatesMcp.length > 0) {
+    flagDef.activates_mcp = activatesMcp;
+  }
+
+  const reasoningBudget = asString(raw.reasoning_budget);
+  if (reasoningBudget) {
+    flagDef.reasoning_budget = reasoningBudget;
+  }
+
+  const conflictsWith = asStringArray(raw.conflicts_with);
+  if (conflictsWith.length > 0) {
+    flagDef.conflicts_with = conflictsWith;
+  }
+
+  return flagDef;
 }

@@ -11,6 +11,11 @@ export interface CodexPaths {
   promptPackDir: string;
   supercodexDir: string;
   registryPath: string;
+  commandsDir: string;
+  agentsDir: string;
+  modesDir: string;
+  frameworkDir: string;
+  skillsDir: string;
 }
 
 export function expandHomePath(inputPath: string): string {
@@ -37,14 +42,20 @@ export function resolveCodexHome(codexHome?: string): string {
 
 export function getCodexPaths(codexHome?: string): CodexPaths {
   const home = resolveCodexHome(codexHome);
+  const promptPackDir = path.join(home, "prompts", SUPERCODEX_PROMPT_PACK);
 
   return {
     home,
     configPath: path.join(home, "config.toml"),
     backupsDir: path.join(home, "backups"),
     promptsDir: path.join(home, "prompts"),
-    promptPackDir: path.join(home, "prompts", SUPERCODEX_PROMPT_PACK),
+    promptPackDir,
     supercodexDir: path.join(home, "supercodex"),
-    registryPath: path.join(home, "supercodex", "registry.toml")
+    registryPath: path.join(home, "supercodex", "registry.toml"),
+    commandsDir: path.join(promptPackDir, "commands"),
+    agentsDir: path.join(promptPackDir, "agents"),
+    modesDir: path.join(promptPackDir, "modes"),
+    frameworkDir: path.join(promptPackDir, "framework"),
+    skillsDir: path.join(promptPackDir, "skills")
   };
 }

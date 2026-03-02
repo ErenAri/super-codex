@@ -1,5 +1,6 @@
 import type { Command } from "commander";
 
+import { loadContentFile, contentFileExists } from "../content-loader";
 import { setDefaultMode, unsetDefaultMode } from "../operations";
 import { loadRegistry } from "../registry";
 import { runCommand } from "./utils";
@@ -27,6 +28,7 @@ export function registerModeCommands(program: Command): void {
     .argument("<name>", "Mode name")
     .option("--codex-home <path>", "Override Codex home directory")
     .option("--json", "Output JSON")
+    .option("--full", "Show full mode content from content file")
     .action((name, options) =>
       runCommand(async () => {
         const registry = await loadRegistry({ codexHome: options.codexHome as string | undefined });
@@ -44,6 +46,15 @@ export function registerModeCommands(program: Command): void {
           }
           if (definition.reasoning_budget) {
             console.log(`Reasoning budget: ${definition.reasoning_budget}`);
+          }
+
+          if (Boolean(options.full) && definition.content_file) {
+            if (contentFileExists("modes", definition.content_file.replace(/\.md$/, ""))) {
+              const content = loadContentFile("modes", definition.content_file.replace(/\.md$/, ""));
+              console.log("\n" + content);
+            } else {
+              console.log(`\nContent file not found: ${definition.content_file}`);
+            }
           }
         }
       })

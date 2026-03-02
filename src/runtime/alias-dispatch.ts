@@ -1,3 +1,4 @@
+import { BUILTIN_FLAGS } from "../registry/builtins";
 import { isReservedTopLevelCommandName, loadRegistry, normalizeAliasToken } from "../registry";
 
 export interface AliasDispatchOptions {
@@ -81,11 +82,44 @@ export async function dispatchAliasArgv(
     }
   }
 
+  const preprocessed = preprocessFlags(rewritten);
+
   return {
-    argv: rewritten,
+    argv: preprocessed.argv,
     applied: true,
     aliasName: alias.name
   };
+}
+
+export function preprocessFlags(argv: string[]): { argv: string[]; appliedFlags: string[] } {
+  const appliedFlags: string[] = [];
+  const processed = [...argv];
+
+  for (const [flagName, def] of Object.entries(BUILTIN_FLAGS)) {
+    const idx = processed.indexOf(def.flag);
+    if (idx === -1) {
+      continue;
+    }
+
+    // Check for conflicts
+    for (const conflict of def.conflicts_with ?? []) {
+      const conflictDef = BUILTIN_FLAGS[conflict];
+      if (conflictDef && processed.includes(conflictDef.flag)) {
+        throw new Error(
+          `Flags "${def.flag}" and "${conflictDef.flag}" conflict and cannot be used together.`
+        );
+      }
+    }
+
+    processed.splice(idx, 1);
+    appliedFlags.push(flagName);
+
+    if (def.activates_mode && !hasOption(processed, "--mode")) {
+      processed.push("--mode", def.activates_mode);
+    }
+  }
+
+  return { argv: processed, appliedFlags };
 }
 
 function targetToArgv(target: string): string[] {

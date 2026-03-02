@@ -114,6 +114,21 @@ export async function runDoctorChecks(options: DoctorOptions = {}): Promise<Doct
     );
   }
 
+  const frameworkFiles = ["PRINCIPLES.md", "RULES.md", "FLAGS.md"];
+  for (const frameworkFile of frameworkFiles) {
+    const frameworkPath = `${codexPaths.frameworkDir}/${frameworkFile}`;
+    if (!(await pathExists(frameworkPath))) {
+      issues.push(
+        issue(
+          `framework.${frameworkFile}.missing`,
+          "warn",
+          `Missing framework file "${frameworkFile}" in ${codexPaths.frameworkDir}.`,
+          true
+        )
+      );
+    }
+  }
+
   const mcpIssues = await runMcpChecks(config, Boolean(options.mcpConnectivity));
   issues.push(...mcpIssues);
 

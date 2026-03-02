@@ -1,100 +1,88 @@
 import path from "node:path";
 import { mkdir, readFile, readdir, rm, writeFile } from "node:fs/promises";
 
+import { contentFileExists, loadContentFile, listContentFiles, type ContentCategory } from "./content-loader";
 import { pathExists } from "./fs-utils";
 import { BUILTIN_ALIASES } from "./registry/aliases";
 import type { AliasDefinition } from "./registry/types";
 
-export const BUNDLED_PROMPTS: Record<string, string> = {
-  "plan.md": `# SuperCodex Plan
+let _bundledPrompts: Record<string, string> | null = null;
 
-## Goal
-- State the objective in one sentence.
+/**
+ * Returns the bundled prompt content, keyed by install-relative path.
+ * Loaded lazily from content/ files on first access.
+ */
+export function getBundledPrompts(): Record<string, string> {
+  if (_bundledPrompts) {
+    return _bundledPrompts;
+  }
 
-## Constraints
-- List technical, time, and safety constraints.
+  _bundledPrompts = {};
 
-## Plan
-1. Define scope and assumptions.
-2. Break work into small, verifiable steps.
-3. Execute with checkpoints.
+  // Load workflow prompts (install as top-level: plan.md, review.md, etc.)
+  for (const file of listContentFiles("workflows")) {
+    _bundledPrompts[file] = loadContentFile("workflows", file);
+  }
 
-## Checkpoints
-- [ ] Checkpoint 1: baseline passes
-- [ ] Checkpoint 2: change implemented
-- [ ] Checkpoint 3: tests + docs updated
+  // Load mode overlays (install as modes/deep.md, modes/fast.md, etc.)
+  for (const file of listContentFiles("modes")) {
+    _bundledPrompts[`modes/${file}`] = loadContentFile("modes", file);
+  }
 
-## Exit Criteria
-- Concrete definition of done.
-`,
-  "review.md": `# SuperCodex Review
+  // Load persona prompts (install as personas/architect.md, etc.)
+  for (const file of listContentFiles("personas")) {
+    _bundledPrompts[`personas/${file}`] = loadContentFile("personas", file);
+  }
 
-## Review Rubric
-1. Correctness and behavioral regressions
-2. Security and data safety
-3. Performance and scalability
-4. Maintainability and readability
-5. Test coverage and failure modes
+  // Load command prompts (install as commands/analyze.md, etc.)
+  for (const file of listContentFiles("commands")) {
+    _bundledPrompts[`commands/${file}`] = loadContentFile("commands", file);
+  }
 
-## Risk Scan
-- What can break at runtime?
-- What assumptions are unverified?
-- Which paths are untested?
+  // Load agent prompts (install as agents/pm.md, etc.)
+  for (const file of listContentFiles("agents")) {
+    _bundledPrompts[`agents/${file}`] = loadContentFile("agents", file);
+  }
 
-## Output
-- Findings ordered by severity with file references.
-- Residual risks and recommended follow-ups.
-`,
-  "refactor.md": `# SuperCodex Refactor
+  // Load framework docs (install as framework/PRINCIPLES.md, etc.)
+  for (const file of listContentFiles("framework")) {
+    _bundledPrompts[`framework/${file}`] = loadContentFile("framework", file);
+  }
 
-## Refactor Safety Steps
-1. Lock behavior with tests first.
-2. Refactor one seam at a time.
-3. Keep commits small and reversible.
-4. Re-run focused and full tests.
+  // Load skill content (install as skills/confidence-check/SKILL.md, etc.)
+  for (const file of listContentFiles("skills")) {
+    _bundledPrompts[`skills/${file}`] = loadContentFile("skills", file);
+  }
 
-## Guardrails
-- No broad rewrites without test coverage.
-- Preserve public contracts.
-- Document any deliberate behavior changes.
-`,
-  "debug.md": `# SuperCodex Debug
+  return _bundledPrompts;
+}
 
-## Hypothesis Loop
-1. Define observable failure.
-2. Form one hypothesis.
-3. Design the smallest experiment.
-4. Run and record result.
-5. Confirm or reject, then iterate.
-
-## Notes
-- Prefer instrumentation over guessing.
-- Change one variable at a time.
-- Stop when root cause is validated by a reproducer.
-`,
-  "modes/deep.md": `# Deep Mode Overlay
-
-- Prioritize architecture-level reasoning.
-- Enumerate tradeoffs before implementation.
-- Highlight irreversible decisions.
-`,
-  "modes/fast.md": `# Fast Mode Overlay
-
-- Optimize for shortest safe path to done.
-- Keep scope tight and changes minimal.
-- Prefer deterministic small diffs.
-`,
-  "personas/architect.md": `# Architect Persona
-
-- Focus on boundaries, contracts, and long-term maintainability.
-- Surface tradeoffs and migration impacts.
-`,
-  "personas/reviewer.md": `# Reviewer Persona
-
-- Focus on correctness, regressions, and security risks.
-- Prioritize findings by severity.
-`
-};
+/**
+ * @deprecated Use getBundledPrompts() instead. Kept for backward compatibility.
+ */
+export const BUNDLED_PROMPTS: Record<string, string> = new Proxy({} as Record<string, string>, {
+  get(_target, prop: string) {
+    return getBundledPrompts()[prop];
+  },
+  has(_target, prop: string) {
+    return prop in getBundledPrompts();
+  },
+  ownKeys() {
+    return Object.keys(getBundledPrompts());
+  },
+  getOwnPropertyDescriptor(_target, prop: string) {
+    const prompts = getBundledPrompts();
+    if (prop in prompts) {
+      return {
+        configurable: true,
+        enumerable: true,
+        value: prompts[prop],
+        writable: false
+      };
+    }
+    return undefined;
+  }
+});
 
 const PROMPT_WRAPPER_MARKER = "<!-- supercodex:managed-prompt-wrapper -->";
 
@@ -104,7 +92,7 @@ export interface PromptInstallResult {
 }
 
 export function listBundledPrompts(): string[] {
-  return Object.keys(BUNDLED_PROMPTS).sort();
+  return Object.keys(getBundledPrompts()).sort();
 }
 
 export function listBundledInteractivePromptCommands(): string[] {
@@ -116,11 +104,12 @@ export async function installPromptPack(promptPackDir: string): Promise<PromptIn
 
   let changed = false;
   const writtenFiles: string[] = [];
+  const bundled = getBundledPrompts();
 
   for (const fileName of listBundledPrompts()) {
     const targetPath = path.join(promptPackDir, fileName);
     await mkdir(path.dirname(targetPath), { recursive: true });
-    const nextContent = BUNDLED_PROMPTS[fileName];
+    const nextContent = bundled[fileName];
     let currentContent: string | null = null;
 
     if (await pathExists(targetPath)) {
@@ -256,33 +245,25 @@ function getBundledInteractivePromptFiles(): Record<string, string> {
   return files;
 }
 
-function resolveWorkflowFromTarget(target: string): "plan" | "review" | "refactor" | "debug" | null {
-  if (target === "run.plan") {
-    return "plan";
-  }
-
-  if (target === "run.review") {
-    return "review";
-  }
-
-  if (target === "run.refactor") {
-    return "refactor";
-  }
-
-  if (target === "run.debug") {
-    return "debug";
+function resolveWorkflowFromTarget(target: string): string | null {
+  if (target.startsWith("run.")) {
+    return target.slice(4);
   }
 
   return null;
 }
 
-function renderInteractivePrompt(
+export function renderInteractivePrompt(
   alias: AliasDefinition,
-  workflow: "plan" | "review" | "refactor" | "debug"
+  workflow: string
 ): string {
   const mode = alias.default_mode ?? "balanced";
   const persona = alias.default_persona ?? "architect";
-  const scaffold = BUNDLED_PROMPTS[`${workflow}.md`];
+  const bundled = getBundledPrompts();
+
+  // Try command-specific content first, then fall back to workflow scaffold
+  const commandContent = bundled[`commands/${alias.name}.md`];
+  const scaffold = commandContent ?? bundled[`${workflow}.md`] ?? "";
 
   return [
     "---",
