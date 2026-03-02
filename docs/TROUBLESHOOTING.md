@@ -107,6 +107,52 @@ Common causes:
 - invalid URL or local service down (http transport)
 - missing required environment variables
 
+## Doctor reports missing framework files
+
+If `supercodex doctor` shows warnings about missing framework files (PRINCIPLES.md, RULES.md, FLAGS.md):
+
+```bash
+supercodex install
+supercodex doctor
+```
+
+The framework files are installed under `~/.codex/prompts/supercodex/framework/`.
+
+## Agent or skill commands not recognized
+
+Make sure you have the latest version:
+
+```bash
+supercodex --version
+```
+
+The `agent`, `skill`, and `flag` commands were added in v1.0.0. Update if needed:
+
+```bash
+npm install -g @erenari/supercodex@latest
+```
+
+## Mode `--full` flag shows "Content file not found"
+
+The mode's content file may not be installed yet. Run:
+
+```bash
+supercodex install
+supercodex mode show brainstorming --full
+```
+
+## Flag dispatch not working with aliases
+
+Flags like `--brainstorm`, `--think`, `--ultrathink` are processed during alias dispatch. They must appear after the alias name:
+
+```bash
+# Correct
+supercodex /sc:research --brainstorm "explore options"
+
+# Incorrect (flag before alias)
+supercodex --brainstorm /sc:research "explore options"
+```
+
 ## Need a clean local repro environment
 
 Use an alternate Codex home path:

@@ -46,6 +46,7 @@
     "node": ">=18"
   },
   "dependencies": {
+    "@erenari/supercodex": "^1.0.0",
     "@iarna/toml": "^2.2.5",
     "commander": "^14.0.3"
   },
