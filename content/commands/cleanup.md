@@ -1,12 +1,12 @@
-# /sc:cleanup
+# /supercodex:cleanup
 
-## Purpose
+## 🎯 Purpose
 
 Incrementally clean up code quality issues -- dead code, formatting inconsistencies,
 unnecessary complexity, and minor debt -- while strictly preserving existing behavior
 and never breaking public APIs.
 
-## Activation
+## 🚀 Activation
 
 - Persona: **refactorer**
 - Mode: **balanced**
@@ -23,13 +23,13 @@ cleaner than it was found.
 
 ---
 
-## Behavioral Flow
+## 🧠 Behavioral Flow
 
 The cleanup proceeds through five ordered phases. Each phase has an effort budget
 expressed as a percentage of total work. The agent MUST touch every phase and MUST verify
 behavior preservation before moving to the next cleanup target.
 
-### Phase 1 -- Identify Debt (20%)
+### 🧩 Phase 1 -- Identify Debt (20%)
 
 1. Scan the target scope for code quality issues. Categorize findings:
 
@@ -74,7 +74,7 @@ behavior preservation before moving to the next cleanup target.
 
 **Checkpoint:** A categorized list of findings with file references and severities.
 
-### Phase 2 -- Prioritize by Impact (15%)
+### 🧩 Phase 2 -- Prioritize by Impact (15%)
 
 1. Score each finding on two axes:
    - **Impact:** How much does fixing this improve readability, maintainability,
@@ -101,7 +101,7 @@ behavior preservation before moving to the next cleanup target.
 
 **Checkpoint:** Prioritized batches with a clear execution plan.
 
-### Phase 3 -- Clean Incrementally (35%)
+### 🧩 Phase 3 -- Clean Incrementally (35%)
 
 This is the main cleanup phase. The agent applies changes batch by batch.
 
@@ -154,7 +154,7 @@ This is the main cleanup phase. The agent applies changes batch by batch.
 
 **Checkpoint:** All planned batches applied.
 
-### Phase 4 -- Verify Behavior Preserved (20%)
+### 🧩 Phase 4 -- Verify Behavior Preserved (20%)
 
 1. For each cleaned file, verify:
    - All exports still exist with the same signatures
@@ -175,7 +175,7 @@ This is the main cleanup phase. The agent applies changes batch by batch.
 
 **Checkpoint:** Verification complete, no behavior changes detected.
 
-### Phase 5 -- Document Changes (10%)
+### 🧩 Phase 5 -- Document Changes (10%)
 
 1. Produce a cleanup summary listing:
    - Every file modified
@@ -196,9 +196,9 @@ This is the main cleanup phase. The agent applies changes batch by batch.
 
 ---
 
-## MCP Integration
+## 🔌 MCP Integration
 
-### Tool Usage Guidance
+### 🧰 Tool Usage Guidance
 
 - **Filesystem tools:** Read files to identify issues, write files to apply cleanups.
   These are the primary tools.
@@ -206,7 +206,7 @@ This is the main cleanup phase. The agent applies changes batch by batch.
   instances of a pattern before standardizing it.
 - **Execution tools:** Run tests and linters after cleanup if available.
 
-### Tool Usage Constraints
+### ⛔ Tool Usage Constraints
 
 - The agent MUST read a file before modifying it.
 - The agent MUST search for references before removing any symbol.
@@ -214,7 +214,7 @@ This is the main cleanup phase. The agent applies changes batch by batch.
 - The agent SHOULD NOT delete files unless they are entirely dead code.
 - The agent MUST NOT modify test files unless tests reference renamed internal helpers.
 
-### Efficiency Guidelines
+### ⚡ Efficiency Guidelines
 
 - Use grep to find all references to a symbol before removing it.
 - Batch changes by file to minimize write operations.
@@ -223,9 +223,9 @@ This is the main cleanup phase. The agent applies changes batch by batch.
 
 ---
 
-## Boundaries
+## 🧱 Boundaries
 
-### WILL DO:
+### ✅ WILL DO:
 
 - Remove dead code (unused imports, variables, functions, commented-out code)
 - Fix formatting inconsistencies to match project conventions
@@ -238,13 +238,13 @@ This is the main cleanup phase. The agent applies changes batch by batch.
 - Defer high-risk cleanups and document them for human review
 - Follow incremental batch-by-batch approach
 
-### WILL NOT DO:
+### 🚫 WILL NOT DO:
 
 - Change any observable behavior or output
 - Add new features or functionality
 - Modify public API signatures, types, or contracts
 - Break existing tests
-- Refactor across module boundaries (use /sc:design for that)
+- Refactor across module boundaries (use /supercodex:design for that)
 - Remove code that may be called dynamically without certainty
 - Change error handling behavior (only standardize formatting)
 - Clean up files outside the specified scope
@@ -253,7 +253,7 @@ This is the main cleanup phase. The agent applies changes batch by batch.
 
 ---
 
-## Output Format
+## 🧾 Output Format
 
 The agent applies changes inline using file modification tools and then provides a summary:
 
@@ -295,15 +295,15 @@ The agent applies changes inline using file modification tools and then provides
 
 ---
 
-## Edge Cases
+## 🧪 Edge Cases
 
 ### No Issues Found
 - If the target scope has no cleanup opportunities, report that the code is clean
-  and suggest alternative scopes or deeper analysis with /sc:analyze.
+  and suggest alternative scopes or deeper analysis with /supercodex:analyze.
 
 ### Everything Is High Risk
 - If all findings are high-risk, report the findings without making changes.
-- Suggest that the user add test coverage first using /sc:build, then re-run cleanup.
+- Suggest that the user add test coverage first using /supercodex:build, then re-run cleanup.
 
 ### Conflicting Conventions Within Project
 - If different parts of the codebase use different conventions (e.g., some files
@@ -317,7 +317,7 @@ The agent applies changes inline using file modification tools and then provides
 
 ---
 
-## Recovery Behavior
+## 🛠️ Recovery Behavior
 
 - If a cleanup accidentally changes behavior (detected during verification),
   revert that specific change and move it to the deferred list.
@@ -328,17 +328,17 @@ The agent applies changes inline using file modification tools and then provides
 
 ---
 
-## Next Steps
+## ✅ Next Steps
 
 After completing this cleanup, the user may want to:
 
-- `/sc:analyze` -- Verify the cleanup improved the code quality metrics
-- `/sc:build` -- Add test coverage for areas that lacked it during cleanup
-- `/sc:document` -- Update documentation to reflect cleaned-up structure
-- `/sc:git` -- Commit the cleanup changes with a clear message
+- `/supercodex:analyze` -- Verify the cleanup improved the code quality metrics
+- `/supercodex:build` -- Add test coverage for areas that lacked it during cleanup
+- `/supercodex:document` -- Update documentation to reflect cleaned-up structure
+- `/supercodex:git` -- Commit the cleanup changes with a clear message
 
 ---
 
-## User Task
+## 📥 User Task
 
 $ARGUMENTS

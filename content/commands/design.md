@@ -1,13 +1,13 @@
-# /sc:design
+# /supercodex:design
 
-## Purpose
+## 🎯 Purpose
 
 Produce a thorough system design for a feature, module, or architectural change,
 including requirements clarification, approach enumeration, tradeoff evaluation,
 detailed design of the chosen approach, and interface contracts -- without
 implementing anything.
 
-## Activation
+## 🚀 Activation
 
 - Persona: **architect**
 - Mode: **deep**
@@ -23,13 +23,13 @@ confidently implement from, with all major decisions explained and justified.
 
 ---
 
-## Behavioral Flow
+## 🧠 Behavioral Flow
 
 The design proceeds through five ordered phases. Each phase has an effort budget
 expressed as a percentage of total work. The agent MUST touch every phase and MUST NOT
 skip to implementation under any circumstances.
 
-### Phase 1 -- Clarify Requirements (15%)
+### 🧩 Phase 1 -- Clarify Requirements (15%)
 
 1. Parse the user's request to extract:
    - **Functional requirements:** What the system must do
@@ -52,7 +52,7 @@ skip to implementation under any circumstances.
 
 **Checkpoint:** A requirements table with priorities, constraints, and assumptions.
 
-### Phase 2 -- Enumerate Approaches (20%)
+### 🧩 Phase 2 -- Enumerate Approaches (20%)
 
 Generate at least **three distinct approaches** to satisfy the requirements. Each
 approach should represent a genuinely different strategy, not just a variation.
@@ -81,7 +81,7 @@ Approach selection guidelines:
 
 **Checkpoint:** Three or more distinct approaches with summaries and sketches.
 
-### Phase 3 -- Evaluate Tradeoffs (25%)
+### 🧩 Phase 3 -- Evaluate Tradeoffs (25%)
 
 This is the analytical core of the design phase. Every approach must be rigorously
 evaluated against every dimension.
@@ -131,7 +131,7 @@ evaluated against every dimension.
 **Checkpoint:** Comparison matrix, irreversible decision list, failure analysis,
 and a clear recommendation with justification.
 
-### Phase 4 -- Detail Chosen Approach (25%)
+### 🧩 Phase 4 -- Detail Chosen Approach (25%)
 
 Flesh out the recommended approach into a design document that an engineer can
 implement from without further architecture decisions.
@@ -182,7 +182,7 @@ implement from without further architecture decisions.
 
 **Checkpoint:** Detailed design document for the chosen approach.
 
-### Phase 5 -- Define Interfaces (15%)
+### 🧩 Phase 5 -- Define Interfaces (15%)
 
 Define the contracts between components with enough precision for parallel
 implementation by different engineers.
@@ -239,9 +239,9 @@ implementation by different engineers.
 
 ---
 
-## MCP Integration
+## 🔌 MCP Integration
 
-### Tool Usage Guidance
+### 🧰 Tool Usage Guidance
 
 - **Filesystem tools:** Read existing code to understand current architecture,
   patterns, interfaces, and conventions. This is essential for producing a design
@@ -251,7 +251,7 @@ implementation by different engineers.
 - **Fetch tools:** Retrieve documentation for libraries or services the design
   depends on.
 
-### Tool Usage Constraints
+### ⛔ Tool Usage Constraints
 
 - The agent MUST NOT create, modify, or delete any source files.
 - The agent MUST NOT execute any code, builds, or tests.
@@ -260,7 +260,7 @@ implementation by different engineers.
 - The agent SHOULD read existing interfaces and types to ensure new contracts
   are consistent with established patterns.
 
-### Efficiency Guidelines
+### ⚡ Efficiency Guidelines
 
 - Read existing interfaces and types early to inform all phases.
 - Use grep to find usage patterns before proposing new conventions.
@@ -268,9 +268,9 @@ implementation by different engineers.
 
 ---
 
-## Boundaries
+## 🧱 Boundaries
 
-### WILL DO:
+### ✅ WILL DO:
 
 - Produce detailed design documents with component breakdowns and data models
 - Define interface contracts with full type specifications
@@ -283,9 +283,9 @@ implementation by different engineers.
 - Ground the design in the existing codebase's patterns and conventions
 - Flag areas that need human decision-making
 
-### WILL NOT DO:
+### 🚫 WILL NOT DO:
 
-- Implement any code (use /sc:build for that)
+- Implement any code (use /supercodex:build for that)
 - Make irreversible decisions alone (flag them for human approval)
 - Choose technologies without justification
 - Design in a vacuum (must read existing codebase first)
@@ -298,7 +298,7 @@ implementation by different engineers.
 
 ---
 
-## Output Format
+## 🧾 Output Format
 
 The final output MUST follow this structure:
 
@@ -370,7 +370,7 @@ The final output MUST follow this structure:
 
 ---
 
-## Edge Cases
+## 🧪 Edge Cases
 
 ### Greenfield Project
 - With no existing codebase, the agent has more freedom but should still propose
@@ -394,7 +394,7 @@ The final output MUST follow this structure:
 
 ---
 
-## Recovery Behavior
+## 🛠️ Recovery Behavior
 
 - If the existing codebase cannot be read (access issues), produce the design
   based on the user's description and note which assumptions need verification.
@@ -405,18 +405,18 @@ The final output MUST follow this structure:
 
 ---
 
-## Next Steps
+## ✅ Next Steps
 
 After completing this design, the user may want to:
 
-- `/sc:estimate` -- Estimate the effort for the chosen approach
-- `/sc:build` -- Implement the design
-- `/sc:business-panel` -- Get multi-stakeholder input on the tradeoffs
-- `/sc:explain` -- Walk the team through the design
-- `/sc:document` -- Produce formal documentation from the design
+- `/supercodex:estimate` -- Estimate the effort for the chosen approach
+- `/supercodex:build` -- Implement the design
+- `/supercodex:business-panel` -- Get multi-stakeholder input on the tradeoffs
+- `/supercodex:explain` -- Walk the team through the design
+- `/supercodex:document` -- Produce formal documentation from the design
 
 ---
 
-## User Task
+## 📥 User Task
 
 $ARGUMENTS

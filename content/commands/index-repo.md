@@ -1,13 +1,13 @@
-# /sc:index-repo
+# /supercodex:index-repo
 
-## Purpose
+## 🎯 Purpose
 
 Produce a comprehensive, repository-level structural index that covers project layout,
 module boundaries, technology stack, dependency graph, contribution patterns, and
 architectural conventions, serving as a definitive reference guide for navigating and
 understanding the entire repository.
 
-## Activation
+## 🚀 Activation
 
 - Persona: **architect**
 - Mode: **deep**
@@ -24,14 +24,14 @@ need to navigate the repository with confidence.
 
 ---
 
-## Behavioral Flow
+## 🧠 Behavioral Flow
 
 The repository indexing proceeds through five ordered phases. Each phase has an effort
 budget expressed as a percentage of total work. The agent MUST touch every phase and
 MUST NOT spend less than half the budgeted effort on any phase. If a phase completes
 early the surplus effort rolls forward to the next phase.
 
-### Phase 1 -- Clone/Scan Repo (15%)
+### 🧩 Phase 1 -- Clone/Scan Repo (15%)
 
 1. Determine the repository scope:
    - Is the target a local directory or a remote repository URL?
@@ -63,7 +63,7 @@ early the surplus effort rolls forward to the next phase.
 **Checkpoint:** A complete top-level map of the repository with metadata, excluded
 areas identified, and workspace configuration understood.
 
-### Phase 2 -- Analyze Structure (20%)
+### 🧩 Phase 2 -- Analyze Structure (20%)
 
 1. Map every major directory to its purpose:
    - Source code directories (src, lib, internal, pkg, app)
@@ -97,7 +97,7 @@ areas identified, and workspace configuration understood.
 **Checkpoint:** A complete directory-to-purpose map and comprehensive tech stack
 inventory with versions.
 
-### Phase 3 -- Map Module Boundaries (25%)
+### 🧩 Phase 3 -- Map Module Boundaries (25%)
 
 1. Define the module hierarchy:
    - What constitutes a "module" in this repository? (directory, package, crate, etc.)
@@ -131,7 +131,7 @@ inventory with versions.
 **Checkpoint:** A complete module inventory with dependency graph, boundary quality
 assessment, and recommended reading order.
 
-### Phase 4 -- Document Patterns (25%)
+### 🧩 Phase 4 -- Document Patterns (25%)
 
 1. Coding conventions:
    - File naming: kebab-case, camelCase, PascalCase, snake_case.
@@ -169,7 +169,7 @@ assessment, and recommended reading order.
 **Checkpoint:** A comprehensive pattern inventory covering coding, architectural,
 testing, workflow, and infrastructure conventions.
 
-### Phase 5 -- Produce Repo Guide (15%)
+### 🧩 Phase 5 -- Produce Repo Guide (15%)
 
 1. Compile the repository guide document:
    - Lead with a concise repository overview (purpose, tech stack, architecture).
@@ -198,9 +198,9 @@ Codex commands.
 
 ---
 
-## MCP Integration
+## 🔌 MCP Integration
 
-### Tool Usage Guidance
+### 🧰 Tool Usage Guidance
 
 - **Filesystem tools:** List directories, read files, scan for patterns. These are
   the primary tools for repository indexing.
@@ -211,7 +211,7 @@ Codex commands.
 - **Git tools:** If available, read commit history, branch structure, and contributor
   patterns.
 
-### Tool Usage Constraints
+### ⛔ Tool Usage Constraints
 
 - The agent MUST NOT modify, create, or delete any files in the repository.
 - The agent MUST NOT execute build commands, test runners, or scripts.
@@ -220,7 +220,7 @@ Codex commands.
 - The agent SHOULD sample large directories rather than reading every file.
 - The agent SHOULD prioritize reading configuration, entry points, and barrel files.
 
-### Efficiency Guidelines
+### ⚡ Efficiency Guidelines
 
 - Start with root-level files (package.json, README, config files) for maximum
   information with minimum reads.
@@ -233,9 +233,9 @@ Codex commands.
 
 ---
 
-## Boundaries
+## 🧱 Boundaries
 
-### WILL DO:
+### ✅ WILL DO:
 
 - Scan and catalog the entire repository structure
 - Map every directory to its purpose and module identity
@@ -248,14 +248,14 @@ Codex commands.
 - Provide a recommended reading order for new developers
 - Adapt indexing depth to repository size
 
-### WILL NOT DO:
+### 🚫 WILL NOT DO:
 
 - Modify, create, or delete any files in the repository
 - Execute any commands, build processes, or scripts
 - Install or modify dependencies or lock files
 - Push changes to any remote
-- Assess code quality in depth (use /sc:analyze for that)
-- Make architectural recommendations (use /sc:recommend for that)
+- Assess code quality in depth (use /supercodex:analyze for that)
+- Make architectural recommendations (use /supercodex:recommend for that)
 - Implement any changes or refactoring
 - Access private repositories without explicit authorization
 - Read binary files, compiled assets, or minified bundles
@@ -263,7 +263,7 @@ Codex commands.
 
 ---
 
-## Output Format
+## 🧾 Output Format
 
 ```markdown
 ## Repository Guide: {repository name}
@@ -340,7 +340,7 @@ Codex commands.
 - {observation about an inconsistency}
 ```
 
-### Output Formatting Rules
+### 📐 Output Formatting Rules
 
 - Technology stack versions must be actual version numbers from config files.
 - Module inventory entries are ordered by architectural importance.
@@ -351,7 +351,7 @@ Codex commands.
 
 ---
 
-## Edge Cases
+## 🧪 Edge Cases
 
 ### Monorepo With 10+ Packages
 
@@ -390,7 +390,7 @@ Codex commands.
 
 ---
 
-## Recovery Behavior
+## 🛠️ Recovery Behavior
 
 - If parts of the repository are inaccessible, document what is accessible and note
   the gaps explicitly.
@@ -403,18 +403,18 @@ Codex commands.
 
 ---
 
-## Next Steps
+## ✅ Next Steps
 
 After completing the repository index, the user may want to:
 
-- `/sc:analyze` -- Deep quality and architectural analysis of specific modules
-- `/sc:load` -- Load specific modules into context for focused work
-- `/sc:recommend` -- Get recommendations for architectural improvements
-- `/sc:pm` -- Create a project management plan based on the repository state
-- `/sc:research` -- Research best practices for the identified tech stack
+- `/supercodex:analyze` -- Deep quality and architectural analysis of specific modules
+- `/supercodex:load` -- Load specific modules into context for focused work
+- `/supercodex:recommend` -- Get recommendations for architectural improvements
+- `/supercodex:pm` -- Create a project management plan based on the repository state
+- `/supercodex:research` -- Research best practices for the identified tech stack
 
 ---
 
-## User Task
+## 📥 User Task
 
 $ARGUMENTS

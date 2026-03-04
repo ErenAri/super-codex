@@ -1,13 +1,13 @@
-# /sc:document
+# /supercodex:document
 
-## Purpose
+## 🎯 Purpose
 
 Generate clear, accurate, and well-structured documentation for code, APIs,
 architecture, or processes by identifying documentation gaps, outlining structure,
 drafting content, reviewing for accuracy, and polishing the final output -- without
 modifying any source code.
 
-## Activation
+## 🚀 Activation
 
 - Persona: **educator**
 - Mode: **balanced**
@@ -23,13 +23,13 @@ teaches rather than merely describes.
 
 ---
 
-## Behavioral Flow
+## 🧠 Behavioral Flow
 
 The documentation process proceeds through five ordered phases. Each phase has an
 effort budget expressed as a percentage of total work. The agent MUST touch every
 phase and SHOULD invest the most effort in drafting content.
 
-### Phase 1 -- Identify Gaps (15%)
+### 🧩 Phase 1 -- Identify Gaps (15%)
 
 1. Determine the documentation type requested:
 
@@ -75,7 +75,7 @@ phase and SHOULD invest the most effort in drafting content.
 
 **Checkpoint:** Gap analysis listing what exists, what is missing, and target audience.
 
-### Phase 2 -- Outline Structure (15%)
+### 🧩 Phase 2 -- Outline Structure (15%)
 
 1. Design the document structure based on the type:
 
@@ -146,7 +146,7 @@ phase and SHOULD invest the most effort in drafting content.
 
 **Checkpoint:** A detailed outline for each document to be written.
 
-### Phase 3 -- Draft Content (35%)
+### 🧩 Phase 3 -- Draft Content (35%)
 
 This is the main writing phase. The agent writes complete documentation content.
 
@@ -196,7 +196,7 @@ This is the main writing phase. The agent writes complete documentation content.
 
 **Checkpoint:** All drafted content complete.
 
-### Phase 4 -- Review for Accuracy (20%)
+### 🧩 Phase 4 -- Review for Accuracy (20%)
 
 1. Cross-reference every claim against the source code:
    - Do the API examples match the actual API signatures?
@@ -229,7 +229,7 @@ This is the main writing phase. The agent writes complete documentation content.
 
 **Checkpoint:** Accuracy review complete with any VERIFY tags noted.
 
-### Phase 5 -- Format and Polish (15%)
+### 🧩 Phase 5 -- Format and Polish (15%)
 
 1. Apply consistent formatting:
    - Header hierarchy (never skip levels: h1 -> h2 -> h3)
@@ -260,9 +260,9 @@ This is the main writing phase. The agent writes complete documentation content.
 
 ---
 
-## MCP Integration
+## 🔌 MCP Integration
 
-### Tool Usage Guidance
+### 🧰 Tool Usage Guidance
 
 - **Filesystem tools:** Read source code to ensure documentation accuracy. Read
   existing documentation to identify gaps. Write documentation files.
@@ -272,7 +272,7 @@ This is the main writing phase. The agent writes complete documentation content.
 - **Fetch tools:** Retrieve external documentation for dependencies or standards
   that the project's documentation should reference.
 
-### Tool Usage Constraints
+### ⛔ Tool Usage Constraints
 
 - The agent MUST NOT modify source code files (only documentation files).
 - The agent MUST read source code to verify accuracy of documentation claims.
@@ -280,7 +280,7 @@ This is the main writing phase. The agent writes complete documentation content.
 - The agent MUST NOT add inline comments to source code files (that is a code change).
 - The agent SHOULD prefer updating existing documentation over creating new files.
 
-### Efficiency Guidelines
+### ⚡ Efficiency Guidelines
 
 - Read all relevant source files in Phase 1 before starting to write.
 - Use grep to find all public exports when documenting an API.
@@ -289,9 +289,9 @@ This is the main writing phase. The agent writes complete documentation content.
 
 ---
 
-## Boundaries
+## 🧱 Boundaries
 
-### WILL DO:
+### ✅ WILL DO:
 
 - Write README files, API documentation, architecture docs, and guides
 - Generate accurate code examples based on the actual codebase
@@ -304,7 +304,7 @@ This is the main writing phase. The agent writes complete documentation content.
 - Structure documentation for the identified target audience
 - Update existing documentation that is outdated
 
-### WILL NOT DO:
+### 🚫 WILL NOT DO:
 
 - Modify source code files (no inline comments, no code changes)
 - Add comments to unchanged code (that requires a code change)
@@ -319,7 +319,7 @@ This is the main writing phase. The agent writes complete documentation content.
 
 ---
 
-## Output Format
+## 🧾 Output Format
 
 The agent produces documentation files using appropriate file creation/modification
 tools. After all documentation is written, it provides a summary:
@@ -352,7 +352,7 @@ tools. After all documentation is written, it provides a summary:
 - {additional documentation that would be valuable}
 ```
 
-### Output Formatting Rules
+### 📐 Output Formatting Rules
 
 - All documentation must use the project's established format (default: Markdown).
 - Code examples must include language tags for syntax highlighting.
@@ -363,7 +363,7 @@ tools. After all documentation is written, it provides a summary:
 
 ---
 
-## Edge Cases
+## 🧪 Edge Cases
 
 ### No Existing Documentation
 - Start with a README as the highest priority.
@@ -392,7 +392,7 @@ tools. After all documentation is written, it provides a summary:
 
 ---
 
-## Recovery Behavior
+## 🛠️ Recovery Behavior
 
 - If source code cannot be read, produce documentation based on available context
   and mark all claims with VERIFY tags.
@@ -403,18 +403,18 @@ tools. After all documentation is written, it provides a summary:
 
 ---
 
-## Next Steps
+## ✅ Next Steps
 
 After completing documentation, the user may want to:
 
-- `/sc:analyze` -- Verify the documentation matches the actual architecture
-- `/sc:explain` -- Generate additional explanations for complex modules
-- `/sc:git` -- Commit the documentation changes
-- `/sc:build` -- Implement features that the documentation revealed are missing
-- `/sc:cleanup` -- Address code issues discovered while documenting
+- `/supercodex:analyze` -- Verify the documentation matches the actual architecture
+- `/supercodex:explain` -- Generate additional explanations for complex modules
+- `/supercodex:git` -- Commit the documentation changes
+- `/supercodex:build` -- Implement features that the documentation revealed are missing
+- `/supercodex:cleanup` -- Address code issues discovered while documenting
 
 ---
 
-## User Task
+## 📥 User Task
 
 $ARGUMENTS

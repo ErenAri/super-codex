@@ -1,13 +1,13 @@
-# /sc:spawn
+# /supercodex:spawn
 
-## Purpose
+## 🎯 Purpose
 Decompose a parent task into well-defined, parallelizable sub-tasks with clear boundaries, interfaces, and dependency tracking to enable concurrent or phased execution.
 
-## Activation
+## 🚀 Activation
 - Persona: architect
 - Mode: balanced
 
-## Context
+## 🧭 Context
 Large tasks are the enemy of predictable delivery. A single monolithic task
 like "build the authentication system" hides dozens of smaller decisions,
 creates unclear ownership, and makes progress invisible. The spawn command
@@ -16,17 +16,17 @@ can be worked on independently -- potentially in parallel by multiple agents
 or sessions. Each sub-task has clear inputs, outputs, acceptance criteria,
 and declared dependencies on other sub-tasks.
 
-The spawn command is the counterpart to `/sc:task` (which manages individual
-tasks) and complements `/sc:workflow` (which manages the overall process).
+The spawn command is the counterpart to `/supercodex:task` (which manages individual
+tasks) and complements `/supercodex:workflow` (which manages the overall process).
 Think of spawn as the work breakdown structure generator.
 
-## Behavioral Flow
+## 🧠 Behavioral Flow
 
 ### Step 1 -- Decompose Parent Task (20% effort)
 
 1. Parse `$ARGUMENTS` to extract the parent task description.
-2. If `$ARGUMENTS` references a saved task (e.g., from a prior `/sc:save` or
-   `/sc:task` session), load that task's full context.
+2. If `$ARGUMENTS` references a saved task (e.g., from a prior `/supercodex:save` or
+   `/supercodex:task` session), load that task's full context.
 3. Analyze the parent task to identify its constituent parts:
    - **Functional decomposition**: What distinct features or behaviors must
      be implemented?
@@ -38,7 +38,7 @@ Think of spawn as the work breakdown structure generator.
    question: "What is the expected outcome when this task is done?"
 6. If the parent task is already atomic (cannot be meaningfully decomposed),
    inform the user: "This task is already at an appropriate granularity for
-   direct execution. Use `/sc:task` instead."
+   direct execution. Use `/supercodex:task` instead."
 
 ### Step 2 -- Identify Parallelizable Work (20% effort)
 
@@ -156,12 +156,12 @@ Think of spawn as the work breakdown structure generator.
    - Break ties by estimated effort (smaller first) to surface issues early.
 
 3. Suggest how to track progress:
-   - "Use `/sc:task` to manage individual sub-tasks."
-   - "Use `/sc:save` to persist the spawn specification for future sessions."
+   - "Use `/supercodex:task` to manage individual sub-tasks."
+   - "Use `/supercodex:save` to persist the spawn specification for future sessions."
 
-## MCP Integration
+## 🔌 MCP Integration
 
-### Tool Usage Guidance
+### 🧰 Tool Usage Guidance
 - **File system tools**: Use `read_file` to load existing task definitions
   or prior save files. Use `write_file` to persist the spawn specification.
 - **Search tools**: Use `grep` or `ripgrep` to find references to the parent
@@ -183,9 +183,9 @@ Think of spawn as the work breakdown structure generator.
 - If the dependency graph has cycles, report the cycle and ask the user
   which dependency to break.
 
-## Boundaries
+## 🧱 Boundaries
 
-### WILL DO:
+### ✅ WILL DO:
 - Decompose parent tasks into well-defined sub-tasks.
 - Identify dependencies and parallelization opportunities.
 - Define clear interfaces between sub-tasks.
@@ -196,7 +196,7 @@ Think of spawn as the work breakdown structure generator.
 - Suggest execution order for both parallel and serial scenarios.
 - Reference existing project structure to inform decomposition.
 
-### WILL NOT DO:
+### 🚫 WILL NOT DO:
 - Execute any of the sub-tasks.
 - Modify source code, configuration, or project files.
 - Make scope decisions (adding or removing requirements from the parent task).
@@ -205,7 +205,7 @@ Think of spawn as the work breakdown structure generator.
 - Create branches, commits, or PRs.
 - Override the user's architectural preferences.
 
-## Output Format
+## 🧾 Output Format
 
 ### Standard Spawn Output
 The primary output is the spawn specification document described in Step 4.
@@ -225,14 +225,14 @@ Wave 2: ST-004 (M), ST-005 (S)
 Wave 3: ST-006 (L)
 
 Next steps:
-  /sc:task ST-001   -- Start the first sub-task.
-  /sc:save          -- Persist this decomposition.
+  /supercodex:task ST-001   -- Start the first sub-task.
+  /supercodex:save          -- Persist this decomposition.
 ```
 
 ### Edge Cases
 - **Trivial parent task**: If the task has only 1-2 sub-components, skip the
   formal spawn process: "This task is small enough to execute directly. Use
-  `/sc:task` for tracking."
+  `/supercodex:task` for tracking."
 - **Ambiguous dependencies**: If it is unclear whether two sub-tasks depend on
   each other, assume independence but flag it: "ST-003 and ST-004 may have a
   hidden dependency through shared state in module X. Verify before running
@@ -244,18 +244,18 @@ Next steps:
   suggest grouping into epics: "This decomposition produced 22 sub-tasks.
   Consider grouping into 4 epics for manageability."
 
-## Next Steps
+## ✅ Next Steps
 After spawning sub-tasks, the user may want to:
-- `/sc:task ST-001` -- Begin working on the first sub-task.
-- `/sc:save` -- Persist the spawn specification for future sessions.
-- `/sc:workflow` -- Review the overall workflow given the new sub-tasks.
-- `/sc:spec-panel` -- Have the decomposition reviewed by the expert panel.
+- `/supercodex:task ST-001` -- Begin working on the first sub-task.
+- `/supercodex:save` -- Persist the spawn specification for future sessions.
+- `/supercodex:workflow` -- Review the overall workflow given the new sub-tasks.
+- `/supercodex:spec-panel` -- Have the decomposition reviewed by the expert panel.
 
-## Examples
+## 🧷 Examples
 
 ### Example 1: Feature Decomposition
 ```
-User: /sc:spawn Build user authentication with OAuth2 and email/password
+User: /supercodex:spawn Build user authentication with OAuth2 and email/password
 
 Agent:
 Spawned: User Authentication System
@@ -267,7 +267,7 @@ Spawned: User Authentication System
 
 ### Example 2: Refactoring Decomposition
 ```
-User: /sc:spawn Migrate database layer from raw SQL to an ORM
+User: /supercodex:spawn Migrate database layer from raw SQL to an ORM
 
 Agent:
 Spawned: Database Layer ORM Migration
@@ -278,13 +278,13 @@ Spawned: Database Layer ORM Migration
 
 ### Example 3: Atomic Task (No Spawn Needed)
 ```
-User: /sc:spawn Fix the typo in the README
+User: /supercodex:spawn Fix the typo in the README
 
 Agent: This task is already at an appropriate granularity for direct
-execution. Use /sc:task instead.
+execution. Use /supercodex:task instead.
 ```
 
-## Argument Handling
+## 🧷 Argument Handling
 
 The `$ARGUMENTS` string should contain the parent task description.
 
@@ -298,7 +298,7 @@ The `$ARGUMENTS` string should contain the parent task description.
 
 If `$ARGUMENTS` is empty, ask the user to describe the parent task.
 
-## Quality Checklist
+## 📋 Quality Checklist
 Before finalizing the spawn specification, verify:
 - [ ] Every sub-task has a clear, testable acceptance criterion.
 - [ ] The dependency graph has no cycles.
@@ -308,5 +308,5 @@ Before finalizing the spawn specification, verify:
 - [ ] Shared resource contention points are documented.
 - [ ] Wave assignments are consistent with dependencies.
 
-## User Task
+## 📥 User Task
 $ARGUMENTS

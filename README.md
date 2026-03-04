@@ -216,8 +216,8 @@ Interactive wrappers installed under `~/.codex/prompts/`:
 
 ```bash
 supercodex validate [--strict] [--json]
-supercodex doctor [--fix] [--strict] [--json] [--mcp-connectivity]
-supercodex start [--yes] [--json]
+supercodex doctor [--fix] [--strict] [--json] [--plain] [--mcp-connectivity]
+supercodex start [--yes] [--json] [--plain]
 supercodex init [--dir <path>]
 supercodex aliases list|show|packs|search|recommend
 supercodex mode list|show|set|unset
@@ -282,6 +282,7 @@ installed_ids = ["filesystem"]
 
 - [Command Reference](docs/COMMANDS.md)
 - [Framework Metadata (Generated)](docs/METADATA.md)
+- [Prompt Quality Checklist](docs/PROMPT_QUALITY_CHECKLIST.md)
 - [ADR 0001: SuperClaude Compatibility Target](docs/adr/0001-superclaude-compatibility-target.md)
 - [Troubleshooting](docs/TROUBLESHOOTING.md)
 

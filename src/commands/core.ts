@@ -9,6 +9,7 @@ import {
 } from "../operations";
 import { initProjectTemplate } from "../project-init";
 import { getShellBridgeStatus } from "../shell-bridge";
+import { bullet, kv, line, resolveOutputStyle } from "./presenter";
 import { runCommand, printWarnings } from "./utils";
 
 export function registerCoreCommands(program: Command): void {
@@ -17,26 +18,37 @@ export function registerCoreCommands(program: Command): void {
     .description("Install SuperCodex prompt pack and merge ~/.codex/config.toml safely")
     .option("--codex-home <path>", "Override Codex home directory")
     .option("--force", "Apply SuperCodex values into conflicting standard locations")
+    .option("--plain", "Disable decorated output")
     .action((options) =>
       runCommand(async () => {
+        const style = resolveOutputStyle({
+          plain: Boolean(options.plain)
+        });
         const result = await installSupercodex({
           codexHome: options.codexHome as string | undefined,
           force: Boolean(options.force)
         });
 
-        console.log(`Backup: ${result.backup.backupDir}`);
-        console.log(`Config: ${result.paths.configPath}`);
-        console.log(result.configChanged ? "Config merged." : "Config already up to date.");
+        console.log(line("section", "Install summary", style));
+        console.log(kv("Backup", result.backup.backupDir, style));
+        console.log(kv("Config", result.paths.configPath, style));
+        console.log(line(result.configChanged ? "ok" : "info", result.configChanged ? "Config merged." : "Config already up to date.", style));
         console.log(
-          result.promptChanged
-            ? `Prompt pack installed at ${result.paths.promptPackDir}.`
-            : `Prompt pack already current at ${result.paths.promptPackDir}.`
+          line(
+            result.promptChanged ? "ok" : "info",
+            result.promptChanged
+              ? `Prompt pack installed at ${result.paths.promptPackDir}.`
+              : `Prompt pack already current at ${result.paths.promptPackDir}.`,
+            style
+          )
         );
-        console.log("Alias usage: supercodex /supercodex:research <args...> (short: /sc:research)");
-        console.log("Codex interactive usage: /prompts:supercodex-research <task>");
-        console.log("Optional shell shortcut bridge: supercodex shell install");
+        console.log(line("tip", "Alias usage: supercodex /supercodex:research <args...> (short: /sc:research)", style));
+        console.log(line("tip", "Codex interactive usage: /prompts:supercodex-research <task>", style));
+        console.log(line("tip", "Optional shell shortcut bridge: supercodex shell install", style));
 
-        printWarnings(result.warnings);
+        printWarnings(result.warnings, { plain: Boolean(options.plain) });
+      }, {
+        plain: Boolean(options.plain)
       })
     );
 
@@ -44,26 +56,49 @@ export function registerCoreCommands(program: Command): void {
     .command("uninstall")
     .description("Remove SuperCodex-managed config and prompt pack")
     .option("--codex-home <path>", "Override Codex home directory")
+    .option("--plain", "Disable decorated output")
     .action((options) =>
       runCommand(async () => {
+        const style = resolveOutputStyle({
+          plain: Boolean(options.plain)
+        });
         const result = await uninstallSupercodex({
           codexHome: options.codexHome as string | undefined
         });
 
-        console.log(`Backup: ${result.backup.backupDir}`);
-        console.log(`Config: ${result.paths.configPath}`);
-        console.log(result.configChanged ? "SuperCodex-managed config removed." : "No managed config found.");
-        console.log(result.promptRemoved ? "Prompt pack removed." : "Prompt pack was not installed.");
+        console.log(line("section", "Uninstall summary", style));
+        console.log(kv("Backup", result.backup.backupDir, style));
+        console.log(kv("Config", result.paths.configPath, style));
         console.log(
-          result.removedAgents.length > 0
-            ? `Removed agents: ${result.removedAgents.join(", ")}`
-            : "Removed agents: (none)"
+          line(
+            result.configChanged ? "ok" : "info",
+            result.configChanged ? "SuperCodex-managed config removed." : "No managed config found.",
+            style
+          )
         );
         console.log(
-          result.removedMcpServers.length > 0
-            ? `Removed MCP servers: ${result.removedMcpServers.join(", ")}`
-            : "Removed MCP servers: (none)"
+          line(
+            result.promptRemoved ? "ok" : "info",
+            result.promptRemoved ? "Prompt pack removed." : "Prompt pack was not installed.",
+            style
+          )
         );
+        console.log(
+          kv(
+            "Removed agents",
+            result.removedAgents.length > 0 ? result.removedAgents.join(", ") : "(none)",
+            style
+          )
+        );
+        console.log(
+          kv(
+            "Removed MCP servers",
+            result.removedMcpServers.length > 0 ? result.removedMcpServers.join(", ") : "(none)",
+            style
+          )
+        );
+      }, {
+        plain: Boolean(options.plain)
       })
     );
 
@@ -71,25 +106,34 @@ export function registerCoreCommands(program: Command): void {
     .command("list")
     .description("List bundled prompt pack files and installed prompt files")
     .option("--codex-home <path>", "Override Codex home directory")
+    .option("--plain", "Disable decorated output")
     .action((options) =>
       runCommand(async () => {
+        const style = resolveOutputStyle({
+          plain: Boolean(options.plain)
+        });
         const result = await listPromptPackStatus(options.codexHome as string | undefined);
         const installed = new Set(result.installed);
 
-        console.log(`Prompt pack directory: ${result.promptPackDir}`);
-        console.log("Bundled prompts:");
+        console.log(line("section", "Prompt pack inventory", style));
+        console.log(kv("Prompt pack directory", result.promptPackDir, style));
+        console.log(line("info", "Bundled prompts:", style));
         for (const promptName of result.bundled) {
           const state = installed.has(promptName) ? "installed" : "missing";
-          console.log(`- ${promptName} (${state})`);
+          const kind = state === "installed" ? "ok" : "warn";
+          console.log(bullet(`${promptName} (${state})`, style, kind));
         }
         const interactiveInstalled = new Set(result.interactiveInstalled);
-        console.log(`Interactive prompt command directory: ${result.promptsDir}`);
-        console.log("Interactive prompt commands:");
+        console.log(kv("Interactive prompt command directory", result.promptsDir, style));
+        console.log(line("info", "Interactive prompt commands:", style));
         for (const fileName of result.interactiveBundled) {
           const state = interactiveInstalled.has(fileName) ? "installed" : "missing";
           const slashName = fileName.replace(/\.md$/i, "");
-          console.log(`- /prompts:${slashName} (${state})`);
+          const kind = state === "installed" ? "ok" : "warn";
+          console.log(bullet(`/prompts:${slashName} (${state})`, style, kind));
         }
+      }, {
+        plain: Boolean(options.plain)
       })
     );
 
@@ -97,9 +141,14 @@ export function registerCoreCommands(program: Command): void {
     .command("status")
     .description("Show SuperCodex install status and managed entries")
     .option("--codex-home <path>", "Override Codex home directory")
+    .option("--plain", "Disable decorated output")
     .option("--json", "Output JSON")
     .action((options) =>
       runCommand(async () => {
+        const style = resolveOutputStyle({
+          json: Boolean(options.json),
+          plain: Boolean(options.plain)
+        });
         const result = await getSupercodexStatus(options.codexHome as string | undefined);
 
         if (Boolean(options.json)) {
@@ -110,51 +159,81 @@ export function registerCoreCommands(program: Command): void {
 
         const shellBridge = await getShellBridgeStatus();
 
-        console.log(`Codex home: ${result.codexHome}`);
-        console.log(`Config path: ${result.configPath}`);
-        console.log(`Config exists: ${result.configExists ? "yes" : "no"}`);
-        console.log(`SuperCodex section installed: ${result.supercodexInstalled ? "yes" : "no"}`);
+        console.log(line("section", "SuperCodex status", style));
+        console.log(kv("Codex home", result.codexHome, style));
+        console.log(kv("Config path", result.configPath, style));
+        console.log(line(result.configExists ? "ok" : "warn", `Config exists: ${result.configExists ? "yes" : "no"}`, style));
         console.log(
-          `Prompt pack: ${result.promptPackInstalled ? "installed" : "missing"} (${result.promptPackDir})`
-        );
-        console.log(`Default mode: ${result.defaultMode ?? "(builtin)"}`);
-        console.log(`Default persona: ${result.defaultPersona ?? "(builtin)"}`);
-        console.log(`Catalog version: ${result.catalogVersion ?? "(unknown)"}`);
-        console.log(
-          result.managedAgents.length > 0
-            ? `Managed agents: ${result.managedAgents.join(", ")}`
-            : "Managed agents: (none)"
+          line(
+            result.supercodexInstalled ? "ok" : "warn",
+            `SuperCodex section installed: ${result.supercodexInstalled ? "yes" : "no"}`,
+            style
+          )
         );
         console.log(
-          result.managedMcpServers.length > 0
-            ? `Managed MCP servers: ${result.managedMcpServers.join(", ")}`
-            : "Managed MCP servers: (none)"
+          line(
+            result.promptPackInstalled ? "ok" : "warn",
+            `Prompt pack: ${result.promptPackInstalled ? "installed" : "missing"} (${result.promptPackDir})`,
+            style
+          )
+        );
+        console.log(kv("Default mode", result.defaultMode ?? "(builtin)", style));
+        console.log(kv("Default persona", result.defaultPersona ?? "(builtin)", style));
+        console.log(kv("Catalog version", result.catalogVersion ?? "(unknown)", style));
+        console.log(
+          kv(
+            "Managed agents",
+            result.managedAgents.length > 0 ? result.managedAgents.join(", ") : "(none)",
+            style
+          )
         );
         console.log(
-          result.catalogInstalledIds.length > 0
-            ? `Catalog-installed MCP ids: ${result.catalogInstalledIds.join(", ")}`
-            : "Catalog-installed MCP ids: (none)"
+          kv(
+            "Managed MCP servers",
+            result.managedMcpServers.length > 0 ? result.managedMcpServers.join(", ") : "(none)",
+            style
+          )
         );
         console.log(
-          result.overridePaths.length > 0
-            ? `Pending overrides: ${result.overridePaths.join(", ")}`
-            : "Pending overrides: (none)"
+          kv(
+            "Catalog-installed MCP ids",
+            result.catalogInstalledIds.length > 0 ? result.catalogInstalledIds.join(", ") : "(none)",
+            style
+          )
         );
         console.log(
-          result.interactivePromptCommandsInstalled.length > 0
-            ? `Interactive prompt commands installed: ${result.interactivePromptCommandsInstalled.length}`
-            : "Interactive prompt commands installed: 0"
+          kv(
+            "Pending overrides",
+            result.overridePaths.length > 0 ? result.overridePaths.join(", ") : "(none)",
+            style
+          )
         );
         console.log(
-          result.interactivePromptCommandsMissing.length > 0
-            ? `Interactive prompt commands missing: ${result.interactivePromptCommandsMissing.length}`
-            : "Interactive prompt commands missing: 0"
+          kv(
+            "Interactive prompt commands installed",
+            String(result.interactivePromptCommandsInstalled.length),
+            style
+          )
         );
-        console.log("Codex slash invocation format: /prompts:supercodex-research <task>");
         console.log(
-          `Shell bridge: ${shellBridge.installed ? "installed" : "missing"} ` +
-            `(${shellBridge.shell}: ${shellBridge.profilePath})`
+          kv(
+            "Interactive prompt commands missing",
+            String(result.interactivePromptCommandsMissing.length),
+            style
+          )
         );
+        console.log(line("tip", "Codex slash invocation format: /prompts:supercodex-research <task>", style));
+        console.log(
+          line(
+            shellBridge.installed ? "ok" : "warn",
+            `Shell bridge: ${shellBridge.installed ? "installed" : "missing"} ` +
+              `(${shellBridge.shell}: ${shellBridge.profilePath})`,
+            style
+          )
+        );
+      }, {
+        json: Boolean(options.json),
+        plain: Boolean(options.plain)
       })
     );
 

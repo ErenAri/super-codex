@@ -1,12 +1,12 @@
-# /sc:index
+# /supercodex:index
 
-## Purpose
+## 🎯 Purpose
 
 Build a comprehensive structural index of a file system, project directory, or module
 tree, producing a navigable inventory of files, their types, dependency relationships,
 and an architectural mental model that can be used as context for subsequent commands.
 
-## Activation
+## 🚀 Activation
 
 - Persona: **architect**
 - Mode: **deep**
@@ -22,14 +22,14 @@ exist but how they relate to each other and what role each plays in the system.
 
 ---
 
-## Behavioral Flow
+## 🧠 Behavioral Flow
 
 The indexing proceeds through five ordered phases. Each phase has an effort budget
 expressed as a percentage of total work. The agent MUST touch every phase and MUST NOT
 spend less than half the budgeted effort on any phase. If a phase completes early the
 surplus effort rolls forward to the next phase.
 
-### Phase 1 -- Scan File Tree (20%)
+### 🧩 Phase 1 -- Scan File Tree (20%)
 
 1. Enumerate the target directory structure:
    - List all top-level directories and their immediate children.
@@ -55,7 +55,7 @@ surplus effort rolls forward to the next phase.
 **Checkpoint:** A complete directory tree outline with project type identified and
 generated/vendored directories marked.
 
-### Phase 2 -- Classify File Types (20%)
+### 🧩 Phase 2 -- Classify File Types (20%)
 
 1. Categorize every non-generated file into a classification:
    - **Source code:** Application logic files (.ts, .js, .py, .go, .rs, etc.)
@@ -90,7 +90,7 @@ generated/vendored directories marked.
 **Checkpoint:** A complete file classification with counts, entry points, and
 architectural files identified.
 
-### Phase 3 -- Map Dependencies (25%)
+### 🧩 Phase 3 -- Map Dependencies (25%)
 
 1. Analyze import/require/use statements to map internal dependencies:
    - For each source file, list what other internal modules it imports.
@@ -120,7 +120,7 @@ architectural files identified.
 **Checkpoint:** A dependency map showing internal relationships, external usage,
 and structural patterns.
 
-### Phase 4 -- Build Mental Model (20%)
+### 🧩 Phase 4 -- Build Mental Model (20%)
 
 1. Synthesize the file tree, classifications, and dependencies into an architectural
    mental model:
@@ -154,7 +154,7 @@ and structural patterns.
 **Checkpoint:** A coherent mental model of the system architecture with key
 abstractions, conventions, and concerns identified.
 
-### Phase 5 -- Produce Index (15%)
+### 🧩 Phase 5 -- Produce Index (15%)
 
 1. Compile the index document:
    - Start with a project overview (type, purpose, tech stack).
@@ -180,9 +180,9 @@ abstractions, conventions, and concerns identified.
 
 ---
 
-## MCP Integration
+## 🔌 MCP Integration
 
-### Tool Usage Guidance
+### 🧰 Tool Usage Guidance
 
 - **Filesystem tools:** List directories, read file headers and imports, scan for
   patterns. These are the primary tools for indexing.
@@ -191,7 +191,7 @@ abstractions, conventions, and concerns identified.
 - **GitHub tools:** If available, read recent PRs and issues to understand active
   areas of development.
 
-### Tool Usage Constraints
+### ⛔ Tool Usage Constraints
 
 - The agent MUST NOT modify, create, or delete any files.
 - The agent MUST NOT execute build commands, test runners, or scripts.
@@ -201,7 +201,7 @@ abstractions, conventions, and concerns identified.
 - The agent SHOULD prioritize reading entry points, configuration files, and
   barrel/index files for maximum understanding with minimum reads.
 
-### Efficiency Guidelines
+### ⚡ Efficiency Guidelines
 
 - Use glob patterns to discover file organization before reading individual files.
 - Use grep to find import patterns across many files simultaneously.
@@ -213,9 +213,9 @@ abstractions, conventions, and concerns identified.
 
 ---
 
-## Boundaries
+## 🧱 Boundaries
 
-### WILL DO:
+### ✅ WILL DO:
 
 - Scan and catalog every file and directory in the target scope
 - Classify files by type and purpose
@@ -229,13 +229,13 @@ abstractions, conventions, and concerns identified.
 - Identify module boundaries and public APIs
 - Adapt scanning depth to codebase size
 
-### WILL NOT DO:
+### 🚫 WILL NOT DO:
 
 - Modify, create, or delete any files
 - Execute any commands, scripts, or build processes
 - Install or modify dependencies
-- Make architectural recommendations (use /sc:analyze for that)
-- Assess code quality (use /sc:analyze for that)
+- Make architectural recommendations (use /supercodex:analyze for that)
+- Assess code quality (use /supercodex:analyze for that)
 - Implement changes or refactoring
 - Read every line of every file (sampling is acceptable and expected)
 - Index generated, vendored, or build output directories
@@ -243,7 +243,7 @@ abstractions, conventions, and concerns identified.
 
 ---
 
-## Output Format
+## 🧾 Output Format
 
 ```markdown
 ## Project Index: {project name}
@@ -297,7 +297,7 @@ abstractions, conventions, and concerns identified.
 - To understand testing: see {test directory/pattern}
 ```
 
-### Output Formatting Rules
+### 📐 Output Formatting Rules
 
 - Directory trees use indentation with annotations for key directories.
 - File counts must be accurate (use actual counts, not estimates).
@@ -307,7 +307,7 @@ abstractions, conventions, and concerns identified.
 
 ---
 
-## Edge Cases
+## 🧪 Edge Cases
 
 ### Very Small Project (<10 files)
 
@@ -335,7 +335,7 @@ abstractions, conventions, and concerns identified.
 - Describe what is found without imposing a structure that does not exist.
 - Note the lack of clear organization as an observation.
 - Group files by apparent function even if the directory structure does not.
-- Suggest that /sc:analyze might provide useful organizational recommendations.
+- Suggest that /supercodex:analyze might provide useful organizational recommendations.
 
 ### Binary or Non-Text Files
 
@@ -345,7 +345,7 @@ abstractions, conventions, and concerns identified.
 
 ---
 
-## Recovery Behavior
+## 🛠️ Recovery Behavior
 
 - If a directory cannot be read (permissions), log it and continue with accessible
   areas. Note the gap in the index.
@@ -358,18 +358,18 @@ abstractions, conventions, and concerns identified.
 
 ---
 
-## Next Steps
+## ✅ Next Steps
 
 After completing the index, the user may want to:
 
-- `/sc:analyze` -- Deep analysis of quality, patterns, and risks in the indexed project
-- `/sc:load` -- Load specific modules into context for focused work
-- `/sc:index-repo` -- Extended indexing for the full repository including git history
-- `/sc:recommend` -- Get recommendations based on the project structure
-- `/sc:brainstorm` -- Generate ideas for improvements to the project architecture
+- `/supercodex:analyze` -- Deep analysis of quality, patterns, and risks in the indexed project
+- `/supercodex:load` -- Load specific modules into context for focused work
+- `/supercodex:index-repo` -- Extended indexing for the full repository including git history
+- `/supercodex:recommend` -- Get recommendations based on the project structure
+- `/supercodex:brainstorm` -- Generate ideas for improvements to the project architecture
 
 ---
 
-## User Task
+## 📥 User Task
 
 $ARGUMENTS

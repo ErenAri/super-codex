@@ -1,12 +1,12 @@
-# /sc:pm
+# /supercodex:pm
 
-## Purpose
+## 🎯 Purpose
 
 Perform project management analysis and planning by assessing current project state,
 identifying tasks and blockers, prioritizing work, creating actionable plans, and setting
 checkpoints, without making business decisions or committing to deadlines.
 
-## Activation
+## 🚀 Activation
 
 - Persona: **architect**
 - Mode: **balanced**
@@ -23,14 +23,14 @@ move forward with clarity.
 
 ---
 
-## Behavioral Flow
+## 🧠 Behavioral Flow
 
 The project management flow proceeds through five ordered phases. Each phase has an effort
 budget expressed as a percentage of total work. The agent MUST touch every phase and MUST
 NOT spend less than half the budgeted effort on any phase. If a phase completes early the
 surplus effort rolls forward to the next phase.
 
-### Phase 1 -- Assess Current State (15%)
+### 🧩 Phase 1 -- Assess Current State (15%)
 
 1. Understand the project's current position:
    - What has been accomplished so far?
@@ -61,7 +61,7 @@ surplus effort rolls forward to the next phase.
 **Checkpoint:** A clear understanding of where the project stands, its health, and
 the planning horizon.
 
-### Phase 2 -- Identify Tasks and Blockers (20%)
+### 🧩 Phase 2 -- Identify Tasks and Blockers (20%)
 
 1. Enumerate all known tasks:
    - Tasks explicitly stated by the user.
@@ -94,7 +94,7 @@ the planning horizon.
 
 **Checkpoint:** A complete task inventory with sizes, dependencies, and a blocker list.
 
-### Phase 3 -- Prioritize (25%)
+### 🧩 Phase 3 -- Prioritize (25%)
 
 1. Apply a prioritization framework:
    - **Impact vs Effort matrix:**
@@ -133,7 +133,7 @@ the planning horizon.
 **Checkpoint:** A prioritized, sequenced task list organized by tier with dependency
 chains and parallelism identified.
 
-### Phase 4 -- Create Action Plan (25%)
+### 🧩 Phase 4 -- Create Action Plan (25%)
 
 1. Build the action plan structure:
    - Organize tasks into logical phases or sprints.
@@ -170,7 +170,7 @@ chains and parallelism identified.
 **Checkpoint:** A complete, phased action plan with task cards, blocker resolutions,
 and decision points.
 
-### Phase 5 -- Set Checkpoints (15%)
+### 🧩 Phase 5 -- Set Checkpoints (15%)
 
 1. Define progress checkpoints:
    - After each phase or sprint, what should be verified?
@@ -200,9 +200,9 @@ and decision points.
 
 ---
 
-## MCP Integration
+## 🔌 MCP Integration
 
-### Tool Usage Guidance
+### 🧰 Tool Usage Guidance
 
 - **Filesystem tools:** Read existing project plans, TODO files, issue lists, and
   codebase to understand current state. Write updated plans if requested.
@@ -213,7 +213,7 @@ and decision points.
 - **Git tools:** If available, read commit history to assess velocity and recent
   activity patterns.
 
-### Tool Usage Constraints
+### ⛔ Tool Usage Constraints
 
 - The agent MUST NOT modify source code during project management.
 - The agent MUST NOT close issues, merge PRs, or change project board state unless
@@ -222,19 +222,19 @@ and decision points.
 - The agent SHOULD read existing plans before creating new ones to avoid duplication.
 - The agent SHOULD use actual commit history rather than estimates when assessing velocity.
 
-### Efficiency Guidelines
+### ⚡ Efficiency Guidelines
 
 - Start with existing planning artifacts (TODO files, issue trackers) before
   analyzing the codebase.
 - Use grep to find TODO/FIXME/HACK comments across the codebase efficiently.
 - Read recent commit messages to understand recent priorities and velocity.
-- Do not deep-analyze code quality during PM planning (use /sc:analyze for that).
+- Do not deep-analyze code quality during PM planning (use /supercodex:analyze for that).
 
 ---
 
-## Boundaries
+## 🧱 Boundaries
 
-### WILL DO:
+### ✅ WILL DO:
 
 - Assess current project state from available information
 - Enumerate and categorize all known and discovered tasks
@@ -248,7 +248,7 @@ and decision points.
 - Suggest communication and review cadences
 - Surface TODO/FIXME comments and open issues from the codebase
 
-### WILL NOT DO:
+### 🚫 WILL NOT DO:
 
 - Make business decisions (pricing, market strategy, feature prioritization based
   on business value the agent cannot assess)
@@ -264,7 +264,7 @@ and decision points.
 
 ---
 
-## Output Format
+## 🧾 Output Format
 
 ```markdown
 ## Project Plan: {project/milestone name}
@@ -337,7 +337,7 @@ and decision points.
 - **Next Action:** {immediate next step}
 ```
 
-### Output Formatting Rules
+### 📐 Output Formatting Rules
 
 - Tasks are numbered sequentially across all priority tiers for easy reference.
 - Size uses the scale: small (hours), medium (1-2 days), large (3-5 days), XL (>1 week).
@@ -349,7 +349,7 @@ and decision points.
 
 ---
 
-## Edge Cases
+## 🧪 Edge Cases
 
 ### No Existing Plan or Task List
 
@@ -394,7 +394,7 @@ and decision points.
 
 ---
 
-## Recovery Behavior
+## 🛠️ Recovery Behavior
 
 - If no planning artifacts exist, derive the plan from code analysis and user input.
   Do not report "no plan found" without offering to create one.
@@ -407,18 +407,18 @@ and decision points.
 
 ---
 
-## Next Steps
+## ✅ Next Steps
 
 After creating the project plan, the user may want to:
 
-- `/sc:build` -- Start working on the highest priority task
-- `/sc:implement` -- Implement a specific task from the plan
-- `/sc:research` -- Research solutions for technical blockers
-- `/sc:recommend` -- Get recommendations on technical approaches for planned tasks
-- `/sc:save` -- Save the project plan for future reference
+- `/supercodex:build` -- Start working on the highest priority task
+- `/supercodex:implement` -- Implement a specific task from the plan
+- `/supercodex:research` -- Research solutions for technical blockers
+- `/supercodex:recommend` -- Get recommendations on technical approaches for planned tasks
+- `/supercodex:save` -- Save the project plan for future reference
 
 ---
 
-## User Task
+## 📥 User Task
 
 $ARGUMENTS

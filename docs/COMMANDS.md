@@ -41,6 +41,7 @@ Run diagnostics (report-only by default):
 supercodex doctor
 supercodex doctor --json
 supercodex doctor --strict
+supercodex doctor --plain
 supercodex doctor --fix
 supercodex doctor --mcp-connectivity
 ```
@@ -258,8 +259,10 @@ Health and maintenance:
 ```bash
 supercodex mcp list
 supercodex mcp test filesystem
+supercodex mcp test filesystem --plain
 supercodex mcp doctor
 supercodex mcp doctor --connectivity
+supercodex mcp guided --goal docs --plain
 supercodex mcp remove filesystem
 ```
 
@@ -300,6 +303,7 @@ Generated files:
 
 - `--codex-home <path>`: point to an alternate Codex home for testing or CI
 - `--json`: machine-readable output for automation
+- `--plain`: disable emoji/decorated output in human-readable modes
 - `--strict`: fail on warnings where supported
 - `--force`: override conflict-preserving merge behavior
 - `--full`: show rich content (used with `mode show`)

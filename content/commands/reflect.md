@@ -1,12 +1,12 @@
-# /sc:reflect
+# /supercodex:reflect
 
-## Purpose
+## 🎯 Purpose
 
 Perform structured self-reflection on recent work, decisions, and processes, identifying
 what worked well, what fell short, what patterns are emerging, and what adjustments should
 be made going forward, without changing code or undoing any decisions.
 
-## Activation
+## 🚀 Activation
 
 - Persona: **reviewer**
 - Mode: **deep**
@@ -22,14 +22,14 @@ reflection that extracts maximum learning value from recent experience.
 
 ---
 
-## Behavioral Flow
+## 🧠 Behavioral Flow
 
 The reflection proceeds through five ordered phases. Each phase has an effort budget
 expressed as a percentage of total work. The agent MUST touch every phase and MUST NOT
 spend less than half the budgeted effort on any phase. If a phase completes early the
 surplus effort rolls forward to the next phase.
 
-### Phase 1 -- Review Recent Work (20%)
+### 🧩 Phase 1 -- Review Recent Work (20%)
 
 1. Identify the scope of reflection:
    - What time period or work product is being reflected on?
@@ -60,7 +60,7 @@ surplus effort rolls forward to the next phase.
 **Checkpoint:** A complete chronological account of the work done, decisions made,
 and outcomes achieved.
 
-### Phase 2 -- Identify What Worked (20%)
+### 🧩 Phase 2 -- Identify What Worked (20%)
 
 1. Analyze successes:
    - Which decisions turned out to be correct? Why?
@@ -90,7 +90,7 @@ and outcomes achieved.
 
 **Checkpoint:** A clear enumeration of what worked and why, with patterns identified.
 
-### Phase 3 -- Identify Gaps (25%)
+### 🧩 Phase 3 -- Identify Gaps (25%)
 
 1. Analyze shortcomings honestly:
    - What goals were not fully met? Why?
@@ -127,7 +127,7 @@ and outcomes achieved.
 **Checkpoint:** An honest assessment of gaps with root causes identified and
 impact evaluated.
 
-### Phase 4 -- Extract Lessons (20%)
+### 🧩 Phase 4 -- Extract Lessons (20%)
 
 1. Derive concrete lessons from the successes and gaps:
    - Each lesson should be specific and actionable.
@@ -157,7 +157,7 @@ impact evaluated.
 **Checkpoint:** A prioritized list of concrete, evidence-based lessons organized by
 category.
 
-### Phase 5 -- Propose Adjustments (15%)
+### 🧩 Phase 5 -- Propose Adjustments (15%)
 
 1. For each high-priority lesson, propose a specific adjustment:
    - What should change in the process, approach, or habits?
@@ -187,9 +187,9 @@ category.
 
 ---
 
-## MCP Integration
+## 🔌 MCP Integration
 
-### Tool Usage Guidance
+### 🧰 Tool Usage Guidance
 
 - **Filesystem tools:** Read recent code changes, commit history, and project state
   to gather evidence for reflection.
@@ -200,7 +200,7 @@ category.
 - **GitHub tools:** If available, read PR discussions, code review comments, and
   issue resolution for additional context.
 
-### Tool Usage Constraints
+### ⛔ Tool Usage Constraints
 
 - The agent MUST NOT modify any files during reflection.
 - The agent MUST NOT change code, undo decisions, or revert changes.
@@ -208,7 +208,7 @@ category.
 - The agent SHOULD read recent changes to ground reflection in evidence.
 - The agent SHOULD use git history when available to reconstruct the work timeline.
 
-### Efficiency Guidelines
+### ⚡ Efficiency Guidelines
 
 - Start with git log and recent file changes for a quick overview of what happened.
 - Read specific files only when deeper analysis of a particular decision is needed.
@@ -217,9 +217,9 @@ category.
 
 ---
 
-## Boundaries
+## 🧱 Boundaries
 
-### WILL DO:
+### ✅ WILL DO:
 
 - Review recent work chronologically with evidence from code and commits
 - Identify what worked well with specific examples and patterns
@@ -233,7 +233,7 @@ category.
 - Acknowledge uncertainty when causes are unclear
 - Look for systemic issues beyond surface-level symptoms
 
-### WILL NOT DO:
+### 🚫 WILL NOT DO:
 
 - Change any code or modify any files
 - Undo decisions or revert changes
@@ -249,7 +249,7 @@ category.
 
 ---
 
-## Output Format
+## 🧾 Output Format
 
 ```markdown
 ## Reflection: {scope/period description}
@@ -307,7 +307,7 @@ category.
 - **Recurring patterns:** {patterns seen across reflections, if applicable}
 ```
 
-### Output Formatting Rules
+### 📐 Output Formatting Rules
 
 - Timeline entries are chronological and include outcomes.
 - Successes and gaps have equal depth of analysis (no skipping either).
@@ -319,7 +319,7 @@ category.
 
 ---
 
-## Edge Cases
+## 🧪 Edge Cases
 
 ### Very Small Scope (Single Task or Decision)
 
@@ -364,7 +364,7 @@ category.
 
 ---
 
-## Recovery Behavior
+## 🛠️ Recovery Behavior
 
 - If evidence is sparse (no git history, no recent changes), reflect based on what
   is available and note the evidence gap.
@@ -377,18 +377,18 @@ category.
 
 ---
 
-## Next Steps
+## ✅ Next Steps
 
 After reflection, the user may want to:
 
-- `/sc:pm` -- Create or update a project plan based on lessons learned
-- `/sc:improve` -- Improve code based on quality gaps identified
-- `/sc:recommend` -- Get recommendations for addressing systemic issues
-- `/sc:research` -- Research solutions for recurring problems
-- `/sc:save` -- Save the reflection for future reference and comparison
+- `/supercodex:pm` -- Create or update a project plan based on lessons learned
+- `/supercodex:improve` -- Improve code based on quality gaps identified
+- `/supercodex:recommend` -- Get recommendations for addressing systemic issues
+- `/supercodex:research` -- Research solutions for recurring problems
+- `/supercodex:save` -- Save the reflection for future reference and comparison
 
 ---
 
-## User Task
+## 📥 User Task
 
 $ARGUMENTS

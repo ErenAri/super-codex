@@ -22,7 +22,7 @@ describe("interactive prompt wrappers", () => {
     expect(prompt).toContain("- Intent: Generate a wide range of creative ideas");
     expect(prompt).toContain("- Pack: core-planning");
     expect(prompt).toContain("## Workflow Scaffold");
-    expect(prompt).toContain("## Purpose");
+    expect(prompt).toMatch(/##\s+.*Purpose/);
     expect(prompt).toContain("Generate a wide range of creative ideas");
   });
 

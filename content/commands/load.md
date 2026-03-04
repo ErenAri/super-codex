@@ -1,12 +1,12 @@
-# /sc:load
+# /supercodex:load
 
-## Purpose
+## 🎯 Purpose
 
 Load project context into the agent's working memory by reading relevant files, parsing
 project structure, and building a comprehensive mental model of the codebase so that
 subsequent commands operate with full situational awareness.
 
-## Activation
+## 🚀 Activation
 
 - Persona: **architect**
 - Mode: **balanced**
@@ -23,14 +23,14 @@ whatever task comes next.
 
 ---
 
-## Behavioral Flow
+## 🧠 Behavioral Flow
 
 The context loading proceeds through five ordered phases. Each phase has an effort budget
 expressed as a percentage of total work. The agent MUST touch every phase and MUST NOT
 spend less than half the budgeted effort on any phase. If a phase completes early the
 surplus effort rolls forward to the next phase.
 
-### Phase 1 -- Identify Needed Context (20%)
+### 🧩 Phase 1 -- Identify Needed Context (20%)
 
 1. Parse the user's request to understand what context is needed:
    - Is the user asking to load an entire project?
@@ -63,7 +63,7 @@ surplus effort rolls forward to the next phase.
 **Checkpoint:** A prioritized list of files and directories to read, organized by
 context layer.
 
-### Phase 2 -- Read Relevant Files (30%)
+### 🧩 Phase 2 -- Read Relevant Files (30%)
 
 1. Read Layer 1 (Essential) files first:
    - Project manifest (package.json, Cargo.toml, go.mod, pyproject.toml).
@@ -97,7 +97,7 @@ context layer.
 
 **Checkpoint:** All prioritized files have been read with appropriate depth.
 
-### Phase 3 -- Parse and Organize (25%)
+### 🧩 Phase 3 -- Parse and Organize (25%)
 
 1. Organize the loaded information into a structured mental model:
    - **Project identity:** Name, purpose, tech stack, architecture style.
@@ -129,7 +129,7 @@ context layer.
 **Checkpoint:** Information is organized into a coherent mental model with known
 gaps identified.
 
-### Phase 4 -- Build Mental Model (15%)
+### 🧩 Phase 4 -- Build Mental Model (15%)
 
 1. Synthesize a narrative understanding of the project:
    - "This is a [type] project that [purpose]. It uses [tech stack] and follows
@@ -156,7 +156,7 @@ gaps identified.
 
 **Checkpoint:** A complete mental model that enables effective work in subsequent commands.
 
-### Phase 5 -- Confirm Ready (10%)
+### 🧩 Phase 5 -- Confirm Ready (10%)
 
 1. Summarize what was loaded:
    - List the key files and modules that were read.
@@ -183,9 +183,9 @@ agent is ready for the next command.
 
 ---
 
-## MCP Integration
+## 🔌 MCP Integration
 
-### Tool Usage Guidance
+### 🧰 Tool Usage Guidance
 
 - **Filesystem tools:** Read files, list directories, check file existence. These
   are the primary tools for context loading.
@@ -194,7 +194,7 @@ agent is ready for the next command.
 - **GitHub tools:** If available, read recent PRs and issues to understand recent
   activity and priorities.
 
-### Tool Usage Constraints
+### ⛔ Tool Usage Constraints
 
 - The agent MUST NOT modify any files during context loading.
 - The agent MUST NOT execute any commands or scripts.
@@ -203,7 +203,7 @@ agent is ready for the next command.
 - The agent SHOULD prefer reading type definitions and exports over full file contents
   when building a high-level mental model.
 
-### Efficiency Guidelines
+### ⚡ Efficiency Guidelines
 
 - Read package.json / Cargo.toml / go.mod first for maximum information per file.
 - Use glob to discover file organization before reading individual files.
@@ -216,9 +216,9 @@ agent is ready for the next command.
 
 ---
 
-## Boundaries
+## 🧱 Boundaries
 
-### WILL DO:
+### ✅ WILL DO:
 
 - Read files to understand project structure, code, and configuration
 - Build a mental model of the codebase architecture and conventions
@@ -231,7 +231,7 @@ agent is ready for the next command.
 - Identify gaps in loaded context
 - Load additional context if the user requests it
 
-### WILL NOT DO:
+### 🚫 WILL NOT DO:
 
 - Modify, create, or delete any files
 - Execute commands, scripts, or build processes
@@ -239,14 +239,14 @@ agent is ready for the next command.
 - Change configuration or environment settings
 - Make changes to the codebase
 - Run tests or linters
-- Analyze code quality in depth (use /sc:analyze for that)
-- Make recommendations or decisions (use /sc:recommend for that)
-- Implement features or fix bugs (use /sc:build or /sc:implement for that)
+- Analyze code quality in depth (use /supercodex:analyze for that)
+- Make recommendations or decisions (use /supercodex:recommend for that)
+- Implement features or fix bugs (use /supercodex:build or /supercodex:implement for that)
 - Load context that is clearly irrelevant to the user's stated or implied task
 
 ---
 
-## Output Format
+## 🧾 Output Format
 
 ```markdown
 ## Context Loaded: {project/module name}
@@ -296,11 +296,11 @@ agent is ready for the next command.
 
 ### Ready For
 The following commands will benefit from this loaded context:
-- /sc:{command} -- {why}
-- /sc:{command} -- {why}
+- /supercodex:{command} -- {why}
+- /supercodex:{command} -- {why}
 ```
 
-### Output Formatting Rules
+### 📐 Output Formatting Rules
 
 - Files loaded are grouped by priority layer.
 - Each file entry includes what was learned, not just the file name.
@@ -311,7 +311,7 @@ The following commands will benefit from this loaded context:
 
 ---
 
-## Edge Cases
+## 🧪 Edge Cases
 
 ### User Asks to Load "Everything"
 
@@ -356,7 +356,7 @@ The following commands will benefit from this loaded context:
 
 ---
 
-## Recovery Behavior
+## 🛠️ Recovery Behavior
 
 - If a file cannot be read (permissions, not found), log it and continue. Note the
   gap in the context summary.
@@ -369,18 +369,18 @@ The following commands will benefit from this loaded context:
 
 ---
 
-## Next Steps
+## ✅ Next Steps
 
 After loading context, the user may want to:
 
-- `/sc:build` -- Build a new feature with full project context
-- `/sc:implement` -- Implement a specification with loaded context
-- `/sc:analyze` -- Analyze the loaded code for quality and patterns
-- `/sc:improve` -- Improve specific code that was loaded
-- `/sc:index` -- Produce a structured index of the loaded project
+- `/supercodex:build` -- Build a new feature with full project context
+- `/supercodex:implement` -- Implement a specification with loaded context
+- `/supercodex:analyze` -- Analyze the loaded code for quality and patterns
+- `/supercodex:improve` -- Improve specific code that was loaded
+- `/supercodex:index` -- Produce a structured index of the loaded project
 
 ---
 
-## User Task
+## 📥 User Task
 
 $ARGUMENTS

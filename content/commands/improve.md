@@ -1,12 +1,12 @@
-# /sc:improve
+# /supercodex:improve
 
-## Purpose
+## 🎯 Purpose
 
 Improve existing code along measurable dimensions -- performance, readability, error
 handling, maintainability, and robustness -- without changing the code's external behavior
 or breaking any existing public APIs.
 
-## Activation
+## 🚀 Activation
 
 - Persona: **refactorer**
 - Mode: **balanced**
@@ -22,14 +22,14 @@ improvements that make the code measurably better without introducing regression
 
 ---
 
-## Behavioral Flow
+## 🧠 Behavioral Flow
 
 The improvement flow proceeds through five ordered phases. Each phase has an effort budget
 expressed as a percentage of total work. The agent MUST touch every phase and MUST NOT
 spend less than half the budgeted effort on any phase. If a phase completes early the
 surplus effort rolls forward to the next phase.
 
-### Phase 1 -- Profile Current Code (15%)
+### 🧩 Phase 1 -- Profile Current Code (15%)
 
 1. Read and understand the target code thoroughly:
    - What does this code do? What is its purpose in the larger system?
@@ -58,7 +58,7 @@ surplus effort rolls forward to the next phase.
 **Checkpoint:** The agent has a complete understanding of the code, its quality baseline,
 its test coverage, and its behavioral contract.
 
-### Phase 2 -- Identify Improvement Targets (20%)
+### 🧩 Phase 2 -- Identify Improvement Targets (20%)
 
 1. Score each quality dimension for the target code:
    - **Performance:** poor / adequate / good / excellent
@@ -89,7 +89,7 @@ its test coverage, and its behavioral contract.
 
 **Checkpoint:** A prioritized list of specific improvements with risk and impact ratings.
 
-### Phase 3 -- Plan Improvements (20%)
+### 🧩 Phase 3 -- Plan Improvements (20%)
 
 1. For each planned improvement, design the change:
    - What will the code look like after the improvement?
@@ -120,7 +120,7 @@ its test coverage, and its behavioral contract.
 **Checkpoint:** A detailed plan for each improvement with behavioral preservation
 verification and test requirements.
 
-### Phase 4 -- Implement Safely (30%)
+### 🧩 Phase 4 -- Implement Safely (30%)
 
 This is the primary coding phase. The agent applies improvements one at a time,
 verifying each before moving to the next.
@@ -182,7 +182,7 @@ verifying each before moving to the next.
 
 **Checkpoint:** All planned improvements are applied and verified.
 
-### Phase 5 -- Verify Improvements (15%)
+### 🧩 Phase 5 -- Verify Improvements (15%)
 
 1. Review all changes holistically:
    - Do the improvements compose well together?
@@ -209,9 +209,9 @@ verifying each before moving to the next.
 
 ---
 
-## MCP Integration
+## 🔌 MCP Integration
 
-### Tool Usage Guidance
+### 🧰 Tool Usage Guidance
 
 - **Filesystem tools:** Read target code and its tests, write improved code and new
   tests. These are the primary tools for this command.
@@ -220,7 +220,7 @@ verifying each before moving to the next.
 - **Execution tools:** If available, run existing tests before and after changes to
   verify behavioral preservation.
 
-### Tool Usage Constraints
+### ⛔ Tool Usage Constraints
 
 - The agent MUST read the target code and its tests before making any changes.
 - The agent MUST read all direct consumers of the target code before making changes
@@ -229,7 +229,7 @@ verifying each before moving to the next.
 - The agent SHOULD run tests if execution tools are available.
 - The agent MUST NOT add new dependencies for improvements.
 
-### Efficiency Guidelines
+### ⚡ Efficiency Guidelines
 
 - Read all relevant files (code, tests, consumers) before starting improvements.
 - Batch related improvements in the same file to minimize write operations.
@@ -238,9 +238,9 @@ verifying each before moving to the next.
 
 ---
 
-## Boundaries
+## 🧱 Boundaries
 
-### WILL DO:
+### ✅ WILL DO:
 
 - Improve code performance by eliminating bottlenecks and redundancy
 - Improve readability by simplifying structure, naming, and organization
@@ -254,11 +254,11 @@ verifying each before moving to the next.
 - Document before/after improvements with measurable differences
 - Flag improvements that would require behavioral changes for user approval
 
-### WILL NOT DO:
+### 🚫 WILL NOT DO:
 
 - Change external behavior of the code (inputs, outputs, error types, side effects)
 - Break existing public APIs, interfaces, or contracts
-- Add new features or functionality (use /sc:implement for that)
+- Add new features or functionality (use /supercodex:implement for that)
 - Change code formatting in files not otherwise being improved
 - Add new dependencies
 - Remove functionality, even deprecated functionality, without user approval
@@ -269,7 +269,7 @@ verifying each before moving to the next.
 
 ---
 
-## Output Format
+## 🧾 Output Format
 
 ```markdown
 ## Improvement Report: {target description}
@@ -308,7 +308,7 @@ verifying each before moving to the next.
 - {any follow-up actions recommended}
 ```
 
-### Output Formatting Rules
+### 📐 Output Formatting Rules
 
 - Quality ratings use: poor, adequate, good, excellent.
 - Every improvement must note "Behavioral Impact: None" or explain the impact.
@@ -317,7 +317,7 @@ verifying each before moving to the next.
 
 ---
 
-## Edge Cases
+## 🧪 Edge Cases
 
 ### Code With No Tests
 
@@ -342,7 +342,7 @@ verifying each before moving to the next.
 
 - Improve only the direct target code.
 - Note coupling concerns in the summary.
-- Suggest /sc:analyze for broader architectural assessment.
+- Suggest /supercodex:analyze for broader architectural assessment.
 
 ### Performance Improvement Needs Benchmarking
 
@@ -352,12 +352,12 @@ verifying each before moving to the next.
 
 ---
 
-## Recovery Behavior
+## 🛠️ Recovery Behavior
 
 - If an improvement breaks existing tests, revert the improvement and note it as
   deferred with explanation.
 - If the code is too complex to improve safely without broader refactoring, report
-  this and suggest /sc:analyze first.
+  this and suggest /supercodex:analyze first.
 - If the improvement scope is too large, focus on the highest-impact items and
   provide a roadmap for the rest.
 - If the agent cannot determine whether a change would affect external behavior,
@@ -365,18 +365,18 @@ verifying each before moving to the next.
 
 ---
 
-## Next Steps
+## ✅ Next Steps
 
 After completing improvements, the user may want to:
 
-- `/sc:analyze` -- Verify the improvements integrate well with the broader architecture
-- `/sc:reflect` -- Review the improvement process for lessons learned
-- `/sc:implement` -- Build new features on top of the improved code
-- `/sc:recommend` -- Get recommendations for further quality improvements
-- `/sc:save` -- Save the improvement context for future reference
+- `/supercodex:analyze` -- Verify the improvements integrate well with the broader architecture
+- `/supercodex:reflect` -- Review the improvement process for lessons learned
+- `/supercodex:implement` -- Build new features on top of the improved code
+- `/supercodex:recommend` -- Get recommendations for further quality improvements
+- `/supercodex:save` -- Save the improvement context for future reference
 
 ---
 
-## User Task
+## 📥 User Task
 
 $ARGUMENTS

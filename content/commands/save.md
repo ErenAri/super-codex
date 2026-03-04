@@ -1,22 +1,22 @@
-# /sc:save
+# /supercodex:save
 
-## Purpose
+## 🎯 Purpose
 Capture and persist the current session's context, decisions, progress, and key insights so that future sessions can resume without loss of continuity.
 
-## Activation
+## 🚀 Activation
 - Persona: architect
 - Mode: balanced
 
-## Context
+## 🧭 Context
 The save command is the memory backbone of SuperCodex. Every interactive session
 accumulates valuable state: architectural decisions, rejected alternatives,
 partially completed plans, discovered constraints, and implicit knowledge that
 exists only in the conversation context. Without explicit persistence, all of
 this is lost when the session ends. The save command transforms ephemeral
 conversation state into durable, structured artifacts that downstream commands
-(`/sc:task`, `/sc:spawn`, `/sc:workflow`) can consume.
+(`/supercodex:task`, `/supercodex:spawn`, `/supercodex:workflow`) can consume.
 
-## Behavioral Flow
+## 🧠 Behavioral Flow
 
 ### Step 1 -- Identify Session State (15% effort)
 
@@ -118,13 +118,13 @@ If a filename collision is detected, append a numeric suffix (e.g., `-1`, `-2`).
      2 open questions").
    - Any items that were ambiguous or could not be confidently captured.
 2. Suggest next steps:
-   - "Run `/sc:task` to create action items from open questions."
-   - "Run `/sc:save` again before ending your next session."
+   - "Run `/supercodex:task` to create action items from open questions."
+   - "Run `/supercodex:save` again before ending your next session."
 3. If the save was partial or had warnings, clearly flag them.
 
-## MCP Integration
+## 🔌 MCP Integration
 
-### Tool Usage Guidance
+### 🧰 Tool Usage Guidance
 - **File system tools**: Use `read_file` to check for existing session files
   before writing. Use `write_file` to persist the session document.
 - **Directory tools**: Use `list_directory` to inspect the sessions folder
@@ -145,9 +145,9 @@ If a filename collision is detected, append a numeric suffix (e.g., `-1`, `-2`).
 - If git tools are unavailable, skip the context snapshot section rather than
   failing.
 
-## Boundaries
+## 🧱 Boundaries
 
-### WILL DO:
+### ✅ WILL DO:
 - Save session summaries, decisions, and progress to structured markdown files.
 - Capture architectural decisions with rationale and confidence levels.
 - Record discovered bugs, constraints, and invalidated assumptions.
@@ -158,7 +158,7 @@ If a filename collision is detected, append a numeric suffix (e.g., `-1`, `-2`).
 - Ask for confirmation before overwriting existing files.
 - Suggest follow-up commands after saving.
 
-### WILL NOT DO:
+### 🚫 WILL NOT DO:
 - Modify project source code, configuration files, or build scripts.
 - Overwrite existing user files without explicit confirmation.
 - Save sensitive information (API keys, passwords, tokens) to session files.
@@ -168,7 +168,7 @@ If a filename collision is detected, append a numeric suffix (e.g., `-1`, `-2`).
 - Modify `.codex/` configuration files (only write to the sessions subfolder).
 - Push changes to git or modify the git state in any way.
 
-## Output Format
+## 🧾 Output Format
 
 ### Primary Output
 A markdown file written to `.codex/supercodex/sessions/session-{timestamp}.md`
@@ -185,8 +185,8 @@ Captured:
   - 4 open questions
 
 Next steps:
-  - /sc:task to create action items from open questions
-  - /sc:save before ending your next session
+  - /supercodex:task to create action items from open questions
+  - /supercodex:save before ending your next session
 ```
 
 ### Edge Cases
@@ -206,21 +206,21 @@ Next steps:
 - File write failure: "Failed to write session file: {error}. Session content
   printed below for manual saving."
 - Permission denied: "Cannot write to {path}. Check directory permissions or
-  specify an alternative path: `/sc:save --path=/alternative/path`"
+  specify an alternative path: `/supercodex:save --path=/alternative/path`"
 
-## Next Steps
+## ✅ Next Steps
 After saving, the user may want to:
-- `/sc:task` -- Convert open questions and blocked items into actionable tasks.
-- `/sc:spawn` -- Break large in-progress items into parallelizable sub-tasks.
-- `/sc:workflow` -- Review and optimize the development workflow based on
+- `/supercodex:task` -- Convert open questions and blocked items into actionable tasks.
+- `/supercodex:spawn` -- Break large in-progress items into parallelizable sub-tasks.
+- `/supercodex:workflow` -- Review and optimize the development workflow based on
   session patterns.
-- `/sc:sc` -- Check the overall SuperCodex status and available commands.
+- `/supercodex:sc` -- Check the overall SuperCodex status and available commands.
 
-## Examples
+## 🧷 Examples
 
 ### Example 1: Standard Session Save
 ```
-User: /sc:save
+User: /supercodex:save
 
 Agent: Scanning session for stateful content...
 
@@ -235,7 +235,7 @@ Session saved to: .codex/supercodex/sessions/session-2026-03-01-14-30-00.md
 
 ### Example 2: Save with Custom Path
 ```
-User: /sc:save --path=docs/session-notes/sprint-12.md
+User: /supercodex:save --path=docs/session-notes/sprint-12.md
 
 Agent: Writing session state to docs/session-notes/sprint-12.md...
 Session saved successfully.
@@ -243,7 +243,7 @@ Session saved successfully.
 
 ### Example 3: Empty Session
 ```
-User: /sc:save
+User: /supercodex:save
 
 Agent: No significant session state to save. The session contained only
 exploratory questions with no decisions or progress to persist.
@@ -251,7 +251,7 @@ exploratory questions with no decisions or progress to persist.
 
 ### Example 4: Resumption from Prior Session
 ```
-User: /sc:save
+User: /supercodex:save
 
 Agent: This session continues from session-2026-02-28-16-45-00.md.
 Lineage noted in the summary section.
@@ -259,7 +259,7 @@ Lineage noted in the summary section.
 Session saved to: .codex/supercodex/sessions/session-2026-03-01-09-00-00.md
 ```
 
-## Argument Handling
+## 🧷 Argument Handling
 
 The `$ARGUMENTS` string may contain:
 
@@ -276,7 +276,7 @@ If `$ARGUMENTS` is empty, save the full session to the default location.
 If `$ARGUMENTS` contains unrecognized flags, warn the user and proceed with
 recognized flags only.
 
-## Quality Checklist
+## 📋 Quality Checklist
 Before finalizing the save, verify:
 - [ ] Every decision has a rationale (not just "decided X").
 - [ ] Progress items have clear status indicators.
@@ -286,5 +286,5 @@ Before finalizing the save, verify:
 - [ ] File paths are relative where possible.
 - [ ] The document is self-contained and readable standalone.
 
-## User Task
+## 📥 User Task
 $ARGUMENTS

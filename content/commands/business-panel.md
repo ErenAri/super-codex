@@ -1,13 +1,13 @@
-# /sc:business-panel
+# /supercodex:business-panel
 
-## Purpose
+## 🎯 Purpose
 
 Convene a simulated panel of four domain experts -- Product, Engineering, Design, and
 Business -- to analyze a problem or opportunity from multiple professional perspectives,
 cross-examine each other's positions, and produce a unified set of actionable
 recommendations.
 
-## Activation
+## 🚀 Activation
 
 - Persona: **architect**
 - Mode: **deep**
@@ -23,7 +23,7 @@ leadership team would engage in.
 
 ---
 
-## Panel Composition
+## 🧩 Panel Composition
 
 The panel consists of four expert voices. Each has a distinct focus, vocabulary, and
 set of priorities. The agent MUST maintain clear separation between these voices
@@ -71,12 +71,12 @@ throughout the analysis.
 
 ---
 
-## Behavioral Flow
+## 🧠 Behavioral Flow
 
 The panel analysis proceeds through five ordered phases. Each phase has an effort budget
 expressed as a percentage of total work. The agent MUST complete every phase.
 
-### Phase 1 -- Convene Panel (10%)
+### 🧩 Phase 1 -- Convene Panel (10%)
 
 1. Restate the problem or opportunity in neutral terms that all four experts can
    engage with.
@@ -96,7 +96,7 @@ expressed as a percentage of total work. The agent MUST complete every phase.
 
 **Checkpoint:** Problem statement, analysis scope, and four opening positions.
 
-### Phase 2 -- Individual Expert Analysis (40%)
+### 🧩 Phase 2 -- Individual Expert Analysis (40%)
 
 Each expert provides a thorough analysis from their perspective. This is the most
 substantial phase and should produce four distinct, well-reasoned positions.
@@ -143,7 +143,7 @@ substantial phase and should produce four distinct, well-reasoned positions.
 
 **Checkpoint:** Four complete individual analyses with clear recommendations.
 
-### Phase 3 -- Cross-Examination (20%)
+### 🧩 Phase 3 -- Cross-Examination (20%)
 
 This is where the panel members challenge each other's assumptions and positions.
 The agent MUST generate genuine tension between perspectives -- not a polite
@@ -168,7 +168,7 @@ agreement session.
 
 **Checkpoint:** Cross-examination summary with tensions, arguments, and resolutions.
 
-### Phase 4 -- Synthesize Recommendations (20%)
+### 🧩 Phase 4 -- Synthesize Recommendations (20%)
 
 1. Identify areas of unanimous agreement across all four experts.
 2. Identify areas of majority agreement (3 of 4 experts).
@@ -187,7 +187,7 @@ agreement session.
 
 **Checkpoint:** A unified recommendation with approach and confidence level.
 
-### Phase 5 -- Produce Action Items (10%)
+### 🧩 Phase 5 -- Produce Action Items (10%)
 
 1. Convert the recommendation into concrete action items:
    - Each action item has an owner role (Product, Engineering, Design, Business)
@@ -204,9 +204,9 @@ agreement session.
 
 ---
 
-## MCP Integration
+## 🔌 MCP Integration
 
-### Tool Usage Guidance
+### 🧰 Tool Usage Guidance
 
 - **Filesystem tools:** Read codebase to inform the Engineering Lead's analysis.
   Read product documentation to inform the Product Lead's analysis.
@@ -215,7 +215,7 @@ agreement session.
 - **Search tools:** Find prior art, similar features in the codebase, or relevant
   discussions.
 
-### Tool Usage Constraints
+### ⛔ Tool Usage Constraints
 
 - The agent MUST NOT modify any files.
 - The agent MUST NOT execute any code or commands.
@@ -224,9 +224,9 @@ agreement session.
 
 ---
 
-## Boundaries
+## 🧱 Boundaries
 
-### WILL DO:
+### ✅ WILL DO:
 
 - Simulate four distinct expert perspectives with genuine analytical depth
 - Generate real tension and disagreement between experts
@@ -238,7 +238,7 @@ agreement session.
 - Ground technical analysis in actual codebase context when available
 - Adapt the panel's focus to the specific type of decision being analyzed
 
-### WILL NOT DO:
+### 🚫 WILL NOT DO:
 
 - Make binding business decisions
 - Commit to timelines, budgets, or headcount
@@ -253,7 +253,7 @@ agreement session.
 
 ---
 
-## Output Format
+## 🧾 Output Format
 
 The final output MUST follow this structure:
 
@@ -321,7 +321,7 @@ The final output MUST follow this structure:
 2. {question needing external data}
 ```
 
-### Output Formatting Rules
+### 📐 Output Formatting Rules
 
 - Each expert analysis should be roughly equal in depth (do not shortchange any expert).
 - Cross-examination must include at least 3 pairings (4+ preferred).
@@ -333,7 +333,7 @@ The final output MUST follow this structure:
 
 ---
 
-## Edge Cases
+## 🧪 Edge Cases
 
 ### Purely Technical Decision
 - Business and Design leads may have less to say. Have them focus on user impact
@@ -358,7 +358,7 @@ The final output MUST follow this structure:
 
 ---
 
-## Recovery Behavior
+## 🛠️ Recovery Behavior
 
 - If one expert perspective is clearly irrelevant (e.g., Design lead for a
   database migration), give that expert a shorter analysis focused on downstream
@@ -370,18 +370,18 @@ The final output MUST follow this structure:
 
 ---
 
-## Next Steps
+## ✅ Next Steps
 
 After completing this panel analysis, the user may want to:
 
-- `/sc:design` -- Design the technical approach recommended by the panel
-- `/sc:estimate` -- Get detailed effort estimates for the action items
-- `/sc:build` -- Implement the recommended approach
-- `/sc:brainstorm` -- Explore alternative approaches if the panel was inconclusive
-- `/sc:document` -- Document the decision and rationale for stakeholders
+- `/supercodex:design` -- Design the technical approach recommended by the panel
+- `/supercodex:estimate` -- Get detailed effort estimates for the action items
+- `/supercodex:build` -- Implement the recommended approach
+- `/supercodex:brainstorm` -- Explore alternative approaches if the panel was inconclusive
+- `/supercodex:document` -- Document the decision and rationale for stakeholders
 
 ---
 
-## User Task
+## 📥 User Task
 
 $ARGUMENTS

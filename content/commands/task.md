@@ -1,13 +1,13 @@
-# /sc:task
+# /supercodex:task
 
-## Purpose
+## 🎯 Purpose
 Parse a task description, decompose it into actionable steps, estimate effort, prioritize and sequence the steps, and produce a clear execution plan.
 
-## Activation
+## 🚀 Activation
 - Persona: architect
 - Mode: balanced
 
-## Context
+## 🧭 Context
 Effective task management is the difference between making steady progress and
 spinning in circles. Developers often carry a vague sense of what needs to be
 done without a concrete plan of attack. The task command transforms a loose
@@ -16,12 +16,12 @@ estimates, dependencies, and checkpoints. It does not execute the work -- it
 creates the roadmap.
 
 The task command integrates with the broader SuperCodex workflow:
-- `/sc:spawn` feeds sub-tasks into `/sc:task` for detailed planning.
-- `/sc:save` persists task state across sessions.
-- `/sc:workflow` provides the process context for prioritization.
-- `/sc:test` verifies the outcomes of completed tasks.
+- `/supercodex:spawn` feeds sub-tasks into `/supercodex:task` for detailed planning.
+- `/supercodex:save` persists task state across sessions.
+- `/supercodex:workflow` provides the process context for prioritization.
+- `/supercodex:test` verifies the outcomes of completed tasks.
 
-## Behavioral Flow
+## 🧠 Behavioral Flow
 
 ### Step 1 -- Parse Task Description (10% effort)
 
@@ -82,7 +82,7 @@ The task command integrates with the broader SuperCodex workflow:
    - **S**: 15-30 minutes. Small change, minimal research.
    - **M**: 30-60 minutes. Moderate change, some research or iteration.
    - **L**: 1-2 hours. Significant change, requires careful thought.
-   - **XL**: 2+ hours. Consider decomposing further with `/sc:spawn`.
+   - **XL**: 2+ hours. Consider decomposing further with `/supercodex:spawn`.
 2. Apply these estimation heuristics:
    - Reading and understanding code: S-M depending on codebase familiarity.
    - Writing new code with tests: M-L depending on complexity.
@@ -91,7 +91,7 @@ The task command integrates with the broader SuperCodex workflow:
    - Configuration changes: XS-S unless debugging is expected.
    - Code review preparation: S.
 3. Flag any step estimated as XL:
-   - "STEP-07 is estimated as XL. Consider running `/sc:spawn` to decompose
+   - "STEP-07 is estimated as XL. Consider running `/supercodex:spawn` to decompose
      it further."
 4. Calculate the total estimated effort:
    - Sum of all steps using midpoint values (XS=10m, S=22m, M=45m, L=90m, XL=180m).
@@ -100,7 +100,7 @@ The task command integrates with the broader SuperCodex workflow:
 5. Add a contingency buffer:
    - Under 2 hours total: add 20% buffer.
    - 2-8 hours total: add 30% buffer.
-   - Over 8 hours total: add 40% buffer and recommend `/sc:spawn`.
+   - Over 8 hours total: add 40% buffer and recommend `/supercodex:spawn`.
 
 ### Step 4 -- Prioritize and Sequence (25% effort)
 
@@ -121,7 +121,7 @@ The task command integrates with the broader SuperCodex workflow:
    - What to verify: "All existing tests still pass."
    - How to verify: "Run `npm test` and check for zero failures."
    - What to do if verification fails: "Investigate the failure before proceeding.
-     Use `/sc:troubleshoot` if needed."
+     Use `/supercodex:troubleshoot` if needed."
 4. Identify optional steps that can be skipped under time pressure:
    - Mark them with `[OPTIONAL]`.
    - Explain the tradeoff: "Skipping this reduces coverage but saves 30 minutes."
@@ -178,9 +178,9 @@ The task command integrates with the broader SuperCodex workflow:
    - The total effort is reasonable for the task scope.
 3. If the plan has issues, fix them and note the corrections.
 
-## MCP Integration
+## 🔌 MCP Integration
 
-### Tool Usage Guidance
+### 🧰 Tool Usage Guidance
 - **File system tools**: Use `read_file` to load existing task definitions,
   saved sessions, or prior execution plans.
 - **Search tools**: Use `grep` to find related tasks, tests, or documentation
@@ -200,9 +200,9 @@ The task command integrates with the broader SuperCodex workflow:
 - If the task scope cannot be estimated (too novel or too uncertain), flag
   it explicitly and recommend a spike/research step first.
 
-## Boundaries
+## 🧱 Boundaries
 
-### WILL DO:
+### ✅ WILL DO:
 - Break down tasks into actionable, atomic steps.
 - Estimate effort for each step using t-shirt sizes.
 - Sequence steps based on dependencies, risk, and value.
@@ -213,7 +213,7 @@ The task command integrates with the broader SuperCodex workflow:
 - Suggest further decomposition for XL steps.
 - Create structured execution plans.
 
-### WILL NOT DO:
+### 🚫 WILL NOT DO:
 - Execute any task steps (no code changes, no tests, no commits).
 - Make scope decisions (adding or removing requirements).
 - Assign calendar dates or deadlines.
@@ -222,7 +222,7 @@ The task command integrates with the broader SuperCodex workflow:
 - Create tasks for work the user did not request.
 - Prioritize based on business value (only technical sequencing).
 
-## Output Format
+## 🧾 Output Format
 
 ### Standard Plan Output
 The primary output is the execution plan document described in Step 5.
@@ -248,23 +248,23 @@ Total: ~1.5 hours (with buffer)
   steps 4+ are blocked."
 - **Recurring task**: If the task is something done repeatedly, suggest
   creating a workflow: "This task pattern recurs. Consider using
-  `/sc:workflow` to formalize it."
+  `/supercodex:workflow` to formalize it."
 - **Underspecified task**: "The task description lacks enough detail to create
   a reliable plan. Clarify: {specific questions}."
 
-## Next Steps
+## ✅ Next Steps
 After creating a task plan, the user may want to:
 - Begin executing the first step.
-- `/sc:spawn` -- Further decompose any XL steps.
-- `/sc:save` -- Persist the plan for future sessions.
-- `/sc:test` -- Plan the testing strategy in detail.
-- `/sc:spec-panel` -- Review the approach before starting implementation.
+- `/supercodex:spawn` -- Further decompose any XL steps.
+- `/supercodex:save` -- Persist the plan for future sessions.
+- `/supercodex:test` -- Plan the testing strategy in detail.
+- `/supercodex:spec-panel` -- Review the approach before starting implementation.
 
-## Examples
+## 🧷 Examples
 
 ### Example 1: Feature Task
 ```
-User: /sc:task Add pagination to the /api/users endpoint
+User: /supercodex:task Add pagination to the /api/users endpoint
 
 Agent:
 Task: Add Pagination to /api/users Endpoint
@@ -297,7 +297,7 @@ Effort Summary: ~3.5 hours (with 30% buffer)
 
 ### Example 2: Bug Fix Task
 ```
-User: /sc:task Fix the race condition in the session cleanup job
+User: /supercodex:task Fix the race condition in the session cleanup job
 
 Agent: [produces plan focusing on reproduction, root cause analysis,
   fix implementation, and regression testing]
@@ -305,7 +305,7 @@ Agent: [produces plan focusing on reproduction, root cause analysis,
 
 ### Example 3: Underspecified Task
 ```
-User: /sc:task authentication
+User: /supercodex:task authentication
 
 Agent: The task description lacks enough detail to create a reliable plan.
 Please clarify:
@@ -314,7 +314,7 @@ Please clarify:
   - What is the scope (backend only, full stack, single endpoint)?
 ```
 
-## Argument Handling
+## 🧷 Argument Handling
 
 The `$ARGUMENTS` string should contain the task description.
 
@@ -327,7 +327,7 @@ The `$ARGUMENTS` string should contain the task description.
 
 If `$ARGUMENTS` is empty, ask the user to describe the task.
 
-## Quality Checklist
+## 📋 Quality Checklist
 Before finalizing the plan, verify:
 - [ ] Every step starts with a verb and is actionable.
 - [ ] Every step has a clear deliverable.
@@ -338,5 +338,5 @@ Before finalizing the plan, verify:
 - [ ] The total effort estimate includes a buffer.
 - [ ] Optional steps are clearly marked.
 
-## User Task
+## 📥 User Task
 $ARGUMENTS

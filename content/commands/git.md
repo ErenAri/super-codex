@@ -1,13 +1,13 @@
-# /sc:git
+# /supercodex:git
 
-## Purpose
+## 🎯 Purpose
 
 Execute git operations safely and efficiently based on the user's intent, planning
 multi-step git workflows, verifying state before and after each operation, and
 providing clear feedback about what changed -- with strong safeguards against
 destructive operations.
 
-## Activation
+## 🚀 Activation
 
 - Persona: **shipper**
 - Mode: **fast**
@@ -23,7 +23,7 @@ prevent destructive mistakes.
 
 ---
 
-## Safety Principles
+## 🛡️ Safety Principles
 
 Git operations can lose work if executed carelessly. This command follows strict safety
 principles:
@@ -42,13 +42,13 @@ principles:
 
 ---
 
-## Behavioral Flow
+## 🧠 Behavioral Flow
 
 The git operation proceeds through five ordered phases. Each phase has an effort budget
 expressed as a percentage of total work. The agent MUST touch every phase, though for
 simple operations (like a single commit) the phases may be brief.
 
-### Phase 1 -- Understand Intent (10%)
+### 🧩 Phase 1 -- Understand Intent (10%)
 
 1. Parse the user's request to determine the git operation(s) needed:
 
@@ -84,7 +84,7 @@ simple operations (like a single commit) the phases may be brief.
 
 **Checkpoint:** Clear understanding of intent, scope, and risk level.
 
-### Phase 2 -- Check Status (15%)
+### 🧩 Phase 2 -- Check Status (15%)
 
 1. Run `git status` to understand current state:
    - Current branch name
@@ -113,7 +113,7 @@ simple operations (like a single commit) the phases may be brief.
 
 **Checkpoint:** Full understanding of current git state and any obstacles.
 
-### Phase 3 -- Plan Git Operations (25%)
+### 🧩 Phase 3 -- Plan Git Operations (25%)
 
 1. Build the operation plan as an ordered list of git commands.
 2. For each command in the plan:
@@ -165,7 +165,7 @@ simple operations (like a single commit) the phases may be brief.
 
 **Checkpoint:** Complete operation plan with commands, explanations, and risk notes.
 
-### Phase 4 -- Execute Safely (35%)
+### 🧩 Phase 4 -- Execute Safely (35%)
 
 1. Execute the planned commands in order.
 2. After each command:
@@ -207,7 +207,7 @@ simple operations (like a single commit) the phases may be brief.
 
 **Checkpoint:** All operations executed successfully or stopped at first failure.
 
-### Phase 5 -- Verify Result (15%)
+### 🧩 Phase 5 -- Verify Result (15%)
 
 1. Run `git status` to show the final state.
 2. Run `git log --oneline -5` to show recent history.
@@ -231,9 +231,9 @@ simple operations (like a single commit) the phases may be brief.
 
 ---
 
-## MCP Integration
+## 🔌 MCP Integration
 
-### Tool Usage Guidance
+### 🧰 Tool Usage Guidance
 
 - **Bash/Shell tools:** Execute git commands. This is the primary tool for this command.
 - **Filesystem tools:** Read files to inspect merge conflicts or review staged changes.
@@ -241,7 +241,7 @@ simple operations (like a single commit) the phases may be brief.
 - **Search tools:** Find sensitive files (credentials, env files) that should not
   be committed.
 
-### Tool Usage Constraints
+### ⛔ Tool Usage Constraints
 
 - The agent MUST check `git status` before every destructive operation.
 - The agent MUST NOT use `git add -A` or `git add .` without first checking for
@@ -251,7 +251,7 @@ simple operations (like a single commit) the phases may be brief.
 - The agent SHOULD use `git status` and `git log` for verification after operations.
 - The agent MUST NOT push to remote without explicit user intent.
 
-### Efficiency Guidelines
+### ⚡ Efficiency Guidelines
 
 - Chain non-destructive read commands (status, log, diff) in parallel.
 - Execute write commands sequentially with verification between each.
@@ -260,9 +260,9 @@ simple operations (like a single commit) the phases may be brief.
 
 ---
 
-## Boundaries
+## 🧱 Boundaries
 
-### WILL DO:
+### ✅ WILL DO:
 
 - Stage files for commit (preferring specific files over wildcard adds)
 - Create commits with well-formed messages
@@ -278,7 +278,7 @@ simple operations (like a single commit) the phases may be brief.
 - Resolve obvious merge conflicts
 - Suggest safe alternatives to destructive operations
 
-### WILL NOT DO:
+### 🚫 WILL NOT DO:
 
 - Force push without explicit user confirmation
 - Force push to main/master/develop/release branches (even with confirmation, warn)
@@ -294,7 +294,7 @@ simple operations (like a single commit) the phases may be brief.
 
 ---
 
-## Output Format
+## 🧾 Output Format
 
 The agent executes git commands and provides a summary:
 
@@ -323,7 +323,7 @@ The agent executes git commands and provides a summary:
 - {any warnings, suggestions, or follow-up actions}
 ```
 
-### Output Formatting Rules
+### 📐 Output Formatting Rules
 
 - Pre-state and post-state are mandatory.
 - Every operation performed must be listed with its result.
@@ -333,7 +333,7 @@ The agent executes git commands and provides a summary:
 
 ---
 
-## Edge Cases
+## 🧪 Edge Cases
 
 ### Empty Repository
 - `git log` will fail. Use `git status` only for state checking.
@@ -367,7 +367,7 @@ The agent executes git commands and provides a summary:
 
 ---
 
-## Commit Message Conventions
+## 🧩 Commit Message Conventions
 
 When generating commit messages, follow this priority:
 
@@ -392,7 +392,7 @@ When generating commit messages, follow this priority:
 
 ---
 
-## Recovery Behavior
+## 🛠️ Recovery Behavior
 
 - If a git command fails, show the error output and explain what went wrong.
 - Suggest recovery steps based on the error:
@@ -408,17 +408,17 @@ When generating commit messages, follow this priority:
 
 ---
 
-## Next Steps
+## ✅ Next Steps
 
 After completing git operations, the user may want to:
 
-- `/sc:build` -- Continue implementing features
-- `/sc:cleanup` -- Clean up code before committing
-- `/sc:analyze` -- Review the changes being committed
-- `/sc:document` -- Update documentation alongside code changes
+- `/supercodex:build` -- Continue implementing features
+- `/supercodex:cleanup` -- Clean up code before committing
+- `/supercodex:analyze` -- Review the changes being committed
+- `/supercodex:document` -- Update documentation alongside code changes
 
 ---
 
-## User Task
+## 📥 User Task
 
 $ARGUMENTS

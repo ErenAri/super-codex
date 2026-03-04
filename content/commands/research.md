@@ -1,13 +1,13 @@
-# /sc:research
+# /supercodex:research
 
-## Purpose
+## 🎯 Purpose
 
 Conduct deep, methodical research on a technical topic, technology, pattern, or best
 practice, gathering evidence from multiple sources, analyzing it critically, synthesizing
 findings into a coherent understanding, and presenting conclusions with clear confidence
 levels and supporting evidence.
 
-## Activation
+## 🚀 Activation
 
 - Persona: **architect**
 - Mode: **deep**
@@ -23,14 +23,14 @@ rigorous research output that can confidently inform technical decisions.
 
 ---
 
-## Behavioral Flow
+## 🧠 Behavioral Flow
 
 The research process proceeds through five ordered phases. Each phase has an effort budget
 expressed as a percentage of total work. The agent MUST touch every phase and MUST NOT
 spend less than half the budgeted effort on any phase. If a phase completes early the
 surplus effort rolls forward to the next phase.
 
-### Phase 1 -- Define Research Question (10%)
+### 🧩 Phase 1 -- Define Research Question (10%)
 
 1. Parse the user's research request:
    - What specific question or topic needs to be researched?
@@ -58,7 +58,7 @@ surplus effort rolls forward to the next phase.
 **Checkpoint:** A clearly defined research question with sub-questions, scope,
 and evaluation framework.
 
-### Phase 2 -- Gather Sources (25%)
+### 🧩 Phase 2 -- Gather Sources (25%)
 
 1. Identify and consult available information sources:
    - **Agent's trained knowledge:** Technical concepts, patterns, and practices
@@ -93,7 +93,7 @@ and evaluation framework.
 **Checkpoint:** A comprehensive collection of organized evidence from multiple sources,
 tagged by quality and grouped by sub-question.
 
-### Phase 3 -- Analyze Evidence (25%)
+### 🧩 Phase 3 -- Analyze Evidence (25%)
 
 1. Evaluate each piece of evidence:
    - **Credibility:** Is the source authoritative? Is the author knowledgeable?
@@ -135,7 +135,7 @@ tagged by quality and grouped by sub-question.
 **Checkpoint:** Evidence has been critically analyzed, conflicts resolved, findings
 assessed for strength, and applied to project context.
 
-### Phase 4 -- Synthesize Findings (25%)
+### 🧩 Phase 4 -- Synthesize Findings (25%)
 
 1. Build a coherent narrative from the analyzed evidence:
    - Start with the most fundamental findings (background, definitions).
@@ -169,7 +169,7 @@ assessed for strength, and applied to project context.
 **Checkpoint:** A coherent synthesis that answers the research question with
 conclusions, confidence levels, and actionable insights.
 
-### Phase 5 -- Present Conclusions (15%)
+### 🧩 Phase 5 -- Present Conclusions (15%)
 
 1. Structure the presentation for maximum utility:
    - Lead with the headline conclusion and its confidence level.
@@ -199,9 +199,9 @@ honest limitations, and actionable conclusions.
 
 ---
 
-## MCP Integration
+## 🔌 MCP Integration
 
-### Tool Usage Guidance
+### 🧰 Tool Usage Guidance
 
 - **Filesystem tools:** Read project files to understand context, existing patterns,
   and constraints that affect how findings apply.
@@ -212,7 +212,7 @@ honest limitations, and actionable conclusions.
 - **GitHub tools:** If available, check repository activity, issue discussions,
   and release notes for libraries or tools being researched.
 
-### Tool Usage Constraints
+### ⛔ Tool Usage Constraints
 
 - The agent MUST NOT modify any files during research.
 - The agent MUST NOT install dependencies or execute code.
@@ -221,7 +221,7 @@ honest limitations, and actionable conclusions.
 - The agent SHOULD use fetch tools to access current documentation when available
   and when the topic requires up-to-date information.
 
-### Efficiency Guidelines
+### ⚡ Efficiency Guidelines
 
 - Start with the agent's trained knowledge for established topics before seeking
   external sources.
@@ -236,9 +236,9 @@ honest limitations, and actionable conclusions.
 
 ---
 
-## Boundaries
+## 🧱 Boundaries
 
-### WILL DO:
+### ✅ WILL DO:
 
 - Research any technical topic, technology, pattern, or practice
 - Gather information from multiple sources (knowledge, code, docs, web)
@@ -253,7 +253,7 @@ honest limitations, and actionable conclusions.
 - Provide references and pointers for further reading
 - Adapt research depth to the question's complexity
 
-### WILL NOT DO:
+### 🚫 WILL NOT DO:
 
 - Implement solutions based on research findings
 - Make decisions without presenting the evidence for the user to evaluate
@@ -269,7 +269,7 @@ honest limitations, and actionable conclusions.
 
 ---
 
-## Output Format
+## 🧾 Output Format
 
 ```markdown
 ## Research Report: {topic}
@@ -327,7 +327,7 @@ honest limitations, and actionable conclusions.
 - {assumption made}
 ```
 
-### Output Formatting Rules
+### 📐 Output Formatting Rules
 
 - Confidence levels use: high, medium, low.
 - Evidence quality uses: H (high), M (medium), L (low).
@@ -339,7 +339,7 @@ honest limitations, and actionable conclusions.
 
 ---
 
-## Edge Cases
+## 🧪 Edge Cases
 
 ### Topic Is Outside Agent's Training Knowledge
 
@@ -380,12 +380,12 @@ honest limitations, and actionable conclusions.
 
 - Complete the research phase fully.
 - Present findings without implementing.
-- Suggest using /sc:implement or /sc:build as the next step.
+- Suggest using /supercodex:implement or /supercodex:build as the next step.
 - Provide implementation-relevant details in the actionable insights section.
 
 ---
 
-## Recovery Behavior
+## 🛠️ Recovery Behavior
 
 - If web fetch tools are unavailable and the topic requires current data, rely on
   trained knowledge and clearly state the limitation.
@@ -398,18 +398,18 @@ honest limitations, and actionable conclusions.
 
 ---
 
-## Next Steps
+## ✅ Next Steps
 
 After completing research, the user may want to:
 
-- `/sc:recommend` -- Get ranked recommendations based on research findings
-- `/sc:implement` -- Implement a solution informed by the research
-- `/sc:build` -- Build a prototype to validate research conclusions
-- `/sc:analyze` -- Analyze how research findings apply to the existing codebase
-- `/sc:brainstorm` -- Generate ideas building on the research insights
+- `/supercodex:recommend` -- Get ranked recommendations based on research findings
+- `/supercodex:implement` -- Implement a solution informed by the research
+- `/supercodex:build` -- Build a prototype to validate research conclusions
+- `/supercodex:analyze` -- Analyze how research findings apply to the existing codebase
+- `/supercodex:brainstorm` -- Generate ideas building on the research insights
 
 ---
 
-## User Task
+## 📥 User Task
 
 $ARGUMENTS

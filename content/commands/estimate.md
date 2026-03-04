@@ -1,13 +1,13 @@
-# /sc:estimate
+# /supercodex:estimate
 
-## Purpose
+## 🎯 Purpose
 
 Produce a rigorous effort estimate for a feature, project, or set of tasks by
 decomposing scope into components, sizing each component individually, identifying
 risks and unknowns, calculating ranges with confidence intervals, and presenting the
 estimate in multiple formats suitable for different audiences.
 
-## Activation
+## 🚀 Activation
 
 - Persona: **architect**
 - Mode: **deep**
@@ -23,7 +23,7 @@ honestly rather than presenting false precision.
 
 ---
 
-## Estimation Philosophy
+## 📏 Estimation Philosophy
 
 This command follows these principles:
 
@@ -42,13 +42,13 @@ This command follows these principles:
 
 ---
 
-## Behavioral Flow
+## 🧠 Behavioral Flow
 
 The estimation proceeds through five ordered phases. Each phase has an effort budget
 expressed as a percentage of total work. The agent MUST touch every phase and MUST
 resist the urge to provide a number before completing the analysis.
 
-### Phase 1 -- Decompose Scope (20%)
+### 🧩 Phase 1 -- Decompose Scope (20%)
 
 1. Break the requested work into a **Work Breakdown Structure (WBS)**:
    - Level 1: Major deliverables or milestones
@@ -72,7 +72,7 @@ resist the urge to provide a number before completing the analysis.
 
 **Checkpoint:** A complete WBS with tasks typed, described, and dependency-mapped.
 
-### Phase 2 -- Size Each Component (25%)
+### 🧩 Phase 2 -- Size Each Component (25%)
 
 1. For each Level 3 task, estimate using **three-point estimation**:
    - **Optimistic (O):** Everything goes smoothly, no surprises
@@ -112,7 +112,7 @@ resist the urge to provide a number before completing the analysis.
 **Checkpoint:** Every task has three-point estimates, T-shirt sizes, and
 optional story points.
 
-### Phase 3 -- Identify Risks (20%)
+### 🧩 Phase 3 -- Identify Risks (20%)
 
 1. Categorize risks:
 
@@ -156,7 +156,7 @@ optional story points.
 
 **Checkpoint:** Risk inventory with probabilities, impacts, and calculated buffer.
 
-### Phase 4 -- Calculate Ranges (20%)
+### 🧩 Phase 4 -- Calculate Ranges (20%)
 
 1. Aggregate task estimates into deliverable-level and project-level totals:
    ```
@@ -189,7 +189,7 @@ optional story points.
 
 **Checkpoint:** Complete estimate with ranges at multiple confidence levels.
 
-### Phase 5 -- Present Estimate (15%)
+### 🧩 Phase 5 -- Present Estimate (15%)
 
 1. Create the executive summary:
    - One-paragraph summary of the estimate
@@ -221,9 +221,9 @@ optional story points.
 
 ---
 
-## MCP Integration
+## 🔌 MCP Integration
 
-### Tool Usage Guidance
+### 🧰 Tool Usage Guidance
 
 - **Filesystem tools:** Read source code to understand the complexity of existing
   systems being modified. Read configuration to assess integration complexity.
@@ -231,14 +231,14 @@ optional story points.
 - **Search tools:** Find similar implementations in the codebase to calibrate
   estimates. Discover integration points and dependencies.
 
-### Tool Usage Constraints
+### ⛔ Tool Usage Constraints
 
 - The agent MUST NOT modify any files.
 - The agent MUST NOT execute any code or commands.
 - The agent SHOULD read relevant code to improve estimate accuracy.
 - The agent SHOULD look for similar completed work to calibrate estimates.
 
-### Efficiency Guidelines
+### ⚡ Efficiency Guidelines
 
 - Read entry points and interfaces rather than full implementations when
   assessing complexity.
@@ -248,9 +248,9 @@ optional story points.
 
 ---
 
-## Boundaries
+## 🧱 Boundaries
 
-### WILL DO:
+### ✅ WILL DO:
 
 - Decompose scope into a detailed Work Breakdown Structure
 - Provide three-point estimates (optimistic, most likely, pessimistic)
@@ -265,7 +265,7 @@ optional story points.
 - Flag tasks that should be decomposed further
 - Acknowledge assumptions explicitly
 
-### WILL NOT DO:
+### 🚫 WILL NOT DO:
 
 - Commit to specific deadlines (provide ranges, not dates)
 - Ignore uncertainty or present false precision
@@ -280,7 +280,7 @@ optional story points.
 
 ---
 
-## Output Format
+## 🧾 Output Format
 
 The final output MUST follow this structure:
 
@@ -340,7 +340,7 @@ Best   50%  Expected    50%    Worst
 - {trigger 2}
 ```
 
-### Output Formatting Rules
+### 📐 Output Formatting Rules
 
 - Every task must have all three estimates (O, M, P).
 - Risks must have probability and impact quantified.
@@ -351,7 +351,7 @@ Best   50%  Expected    50%    Worst
 
 ---
 
-## Edge Cases
+## 🧪 Edge Cases
 
 ### Very Small Task (<1 day)
 - Still provide a range but acknowledge low variance.
@@ -384,7 +384,7 @@ Best   50%  Expected    50%    Worst
 
 ---
 
-## Recovery Behavior
+## 🛠️ Recovery Behavior
 
 - If the scope is too vague to decompose, ask at most 2 clarifying questions,
   then provide a high-level estimate with wide ranges and a note about precision.
@@ -395,18 +395,18 @@ Best   50%  Expected    50%    Worst
 
 ---
 
-## Next Steps
+## ✅ Next Steps
 
 After completing this estimate, the user may want to:
 
-- `/sc:design` -- Design the technical approach before building
-- `/sc:build` -- Begin implementation of the estimated work
-- `/sc:business-panel` -- Evaluate whether the effort is justified by the value
-- `/sc:brainstorm` -- Explore alternative approaches that might be cheaper
-- `/sc:analyze` -- Deep-dive into the codebase areas that drive the highest estimates
+- `/supercodex:design` -- Design the technical approach before building
+- `/supercodex:build` -- Begin implementation of the estimated work
+- `/supercodex:business-panel` -- Evaluate whether the effort is justified by the value
+- `/supercodex:brainstorm` -- Explore alternative approaches that might be cheaper
+- `/supercodex:analyze` -- Deep-dive into the codebase areas that drive the highest estimates
 
 ---
 
-## User Task
+## 📥 User Task
 
 $ARGUMENTS

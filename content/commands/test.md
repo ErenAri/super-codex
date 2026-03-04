@@ -1,13 +1,13 @@
-# /sc:test
+# /supercodex:test
 
-## Purpose
+## 🎯 Purpose
 Analyze code under test, identify comprehensive test cases including edge cases and failure modes, generate test code, execute tests, and report coverage and results.
 
-## Activation
+## 🚀 Activation
 - Persona: reviewer
 - Mode: safe
 
-## Context
+## 🧭 Context
 Testing is the safety net of software development. Untested code is unreliable
 code, but poorly designed tests provide false confidence that is worse than no
 tests at all. The test command approaches test generation with the rigor of a
@@ -20,7 +20,7 @@ things. It will write test files but will not modify production code. It will
 run tests but will not change test configuration without confirmation. It will
 report coverage gaps but will not inflate coverage with meaningless assertions.
 
-## Behavioral Flow
+## 🧠 Behavioral Flow
 
 ### Step 1 -- Analyze Code Under Test (15% effort)
 
@@ -190,9 +190,9 @@ report coverage gaps but will not inflate coverage with meaningless assertions.
    be meaningfully tested (e.g., trivial getters, framework boilerplate)
    and suggest excluding it from coverage metrics.
 
-## MCP Integration
+## 🔌 MCP Integration
 
-### Tool Usage Guidance
+### 🧰 Tool Usage Guidance
 - **File system tools**: Use `read_file` to read the code under test and
   existing test files. Use `write_file` to write new test files.
 - **Shell tools**: Use shell commands to run the test suite and coverage tools.
@@ -215,9 +215,9 @@ report coverage gaps but will not inflate coverage with meaningless assertions.
   unavailable services), report clearly and suggest mock alternatives.
 - If the coverage tool is not available, skip coverage reporting and note it.
 
-## Boundaries
+## 🧱 Boundaries
 
-### WILL DO:
+### ✅ WILL DO:
 - Analyze code to identify all testable paths and behaviors.
 - Generate comprehensive test cases including edge cases and failure modes.
 - Write test code following the project's existing conventions.
@@ -228,7 +228,7 @@ report coverage gaps but will not inflate coverage with meaningless assertions.
 - Identify dead code or unreachable paths during analysis.
 - Recommend test framework setup if none exists.
 
-### WILL NOT DO:
+### 🚫 WILL NOT DO:
 - Modify production code to make it more testable (suggest but do not apply).
 - Skip edge cases or error handling tests to save time.
 - Write tests that test implementation details rather than behavior.
@@ -238,7 +238,7 @@ report coverage gaps but will not inflate coverage with meaningless assertions.
 - Ignore test failures or mark them as "expected" without investigation.
 - Mock the code under test itself.
 
-## Output Format
+## 🧾 Output Format
 
 ### Standard Test Output
 ```
@@ -277,19 +277,19 @@ Coverage:
   isolated testing difficult. Recommend refactoring to inject dependencies
   before writing comprehensive tests."
 
-## Next Steps
+## ✅ Next Steps
 After test generation, the user may want to:
 - Fix any production bugs revealed by the tests.
-- `/sc:troubleshoot` -- Investigate test failures.
-- `/sc:task` -- Plan additional testing work.
-- `/sc:save` -- Persist the testing progress.
-- `/sc:workflow` -- Integrate testing into the development workflow.
+- `/supercodex:troubleshoot` -- Investigate test failures.
+- `/supercodex:task` -- Plan additional testing work.
+- `/supercodex:save` -- Persist the testing progress.
+- `/supercodex:workflow` -- Integrate testing into the development workflow.
 
-## Examples
+## 🧷 Examples
 
 ### Example 1: Test a Utility Function
 ```
-User: /sc:test src/utils/parse-url.ts
+User: /supercodex:test src/utils/parse-url.ts
 
 Agent:
 Analyzing src/utils/parse-url.ts...
@@ -312,13 +312,13 @@ Coverage: Lines 95% | Branches 87% | Functions 100%
 
 ### Example 2: Test a Complex Module
 ```
-User: /sc:test src/auth/session-manager.ts
+User: /supercodex:test src/auth/session-manager.ts
 
 Agent: [analyzes complex module, generates extensive test suite with mocking
   of external dependencies, reports coverage and uncovered paths]
 ```
 
-## Argument Handling
+## 🧷 Argument Handling
 
 The `$ARGUMENTS` string identifies what to test.
 
@@ -334,7 +334,7 @@ The `$ARGUMENTS` string identifies what to test.
 
 If `$ARGUMENTS` is empty, ask the user what code to test.
 
-## Quality Checklist
+## 📋 Quality Checklist
 Before finalizing the test output, verify:
 - [ ] Every public function or method has at least one test.
 - [ ] Edge cases and error paths are tested, not just happy paths.
@@ -345,5 +345,5 @@ Before finalizing the test output, verify:
 - [ ] No production code was modified.
 - [ ] Coverage report is honest (no inflated metrics).
 
-## User Task
+## 📥 User Task
 $ARGUMENTS

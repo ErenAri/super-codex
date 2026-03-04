@@ -1,13 +1,13 @@
-# /sc:select-tool
+# /supercodex:select-tool
 
-## Purpose
+## 🎯 Purpose
 Analyze a given task and recommend the most appropriate MCP tools, CLI tools, or libraries to accomplish it, with clear rationale for each recommendation.
 
-## Activation
+## 🚀 Activation
 - Persona: architect
 - Mode: balanced
 
-## Context
+## 🧭 Context
 Modern development environments offer an abundance of tools: MCP servers expose
 structured capabilities, CLI tools provide shell-level automation, and language
 libraries offer programmatic access. Choosing the wrong tool wastes time,
@@ -20,7 +20,7 @@ This command is especially valuable when the user faces a task that could be
 approached multiple ways (e.g., file manipulation via MCP vs. shell vs. a
 scripting library) or when they need to discover tools they may not know about.
 
-## Behavioral Flow
+## 🧠 Behavioral Flow
 
 ### Step 1 -- Understand Task (20% effort)
 
@@ -128,16 +128,16 @@ scripting library) or when they need to discover tools they may not know about.
    - "If you need [specific feature], use **Tool Y** instead."
    - "If you want to avoid adding dependencies, use **Tool Z**."
 3. Include any setup steps if the recommended tool is not yet configured:
-   - MCP server: "Add to your configuration with `/sc:sc config`."
+   - MCP server: "Add to your configuration with `/supercodex:sc config`."
    - CLI tool: Provide the install command for the user's platform.
    - Library: Provide the package manager command (`npm install`, `pip install`, etc.).
 4. Note any caveats or gotchas:
    - "This tool requires Node.js 18+."
    - "This MCP server needs the GITHUB_TOKEN environment variable."
 
-## MCP Integration
+## 🔌 MCP Integration
 
-### Tool Usage Guidance
+### 🧰 Tool Usage Guidance
 - **Registry inspection**: Use `read_file` to inspect the SuperCodex registry
   catalog and determine which MCP tools are available.
 - **Config reading**: Read the main configuration file to check for installed
@@ -156,9 +156,9 @@ scripting library) or when they need to discover tools they may not know about.
   recommendations only.
 - If the user's platform cannot be determined, provide cross-platform options.
 
-## Boundaries
+## 🧱 Boundaries
 
-### WILL DO:
+### ✅ WILL DO:
 - Recommend MCP tools, CLI tools, and libraries for specific tasks.
 - Evaluate tools against structured criteria with clear rationale.
 - Provide usage examples for recommended tools.
@@ -168,7 +168,7 @@ scripting library) or when they need to discover tools they may not know about.
 - Consider platform compatibility and project constraints.
 - Rank multiple options with clear differentiation.
 
-### WILL NOT DO:
+### 🚫 WILL NOT DO:
 - Install tools, packages, or dependencies.
 - Modify project configuration or dependency files.
 - Run tools or execute commands on behalf of the user.
@@ -178,7 +178,7 @@ scripting library) or when they need to discover tools they may not know about.
 - Make purchasing decisions or recommend paid services without flagging the cost.
 - Override the user's existing tool preferences without strong justification.
 
-## Output Format
+## 🧾 Output Format
 
 ### Standard Recommendation Output
 ```
@@ -230,18 +230,18 @@ When to choose Tool C instead:
 - **Tool is installed but misconfigured**: Note the configuration issue and
   provide steps to fix it.
 
-## Next Steps
+## ✅ Next Steps
 After receiving a tool recommendation, the user may want to:
-- `/sc:task` -- Plan the work using the recommended tool.
-- `/sc:test` -- Write tests that exercise the tool integration.
-- `/sc:troubleshoot` -- Debug issues with tool setup or usage.
-- `/sc:sc tools` -- Review all available MCP tools.
+- `/supercodex:task` -- Plan the work using the recommended tool.
+- `/supercodex:test` -- Write tests that exercise the tool integration.
+- `/supercodex:troubleshoot` -- Debug issues with tool setup or usage.
+- `/supercodex:sc tools` -- Review all available MCP tools.
 
-## Examples
+## 🧷 Examples
 
 ### Example 1: File Search Task
 ```
-User: /sc:select-tool I need to find all TypeScript files that import a specific module
+User: /supercodex:select-tool I need to find all TypeScript files that import a specific module
 
 Agent:
 Task: Find TypeScript files importing a specific module.
@@ -260,7 +260,7 @@ Notes: ripgrep is already available in your environment. For AST-aware
 
 ### Example 2: API Testing
 ```
-User: /sc:select-tool I need to test a REST API with authentication
+User: /supercodex:select-tool I need to test a REST API with authentication
 
 Agent:
 Task: Test authenticated REST API endpoints.
@@ -269,7 +269,7 @@ Recommendation: **httpie** (CLI) or **rest-client MCP** (if configured)
   ...
 ```
 
-## Argument Handling
+## 🧷 Argument Handling
 
 The `$ARGUMENTS` string should contain a description of the task for which
 the user needs tool recommendations.
@@ -284,7 +284,7 @@ the user needs tool recommendations.
 
 If `$ARGUMENTS` is empty, ask the user to describe their task.
 
-## Quality Checklist
+## 📋 Quality Checklist
 Before finalizing recommendations, verify:
 - [ ] At least one recommendation is provided.
 - [ ] Each recommendation includes a concrete usage example.
@@ -293,5 +293,5 @@ Before finalizing recommendations, verify:
 - [ ] Existing project dependencies have been checked.
 - [ ] No tool is recommended solely because it is popular.
 
-## User Task
+## 📥 User Task
 $ARGUMENTS

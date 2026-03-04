@@ -1,13 +1,13 @@
-# /sc:spec-panel
+# /supercodex:spec-panel
 
-## Purpose
+## 🎯 Purpose
 Convene a multi-expert review panel to evaluate a specification from Architecture, Security, Performance, UX, and Testing perspectives, producing a consensus assessment with actionable findings.
 
-## Activation
+## 🚀 Activation
 - Persona: reviewer
 - Mode: deep
 
-## Context
+## 🧭 Context
 Specifications are the blueprints of software. A spec reviewed by only one
 perspective -- say, feature completeness -- may hide critical flaws in security,
 performance, usability, or testability. The spec-panel command simulates a
@@ -26,7 +26,7 @@ The spec-panel command is most valuable for:
 - Architecture decision records before they become irreversible.
 - Migration plans before data is moved.
 
-## Behavioral Flow
+## 🧠 Behavioral Flow
 
 ### Step 1 -- Convene Review Panel (10% effort)
 
@@ -254,12 +254,12 @@ concerns.
    major, grouped by related concerns).
 3. Estimate the total effort to address all action items.
 4. Suggest next steps:
-   - "Address action items and run `/sc:spec-panel` again for re-review."
-   - "Use `/sc:task` to track individual action items."
+   - "Address action items and run `/supercodex:spec-panel` again for re-review."
+   - "Use `/supercodex:task` to track individual action items."
 
-## MCP Integration
+## 🔌 MCP Integration
 
-### Tool Usage Guidance
+### 🧰 Tool Usage Guidance
 - **File system tools**: Use `read_file` to load specification documents
   referenced by file path.
 - **Search tools**: Use `grep` to find related specifications, ADRs, or
@@ -278,9 +278,9 @@ concerns.
 - If the spec is very long (over 1000 lines), focus on the most critical
   sections and note what was skimmed.
 
-## Boundaries
+## 🧱 Boundaries
 
-### WILL DO:
+### ✅ WILL DO:
 - Provide multi-perspective review from five domain experts.
 - Identify critical, major, minor, and informational findings.
 - Cross-examine findings for overlaps, contradictions, and tensions.
@@ -290,7 +290,7 @@ concerns.
 - Surface tradeoffs and tensions without prematurely resolving them.
 - Reference existing code or prior reviews for context.
 
-### WILL NOT DO:
+### 🚫 WILL NOT DO:
 - Rewrite the specification. The panel reviews; the author revises.
 - Make final decisions on behalf of the user. The verdict is advisory.
 - Implement any of the recommended changes.
@@ -300,7 +300,7 @@ concerns.
 - Introduce new requirements not implied by the spec.
 - Assign blame or criticize the spec author.
 
-## Output Format
+## 🧾 Output Format
 
 ### Full Panel Output
 ```
@@ -342,25 +342,25 @@ concerns.
 - **Spec has no security-relevant surface**: Security expert still reviews
   for data handling and dependency risks, but may report "no findings."
 
-## Next Steps
+## ✅ Next Steps
 After the panel review, the user may want to:
-- `/sc:task` -- Track action items from the review.
-- `/sc:spec-panel` -- Re-run the panel after addressing findings.
-- `/sc:spawn` -- Decompose the implementation into sub-tasks.
-- `/sc:save` -- Persist the review findings for future reference.
+- `/supercodex:task` -- Track action items from the review.
+- `/supercodex:spec-panel` -- Re-run the panel after addressing findings.
+- `/supercodex:spawn` -- Decompose the implementation into sub-tasks.
+- `/supercodex:save` -- Persist the review findings for future reference.
 
-## Examples
+## 🧷 Examples
 
 ### Example 1: API Spec Review
 ```
-User: /sc:spec-panel Review the user profile API spec in docs/api/user-profile.md
+User: /supercodex:spec-panel Review the user profile API spec in docs/api/user-profile.md
 
 Agent: [Loads spec, convenes panel, produces full review with findings and verdict]
 ```
 
 ### Example 2: Inline Spec Review
 ```
-User: /sc:spec-panel Review this: Users can upload avatars up to 10MB.
+User: /supercodex:spec-panel Review this: Users can upload avatars up to 10MB.
   Avatars are stored in S3 and served via CloudFront. Users can delete
   their avatar at any time.
 
@@ -380,7 +380,7 @@ Verdict: Approved with Conditions
   ...
 ```
 
-## Argument Handling
+## 🧷 Argument Handling
 
 The `$ARGUMENTS` string should contain either the spec text or a reference
 to a spec file.
@@ -394,7 +394,7 @@ to a spec file.
 
 If `$ARGUMENTS` is empty, ask the user to provide a specification.
 
-## Quality Checklist
+## 📋 Quality Checklist
 Before finalizing the panel review, verify:
 - [ ] All five expert perspectives are represented.
 - [ ] Every finding has a severity, description, impact, and recommendation.
@@ -403,5 +403,5 @@ Before finalizing the panel review, verify:
 - [ ] Contradictions between experts are surfaced, not hidden.
 - [ ] The tone is constructive and professional.
 
-## User Task
+## 📥 User Task
 $ARGUMENTS

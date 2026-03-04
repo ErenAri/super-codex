@@ -1,12 +1,12 @@
-# /sc:build
+# /supercodex:build
 
-## Purpose
+## 🎯 Purpose
 
 Implement a feature or set of requirements from specification to working, tested,
 integrated code, following a disciplined build flow that prioritizes shipping production-
 quality work in the smallest safe increments.
 
-## Activation
+## 🚀 Activation
 
 - Persona: **shipper**
 - Mode: **fast**
@@ -22,14 +22,14 @@ gets the feature shipped without unnecessary detours.
 
 ---
 
-## Behavioral Flow
+## 🧠 Behavioral Flow
 
 The build proceeds through five ordered phases. Each phase has an effort budget expressed
 as a percentage of total work. The agent MUST touch every phase. Fast mode biases toward
 spending more time on implementation and less on analysis, but never skips any phase
 entirely.
 
-### Phase 1 -- Parse Requirements (10%)
+### 🧩 Phase 1 -- Parse Requirements (10%)
 
 1. Extract the concrete deliverables from the user's request:
    - What needs to exist when this is done?
@@ -48,7 +48,7 @@ entirely.
 
 **Checkpoint:** A bullet list of deliverables, acceptance criteria, and files to touch.
 
-### Phase 2 -- Design Approach (20%)
+### 🧩 Phase 2 -- Design Approach (20%)
 
 1. Choose the implementation strategy:
    - What is the simplest approach that satisfies all acceptance criteria?
@@ -70,7 +70,7 @@ entirely.
 
 **Checkpoint:** A numbered implementation plan with file paths and approach decisions.
 
-### Phase 3 -- Implement Core (35%)
+### 🧩 Phase 3 -- Implement Core (35%)
 
 This is the main coding phase. The agent writes production-quality code.
 
@@ -100,7 +100,7 @@ This is the main coding phase. The agent writes production-quality code.
 
 **Checkpoint:** All core code is written and ready for testing.
 
-### Phase 4 -- Add Tests (20%)
+### 🧩 Phase 4 -- Add Tests (20%)
 
 1. Write tests that cover the acceptance criteria from Phase 1:
    - Each acceptance criterion should map to at least one test.
@@ -129,7 +129,7 @@ This is the main coding phase. The agent writes production-quality code.
 
 **Checkpoint:** All tests written and expected to pass.
 
-### Phase 5 -- Integrate and Verify (15%)
+### 🧩 Phase 5 -- Integrate and Verify (15%)
 
 1. Verify the feature integrates cleanly:
    - Import paths are correct
@@ -157,9 +157,9 @@ This is the main coding phase. The agent writes production-quality code.
 
 ---
 
-## MCP Integration
+## 🔌 MCP Integration
 
-### Tool Usage Guidance
+### 🧰 Tool Usage Guidance
 
 - **Filesystem tools:** Read existing code to understand patterns, write new files
   and modifications. These are the primary tools for this command.
@@ -168,7 +168,7 @@ This is the main coding phase. The agent writes production-quality code.
 - **Execution tools:** If available, run tests to verify the implementation works.
   Run linters to catch formatting issues.
 
-### Tool Usage Constraints
+### ⛔ Tool Usage Constraints
 
 - The agent MUST only modify files that are directly needed for the feature.
 - The agent MUST NOT delete files unless the requirements explicitly call for removal.
@@ -176,7 +176,7 @@ This is the main coding phase. The agent writes production-quality code.
 - The agent MUST NOT install new dependencies without explicit justification.
 - The agent SHOULD run tests after implementation if execution tools are available.
 
-### Efficiency Guidelines
+### ⚡ Efficiency Guidelines
 
 - Read the relevant existing code BEFORE writing anything. Pattern matching is faster
   than iteration.
@@ -186,9 +186,9 @@ This is the main coding phase. The agent writes production-quality code.
 
 ---
 
-## Boundaries
+## 🧱 Boundaries
 
-### WILL DO:
+### ✅ WILL DO:
 
 - Write production-quality code that implements the specified requirements
 - Follow existing codebase conventions and patterns
@@ -200,9 +200,9 @@ This is the main coding phase. The agent writes production-quality code.
 - Note any assumptions made when requirements are ambiguous
 - Provide a clear summary of all changes made
 
-### WILL NOT DO:
+### 🚫 WILL NOT DO:
 
-- Redesign existing architecture (use /sc:design for that)
+- Redesign existing architecture (use /supercodex:design for that)
 - Refactor unrelated code, even if it is adjacent to the changes
 - Add dependencies without explicit justification
 - Change code formatting in files not otherwise modified
@@ -215,7 +215,7 @@ This is the main coding phase. The agent writes production-quality code.
 
 ---
 
-## Output Format
+## 🧾 Output Format
 
 The agent produces code changes inline using the appropriate file modification tools.
 After all changes are complete, it provides a summary:
@@ -247,7 +247,7 @@ After all changes are complete, it provides a summary:
 - {any follow-up work suggested}
 ```
 
-### Output Formatting Rules
+### 📐 Output Formatting Rules
 
 - The changes table must list every file created or modified.
 - Every acceptance criterion must appear in the status checklist.
@@ -257,7 +257,7 @@ After all changes are complete, it provides a summary:
 
 ---
 
-## Edge Cases
+## 🧪 Edge Cases
 
 ### Incomplete Requirements
 - Ask at most 2 clarifying questions. If the answer is reasonably inferable from
@@ -286,7 +286,7 @@ After all changes are complete, it provides a summary:
 
 ---
 
-## Recovery Behavior
+## 🛠️ Recovery Behavior
 
 - If an implementation approach hits a wall, fall back to the next simplest approach
   without asking the user. Note the pivot in the summary.
@@ -297,18 +297,18 @@ After all changes are complete, it provides a summary:
 
 ---
 
-## Next Steps
+## ✅ Next Steps
 
 After completing this build, the user may want to:
 
-- `/sc:cleanup` -- Clean up any rough edges left by the fast implementation
-- `/sc:analyze` -- Verify the new code integrates well with the existing architecture
-- `/sc:document` -- Add comprehensive documentation for the new feature
-- `/sc:explain` -- Walk through the implementation for team knowledge sharing
-- `/sc:git` -- Commit and push the changes
+- `/supercodex:cleanup` -- Clean up any rough edges left by the fast implementation
+- `/supercodex:analyze` -- Verify the new code integrates well with the existing architecture
+- `/supercodex:document` -- Add comprehensive documentation for the new feature
+- `/supercodex:explain` -- Walk through the implementation for team knowledge sharing
+- `/supercodex:git` -- Commit and push the changes
 
 ---
 
-## User Task
+## 📥 User Task
 
 $ARGUMENTS

@@ -1,12 +1,12 @@
-# /sc:analyze
+# /supercodex:analyze
 
-## Purpose
+## 🎯 Purpose
 
 Perform deep structural and qualitative analysis of a codebase, module, or architectural
 layer, producing an actionable report of patterns, quality signals, coupling risks, and
 improvement opportunities without modifying any source files.
 
-## Activation
+## 🚀 Activation
 
 - Persona: **architect**
 - Mode: **deep**
@@ -22,14 +22,14 @@ measured analysis that surfaces what matters most for informed decision-making.
 
 ---
 
-## Behavioral Flow
+## 🧠 Behavioral Flow
 
 The analysis proceeds through five ordered phases. Each phase has an effort budget
 expressed as a percentage of total work. The agent MUST touch every phase and MUST NOT
 spend less than half the budgeted effort on any phase. If a phase completes early the
 surplus effort rolls forward to the next phase.
 
-### Phase 1 -- Scan Structure (20%)
+### 🧩 Phase 1 -- Scan Structure (20%)
 
 1. Enumerate top-level directories and identify the project layout convention
    (monorepo, flat src, workspace, etc.).
@@ -43,7 +43,7 @@ surplus effort rolls forward to the next phase.
 **Checkpoint:** The agent should be able to draw a one-paragraph summary of the
 project shape before moving on.
 
-### Phase 2 -- Identify Patterns (25%)
+### 🧩 Phase 2 -- Identify Patterns (25%)
 
 1. Classify the dominant architectural style:
    - Layered (controller / service / repository)
@@ -73,7 +73,7 @@ project shape before moving on.
 
 **Checkpoint:** A bullet list of patterns and anti-patterns with file references.
 
-### Phase 3 -- Assess Quality (25%)
+### 🧩 Phase 3 -- Assess Quality (25%)
 
 1. Evaluate naming consistency across the codebase:
    - File naming convention (camelCase, kebab-case, PascalCase)
@@ -100,7 +100,7 @@ project shape before moving on.
 
 **Checkpoint:** A quality scorecard with ratings (strong / adequate / weak) per dimension.
 
-### Phase 4 -- Map Dependencies (15%)
+### 🧩 Phase 4 -- Map Dependencies (15%)
 
 1. Build a mental model of internal dependency flow:
    - Which modules depend on which other modules?
@@ -120,7 +120,7 @@ project shape before moving on.
 
 **Checkpoint:** A dependency summary listing the top five coupling hotspots.
 
-### Phase 5 -- Report Findings (15%)
+### 🧩 Phase 5 -- Report Findings (15%)
 
 1. Synthesize phases 1-4 into a structured report.
 2. Order findings by impact: what matters most for the codebase's long-term health.
@@ -140,9 +140,9 @@ project shape before moving on.
 
 ---
 
-## MCP Integration
+## 🔌 MCP Integration
 
-### Tool Usage Guidance
+### 🧰 Tool Usage Guidance
 
 The agent may use the following MCP tool categories during analysis:
 
@@ -154,7 +154,7 @@ The agent may use the following MCP tool categories during analysis:
 - **GitHub tools:** If the project is hosted on GitHub and the agent has access, it
   may read recent PRs, issues, or CI status to enrich the analysis.
 
-### Tool Usage Constraints
+### ⛔ Tool Usage Constraints
 
 - The agent MUST NOT use any tool that writes, modifies, or deletes files.
 - The agent MUST NOT execute build commands, test runners, or linters.
@@ -163,7 +163,7 @@ The agent may use the following MCP tool categories during analysis:
   every file when the codebase is very large (>500 files).
 - The agent SHOULD read configuration files early (Phase 1) to inform later phases.
 
-### Efficiency Guidelines
+### ⚡ Efficiency Guidelines
 
 - When scanning for patterns, use grep with targeted regex rather than reading every
   file line by line.
@@ -174,9 +174,9 @@ The agent may use the following MCP tool categories during analysis:
 
 ---
 
-## Boundaries
+## 🧱 Boundaries
 
-### WILL DO:
+### ✅ WILL DO:
 
 - Analyze source code structure, patterns, and quality signals
 - Identify architectural styles and design patterns in use
@@ -190,7 +190,7 @@ The agent may use the following MCP tool categories during analysis:
 - Adapt analysis depth to codebase size (sample large codebases)
 - Analyze specific subsystems when the user scopes the request
 
-### WILL NOT DO:
+### 🚫 WILL NOT DO:
 
 - Modify, create, or delete any source files
 - Run tests, linters, build tools, or any executable process
@@ -205,7 +205,7 @@ The agent may use the following MCP tool categories during analysis:
 
 ---
 
-## Output Format
+## 🧾 Output Format
 
 The final output MUST follow this structure:
 
@@ -258,7 +258,7 @@ The final output MUST follow this structure:
 3. {next step}
 ```
 
-### Output Formatting Rules
+### 📐 Output Formatting Rules
 
 - Use severity badges consistently: critical, high, medium, low, informational.
 - Ratings in the scorecard use: strong, adequate, weak.
@@ -270,7 +270,7 @@ The final output MUST follow this structure:
 
 ---
 
-## Edge Cases
+## 🧪 Edge Cases
 
 ### Very Small Codebase (<10 files)
 - Skip the sampling strategy and analyze every file.
@@ -300,7 +300,7 @@ The final output MUST follow this structure:
 
 ---
 
-## Recovery Behavior
+## 🛠️ Recovery Behavior
 
 - If the agent cannot access a file or directory, log it and continue analysis
   with available information. Do not halt.
@@ -313,18 +313,18 @@ The final output MUST follow this structure:
 
 ---
 
-## Next Steps
+## ✅ Next Steps
 
 After completing this analysis, the user may want to:
 
-- `/sc:design` -- Design improvements for issues identified in the report
-- `/sc:cleanup` -- Address low-severity code quality findings
-- `/sc:document` -- Fill documentation gaps identified in the analysis
-- `/sc:estimate` -- Estimate effort for recommended improvements
-- `/sc:explain` -- Deep-dive into specific patterns or modules flagged in findings
+- `/supercodex:design` -- Design improvements for issues identified in the report
+- `/supercodex:cleanup` -- Address low-severity code quality findings
+- `/supercodex:document` -- Fill documentation gaps identified in the analysis
+- `/supercodex:estimate` -- Estimate effort for recommended improvements
+- `/supercodex:explain` -- Deep-dive into specific patterns or modules flagged in findings
 
 ---
 
-## User Task
+## 📥 User Task
 
 $ARGUMENTS

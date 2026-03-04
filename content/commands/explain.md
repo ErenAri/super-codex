@@ -1,13 +1,13 @@
-# /sc:explain
+# /supercodex:explain
 
-## Purpose
+## 🎯 Purpose
 
 Explain code, patterns, architectures, or abstractions at the appropriate level for
 the target audience by tracing execution flow, breaking down abstractions, highlighting
 design patterns, and providing clear summaries -- without modifying any code or
 judging its quality.
 
-## Activation
+## 🚀 Activation
 
 - Persona: **educator**
 - Mode: **balanced**
@@ -23,13 +23,13 @@ understanding progressively, from high-level overview to detailed mechanics.
 
 ---
 
-## Behavioral Flow
+## 🧠 Behavioral Flow
 
 The explanation proceeds through five ordered phases. Each phase has an effort budget
 expressed as a percentage of total work. The agent MUST touch every phase. The effort
 distribution emphasizes the middle phases where the actual explanation happens.
 
-### Phase 1 -- Identify Target Code (10%)
+### 🧩 Phase 1 -- Identify Target Code (10%)
 
 1. Parse the user's request to determine what needs to be explained:
 
@@ -70,7 +70,7 @@ distribution emphasizes the middle phases where the actual explanation happens.
 
 **Checkpoint:** Target identified, audience set, depth determined, code read.
 
-### Phase 2 -- Trace Execution Flow (25%)
+### 🧩 Phase 2 -- Trace Execution Flow (25%)
 
 1. For function/method explanations:
    - What are the inputs (parameters, context, state)?
@@ -111,7 +111,7 @@ distribution emphasizes the middle phases where the actual explanation happens.
 
 **Checkpoint:** Complete execution trace with happy path and error paths.
 
-### Phase 3 -- Explain Abstractions (25%)
+### 🧩 Phase 3 -- Explain Abstractions (25%)
 
 1. For each abstraction encountered in the code, explain:
    - **What it is:** Name the pattern or concept
@@ -158,7 +158,7 @@ distribution emphasizes the middle phases where the actual explanation happens.
 
 **Checkpoint:** All relevant abstractions explained with context and rationale.
 
-### Phase 4 -- Highlight Patterns (20%)
+### 🧩 Phase 4 -- Highlight Patterns (20%)
 
 1. Identify recurring patterns in the target code:
 
@@ -198,7 +198,7 @@ distribution emphasizes the middle phases where the actual explanation happens.
 
 **Checkpoint:** Pattern inventory with examples and rationale.
 
-### Phase 5 -- Summarize for Audience (20%)
+### 🧩 Phase 5 -- Summarize for Audience (20%)
 
 1. Produce a layered summary appropriate for the target audience:
 
@@ -241,9 +241,9 @@ distribution emphasizes the middle phases where the actual explanation happens.
 
 ---
 
-## MCP Integration
+## 🔌 MCP Integration
 
-### Tool Usage Guidance
+### 🧰 Tool Usage Guidance
 
 - **Filesystem tools:** Read the target code, its dependencies, its tests, and
   related configuration. These are the primary tools.
@@ -252,7 +252,7 @@ distribution emphasizes the middle phases where the actual explanation happens.
 - **Fetch tools:** Retrieve documentation for external libraries or frameworks
   used in the code to provide accurate explanations.
 
-### Tool Usage Constraints
+### ⛔ Tool Usage Constraints
 
 - The agent MUST NOT modify, create, or delete any files.
 - The agent MUST NOT execute any code.
@@ -260,7 +260,7 @@ distribution emphasizes the middle phases where the actual explanation happens.
 - The agent SHOULD follow the dependency chain to understand context.
 - The agent SHOULD read tests to understand intended behavior.
 
-### Efficiency Guidelines
+### ⚡ Efficiency Guidelines
 
 - Start by reading the target file, then read imports as needed.
 - Use grep to find all references to a symbol when explaining its role.
@@ -269,9 +269,9 @@ distribution emphasizes the middle phases where the actual explanation happens.
 
 ---
 
-## Boundaries
+## 🧱 Boundaries
 
-### WILL DO:
+### ✅ WILL DO:
 
 - Explain code at any level of abstraction (function, module, system)
 - Trace execution flow through the code
@@ -284,10 +284,10 @@ distribution emphasizes the middle phases where the actual explanation happens.
 - Highlight non-obvious behavior or gotchas
 - Point to related code for further reading
 
-### WILL NOT DO:
+### 🚫 WILL NOT DO:
 
 - Modify any code
-- Judge code quality (use /sc:analyze for that)
+- Judge code quality (use /supercodex:analyze for that)
 - Suggest improvements or refactorings
 - Run or execute any code
 - Explain code the agent has not read
@@ -299,7 +299,7 @@ distribution emphasizes the middle phases where the actual explanation happens.
 
 ---
 
-## Output Format
+## 🧾 Output Format
 
 The final output MUST follow this structure:
 
@@ -345,7 +345,7 @@ The final output MUST follow this structure:
 - {external resource} -- {what it explains}
 ```
 
-### Output Formatting Rules
+### 📐 Output Formatting Rules
 
 - Every code reference must include the file path.
 - Execution flow steps must be numbered and sequential.
@@ -356,7 +356,7 @@ The final output MUST follow this structure:
 
 ---
 
-## Edge Cases
+## 🧪 Edge Cases
 
 ### Minified or Obfuscated Code
 - State that the code appears minified or obfuscated.
@@ -390,7 +390,7 @@ The final output MUST follow this structure:
 
 ---
 
-## Recovery Behavior
+## 🛠️ Recovery Behavior
 
 - If the target code cannot be found, ask the user to provide the file path
   or a code snippet directly.
@@ -402,18 +402,18 @@ The final output MUST follow this structure:
 
 ---
 
-## Next Steps
+## ✅ Next Steps
 
 After completing this explanation, the user may want to:
 
-- `/sc:analyze` -- Assess the quality of the explained code
-- `/sc:document` -- Turn the explanation into formal documentation
-- `/sc:design` -- Design improvements to the explained system
-- `/sc:build` -- Implement changes to the explained code
-- `/sc:brainstorm` -- Explore alternatives to the explained approach
+- `/supercodex:analyze` -- Assess the quality of the explained code
+- `/supercodex:document` -- Turn the explanation into formal documentation
+- `/supercodex:design` -- Design improvements to the explained system
+- `/supercodex:build` -- Implement changes to the explained code
+- `/supercodex:brainstorm` -- Explore alternatives to the explained approach
 
 ---
 
-## User Task
+## 📥 User Task
 
 $ARGUMENTS

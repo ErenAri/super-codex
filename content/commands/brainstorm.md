@@ -1,12 +1,12 @@
-# /sc:brainstorm
+# /supercodex:brainstorm
 
-## Purpose
+## 🎯 Purpose
 
 Generate a wide range of creative ideas, approaches, and solutions for a given problem
 or opportunity, clustering them into themes and evaluating feasibility to give the user
 a rich menu of options without making the final decision.
 
-## Activation
+## 🚀 Activation
 
 - Persona: **educator**
 - Mode: **balanced**
@@ -23,14 +23,14 @@ are but why each one might or might not work.
 
 ---
 
-## Behavioral Flow
+## 🧠 Behavioral Flow
 
 The brainstorm proceeds through five ordered phases. Each phase has an effort budget
 expressed as a percentage of total work. The agent MUST touch every phase and SHOULD
 spend roughly the allocated effort on each. If divergent thinking produces an abundance
 of ideas in Phase 2, the agent may borrow up to 5% from Phases 3-5 to capture them.
 
-### Phase 1 -- Understand Context (15%)
+### 🧩 Phase 1 -- Understand Context (15%)
 
 1. Restate the user's problem or opportunity in your own words. Confirm understanding
    by identifying:
@@ -51,7 +51,7 @@ of ideas in Phase 2, the agent may borrow up to 5% from Phases 3-5 to capture th
 
 **Checkpoint:** A 2-3 sentence restatement of the problem with explicit constraints.
 
-### Phase 2 -- Diverge Widely (30%)
+### 🧩 Phase 2 -- Diverge Widely (30%)
 
 This is the creative core of the brainstorm. The agent MUST generate ideas freely and
 resist the urge to evaluate or filter prematurely.
@@ -81,7 +81,7 @@ resist the urge to evaluate or filter prematurely.
 
 **Checkpoint:** A numbered list of 12+ raw ideas with lens tags.
 
-### Phase 3 -- Cluster Themes (20%)
+### 🧩 Phase 3 -- Cluster Themes (20%)
 
 1. Group the raw ideas into **3-6 thematic clusters**. Each cluster should represent
    a distinct strategic direction.
@@ -98,7 +98,7 @@ resist the urge to evaluate or filter prematurely.
 
 **Checkpoint:** A cluster map with named groups and their constituent ideas.
 
-### Phase 4 -- Evaluate Feasibility (20%)
+### 🧩 Phase 4 -- Evaluate Feasibility (20%)
 
 1. For each cluster (not individual ideas), assess:
    - **Technical Feasibility:** Can we build this with known technology and skills?
@@ -121,7 +121,7 @@ resist the urge to evaluate or filter prematurely.
 
 **Checkpoint:** A feasibility matrix for all clusters with top three highlighted.
 
-### Phase 5 -- Synthesize Options (15%)
+### 🧩 Phase 5 -- Synthesize Options (15%)
 
 1. Present a final synthesis with three tiers:
    - **Safe Bet:** The most feasible, lowest-risk direction. Explain why this is
@@ -144,9 +144,9 @@ resist the urge to evaluate or filter prematurely.
 
 ---
 
-## MCP Integration
+## 🔌 MCP Integration
 
-### Tool Usage Guidance
+### 🧰 Tool Usage Guidance
 
 - **Filesystem tools:** Read project files when the brainstorm relates to an existing
   codebase. Understanding current architecture informs idea generation.
@@ -155,7 +155,7 @@ resist the urge to evaluate or filter prematurely.
 - **Search tools:** Look up similar problems and their solutions to feed the
   divergent thinking phase.
 
-### Tool Usage Constraints
+### ⛔ Tool Usage Constraints
 
 - The agent MUST NOT write, create, modify, or delete any files.
 - The agent MUST NOT execute any code, build commands, or test runners.
@@ -166,9 +166,9 @@ resist the urge to evaluate or filter prematurely.
 
 ---
 
-## Boundaries
+## 🧱 Boundaries
 
-### WILL DO:
+### ✅ WILL DO:
 
 - Generate a diverse set of creative ideas across multiple thinking lenses
 - Explore unconventional and non-obvious approaches
@@ -182,7 +182,7 @@ resist the urge to evaluate or filter prematurely.
 - Preserve wild-card ideas that do not fit standard clusters
 - Offer combination strategies across clusters
 
-### WILL NOT DO:
+### 🚫 WILL NOT DO:
 
 - Make the final decision for the user
 - Implement any ideas
@@ -193,11 +193,11 @@ resist the urge to evaluate or filter prematurely.
 - Guarantee that any idea will work
 - Ignore stated constraints when generating ideas (acknowledge them, even for radical ideas)
 - Present a single "right answer" instead of a menu of options
-- Deep-dive into implementation details (that is for /sc:design or /sc:build)
+- Deep-dive into implementation details (that is for /supercodex:design or /supercodex:build)
 
 ---
 
-## Output Format
+## 🧾 Output Format
 
 The final output MUST follow this structure:
 
@@ -264,7 +264,7 @@ The final output MUST follow this structure:
 3. {question}
 ```
 
-### Output Formatting Rules
+### 📐 Output Formatting Rules
 
 - Minimum 12 ideas in the raw ideas table.
 - Minimum 3, maximum 6 thematic clusters.
@@ -277,7 +277,7 @@ The final output MUST follow this structure:
 
 ---
 
-## Edge Cases
+## 🧪 Edge Cases
 
 ### Extremely Open-Ended Problem
 - If the user says something like "brainstorm ideas for my app," ask one clarifying
@@ -301,29 +301,29 @@ The final output MUST follow this structure:
 
 ---
 
-## Recovery Behavior
+## 🛠️ Recovery Behavior
 
 - If the agent struggles to generate 12 ideas, lower the bar for novelty and include
   variations on strong ideas rather than leaving the list short.
 - If clusters are too similar, merge them and add a "Miscellaneous" cluster for orphans.
 - If the user's problem turns out to be a clear implementation task rather than an
-  ideation task, suggest using `/sc:build` or `/sc:design` instead, but still provide
+  ideation task, suggest using `/supercodex:build` or `/supercodex:design` instead, but still provide
   a brief brainstorm if the user insists.
 
 ---
 
-## Next Steps
+## ✅ Next Steps
 
 After completing this brainstorm, the user may want to:
 
-- `/sc:design` -- Design the chosen approach in detail
-- `/sc:estimate` -- Estimate effort for the top candidates
-- `/sc:analyze` -- Analyze the current codebase before implementing a chosen direction
-- `/sc:build` -- Implement the chosen idea
-- `/sc:business-panel` -- Get multi-expert business perspective on the top options
+- `/supercodex:design` -- Design the chosen approach in detail
+- `/supercodex:estimate` -- Estimate effort for the top candidates
+- `/supercodex:analyze` -- Analyze the current codebase before implementing a chosen direction
+- `/supercodex:build` -- Implement the chosen idea
+- `/supercodex:business-panel` -- Get multi-expert business perspective on the top options
 
 ---
 
-## User Task
+## 📥 User Task
 
 $ARGUMENTS

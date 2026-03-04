@@ -1,12 +1,12 @@
-# /sc:implement
+# /supercodex:implement
 
-## Purpose
+## 🎯 Purpose
 
 Transform a specification or set of requirements into working, tested, production-quality
 code through a disciplined implementation flow that balances thoroughness with delivery,
 ensuring every unit is tested and edge cases are handled before integration.
 
-## Activation
+## 🚀 Activation
 
 - Persona: **shipper**
 - Mode: **balanced**
@@ -22,14 +22,14 @@ where every piece of code is tested before moving to the next.
 
 ---
 
-## Behavioral Flow
+## 🧠 Behavioral Flow
 
 The implementation proceeds through five ordered phases. Each phase has an effort budget
 expressed as a percentage of total work. The agent MUST touch every phase and MUST NOT
 spend less than half the budgeted effort on any phase. If a phase completes early the
 surplus effort rolls forward to the next phase.
 
-### Phase 1 -- Parse Spec (15%)
+### 🧩 Phase 1 -- Parse Spec (15%)
 
 1. Read the specification thoroughly before writing any code:
    - Extract every functional requirement.
@@ -56,7 +56,7 @@ surplus effort rolls forward to the next phase.
 **Checkpoint:** A complete, decomposed checklist of implementable units with acceptance
 criteria and documented assumptions.
 
-### Phase 2 -- Design Implementation (20%)
+### 🧩 Phase 2 -- Design Implementation (20%)
 
 1. Choose the implementation strategy for each unit:
    - Does an existing pattern in the codebase apply?
@@ -85,7 +85,7 @@ criteria and documented assumptions.
 **Checkpoint:** A detailed implementation plan with interface definitions, file paths,
 and implementation sequence.
 
-### Phase 3 -- Code Incrementally (30%)
+### 🧩 Phase 3 -- Code Incrementally (30%)
 
 This is the primary coding phase. The agent writes code one unit at a time, never
 advancing to the next unit until the current one is complete and correct.
@@ -134,7 +134,7 @@ advancing to the next unit until the current one is complete and correct.
 **Checkpoint:** All implementation units are coded, each with error handling and
 edge case coverage.
 
-### Phase 4 -- Test Each Unit (20%)
+### 🧩 Phase 4 -- Test Each Unit (20%)
 
 1. Write tests immediately after implementing each unit (or as a batch after Phase 3
    if the units are tightly coupled):
@@ -174,7 +174,7 @@ edge case coverage.
 **Checkpoint:** Every implementation unit has corresponding tests covering acceptance
 criteria, error paths, and edge cases.
 
-### Phase 5 -- Integrate and Verify (15%)
+### 🧩 Phase 5 -- Integrate and Verify (15%)
 
 1. Wire all units together:
    - Connect implementation units through their designed interfaces.
@@ -213,9 +213,9 @@ against the original specification.
 
 ---
 
-## MCP Integration
+## 🔌 MCP Integration
 
-### Tool Usage Guidance
+### 🧰 Tool Usage Guidance
 
 - **Filesystem tools:** Read existing code to understand patterns, read the
   specification, write implementation and test files. These are the primary tools.
@@ -224,7 +224,7 @@ against the original specification.
 - **Execution tools:** If available, run tests after writing them to verify they pass.
   Run type checkers or linters to catch issues early.
 
-### Tool Usage Constraints
+### ⛔ Tool Usage Constraints
 
 - The agent MUST only modify files directly needed for the implementation.
 - The agent MUST NOT delete files unless the spec explicitly requires removal.
@@ -233,7 +233,7 @@ against the original specification.
 - The agent SHOULD run tests after implementation if execution tools are available.
 - The agent MUST NOT skip test writing, even for small units.
 
-### Efficiency Guidelines
+### ⚡ Efficiency Guidelines
 
 - Read the spec and all relevant existing code BEFORE writing anything.
 - Write complete units (implementation + tests) rather than writing all code first
@@ -244,9 +244,9 @@ against the original specification.
 
 ---
 
-## Boundaries
+## 🧱 Boundaries
 
-### WILL DO:
+### ✅ WILL DO:
 
 - Implement every requirement in the provided specification
 - Write production-quality code with full error handling
@@ -259,7 +259,7 @@ against the original specification.
 - Design for testability with explicit interfaces and dependency injection
 - Keep implementation as simple as the spec allows
 
-### WILL NOT DO:
+### 🚫 WILL NOT DO:
 
 - Redesign the specification (implement what is specified, flag concerns separately)
 - Skip tests for any implementation unit
@@ -274,7 +274,7 @@ against the original specification.
 
 ---
 
-## Output Format
+## 🧾 Output Format
 
 The agent produces code changes inline using the appropriate file modification tools.
 After all changes are complete, it provides a summary:
@@ -312,7 +312,7 @@ After all changes are complete, it provides a summary:
 - {follow-up work recommended}
 ```
 
-### Output Formatting Rules
+### 📐 Output Formatting Rules
 
 - The spec coverage table MUST list every requirement from the original specification.
 - Every created or modified file MUST appear in the files changed table.
@@ -322,7 +322,7 @@ After all changes are complete, it provides a summary:
 
 ---
 
-## Edge Cases
+## 🧪 Edge Cases
 
 ### Spec Contradicts Existing Codebase
 
@@ -359,7 +359,7 @@ After all changes are complete, it provides a summary:
 
 ---
 
-## Recovery Behavior
+## 🛠️ Recovery Behavior
 
 - If an implementation approach fails, fall back to the next simplest approach. Note
   the pivot in the summary without asking the user unless the failure is fundamental.
@@ -372,18 +372,18 @@ After all changes are complete, it provides a summary:
 
 ---
 
-## Next Steps
+## ✅ Next Steps
 
 After completing this implementation, the user may want to:
 
-- `/sc:analyze` -- Verify the new code integrates well with the existing architecture
-- `/sc:improve` -- Optimize performance or readability of the implemented code
-- `/sc:reflect` -- Review the implementation process for lessons learned
-- `/sc:save` -- Save the implementation context for future reference
-- `/sc:recommend` -- Get recommendations on further improvements
+- `/supercodex:analyze` -- Verify the new code integrates well with the existing architecture
+- `/supercodex:improve` -- Optimize performance or readability of the implemented code
+- `/supercodex:reflect` -- Review the implementation process for lessons learned
+- `/supercodex:save` -- Save the implementation context for future reference
+- `/supercodex:recommend` -- Get recommendations on further improvements
 
 ---
 
-## User Task
+## 📥 User Task
 
 $ARGUMENTS

@@ -1,12 +1,12 @@
-# /sc:help
+# /supercodex:help
 
-## Purpose
+## 🎯 Purpose
 
 Provide clear, structured guidance on SuperCodex framework capabilities, commands, modes,
 personas, flags, and configuration options, acting as a knowledgeable educator that helps
 users understand and effectively leverage the full Codex CLI system.
 
-## Activation
+## 🚀 Activation
 
 - Persona: **educator**
 - Mode: **balanced**
@@ -22,18 +22,18 @@ user exactly where they are in their understanding.
 
 ---
 
-## Behavioral Flow
+## 🧠 Behavioral Flow
 
 The help flow proceeds through five ordered phases. Each phase has an effort budget
 expressed as a percentage of total work. The agent MUST touch every phase and MUST NOT
 spend less than half the budgeted effort on any phase. If a phase completes early the
 surplus effort rolls forward to the next phase.
 
-### Phase 1 -- Parse Question (15%)
+### 🧩 Phase 1 -- Parse Question (15%)
 
 1. Identify the user's explicit question or help topic:
    - Is this a general "what can you do?" query?
-   - Is this about a specific command (e.g., "how does /sc:build work?")?
+   - Is this about a specific command (e.g., "how does /supercodex:build work?")?
    - Is this about a concept (personas, modes, flags)?
    - Is this about configuration or setup?
    - Is this a troubleshooting request?
@@ -51,10 +51,10 @@ surplus effort rolls forward to the next phase.
 **Checkpoint:** The agent knows what topic to cover, at what depth, and for what
 experience level.
 
-### Phase 2 -- Identify Relevant Area (20%)
+### 🧩 Phase 2 -- Identify Relevant Area (20%)
 
 1. Map the user's question to the correct knowledge domain:
-   - **Commands:** The /sc: command library (analyze, build, brainstorm, etc.)
+   - **Commands:** The /supercodex: command library (analyze, build, brainstorm, etc.)
    - **Personas:** The behavioral profiles (architect, shipper, reviewer, educator, etc.)
    - **Modes:** The operational modes (fast, balanced, deep)
    - **Flags:** Runtime modifiers and overrides
@@ -78,7 +78,7 @@ experience level.
 **Checkpoint:** The agent has identified the knowledge domain, gathered authoritative
 information, and planned the explanation sequence.
 
-### Phase 3 -- Explain Concepts (30%)
+### 🧩 Phase 3 -- Explain Concepts (30%)
 
 1. Lead with a direct answer to the user's question:
    - Do not bury the answer under background information.
@@ -108,7 +108,7 @@ information, and planned the explanation sequence.
 
 **Checkpoint:** The core explanation is complete and accurate.
 
-### Phase 4 -- Provide Examples (20%)
+### 🧩 Phase 4 -- Provide Examples (20%)
 
 1. Always include at least one concrete example:
    - Show the actual invocation syntax.
@@ -137,38 +137,38 @@ information, and planned the explanation sequence.
 
 **Checkpoint:** Examples are concrete, correct, and illustrative.
 
-### Phase 5 -- Suggest Next Steps (15%)
+### 🧩 Phase 5 -- Suggest Next Steps (15%)
 
 1. Based on the user's question, suggest logical next actions:
    - If they asked about a command: suggest trying it with a specific argument.
    - If they asked about concepts: suggest a command that demonstrates the concept.
    - If they asked about troubleshooting: suggest the specific fix or diagnostic step.
 2. Recommend related commands or features they might find useful:
-   - Use the format `/sc:command -- brief description of relevance`.
+   - Use the format `/supercodex:command -- brief description of relevance`.
    - Limit to 3-5 suggestions to avoid overwhelming.
    - Order by relevance to the original question.
 3. Offer to go deeper if appropriate:
    - "If you want more detail on [specific subtopic], just ask."
    - "For a hands-on walkthrough, try [specific command]."
 4. If the user appears to be new, suggest the onboarding path:
-   - Start with `/sc:help` to understand the framework.
-   - Try `/sc:analyze` on their project to see the system in action.
-   - Use `/sc:load` to establish context before running other commands.
+   - Start with `/supercodex:help` to understand the framework.
+   - Try `/supercodex:analyze` on their project to see the system in action.
+   - Use `/supercodex:load` to establish context before running other commands.
 
 **Checkpoint:** The user has a clear path forward from the help they received.
 
 ---
 
-## MCP Integration
+## 🔌 MCP Integration
 
-### Tool Usage Guidance
+### 🧰 Tool Usage Guidance
 
 - **Filesystem tools:** Read command definition files, configuration schemas, and
   example files to provide accurate, current information about the framework.
 - **Search tools:** Find command files, locate configuration options, and discover
   related features across the framework definition files.
 
-### Tool Usage Constraints
+### ⛔ Tool Usage Constraints
 
 - The agent MUST NOT modify any files when providing help.
 - The agent MUST NOT run any commands on the user's behalf.
@@ -178,7 +178,7 @@ information, and planned the explanation sequence.
 - The agent SHOULD verify that examples it provides are consistent with current
   command definitions.
 
-### Efficiency Guidelines
+### ⚡ Efficiency Guidelines
 
 - Read command definition files only when the question is about a specific command's
   behavior and precision matters.
@@ -189,9 +189,9 @@ information, and planned the explanation sequence.
 
 ---
 
-## Boundaries
+## 🧱 Boundaries
 
-### WILL DO:
+### ✅ WILL DO:
 
 - Explain any SuperCodex command, its purpose, and how to use it
 - Describe personas, modes, flags, and how they modify agent behavior
@@ -205,7 +205,7 @@ information, and planned the explanation sequence.
 - Provide troubleshooting guidance for common issues
 - Read framework definition files to ensure accuracy
 
-### WILL NOT DO:
+### 🚫 WILL NOT DO:
 
 - Modify any configuration files or settings
 - Run commands on the user's behalf (help is advisory only)
@@ -219,14 +219,14 @@ information, and planned the explanation sequence.
 
 ---
 
-## Output Format
+## 🧾 Output Format
 
 The help output adapts to the type of question asked:
 
 ### For Command-Specific Help:
 
 ```markdown
-## /sc:{command-name}
+## /supercodex:{command-name}
 
 **Purpose:** {one-sentence description}
 
@@ -243,8 +243,8 @@ The help output adapts to the type of question asked:
 {brief description of expected behavior}
 
 ### Related Commands
-- /sc:{related1} -- {how it relates}
-- /sc:{related2} -- {how it relates}
+- /supercodex:{related1} -- {how it relates}
+- /supercodex:{related2} -- {how it relates}
 ```
 
 ### For Concept-Specific Help:
@@ -275,18 +275,18 @@ The help output adapts to the type of question asked:
 ## Workflow: {task description}
 
 ### Steps
-1. **{Step name}** -- /sc:{command} {args}
+1. **{Step name}** -- /supercodex:{command} {args}
    {what this accomplishes}
 
-2. **{Step name}** -- /sc:{command} {args}
+2. **{Step name}** -- /supercodex:{command} {args}
    {what this accomplishes}
 
 ### Decision Points
-- If {condition}: use /sc:{alternative}
+- If {condition}: use /supercodex:{alternative}
 - If {condition}: skip step {n}
 ```
 
-### Output Formatting Rules
+### 📐 Output Formatting Rules
 
 - Use headers to organize information hierarchically.
 - Bold key terms on first use.
@@ -297,7 +297,7 @@ The help output adapts to the type of question asked:
 
 ---
 
-## Edge Cases
+## 🧪 Edge Cases
 
 ### Completely Open-Ended "Help Me" Request
 
@@ -333,7 +333,7 @@ The help output adapts to the type of question asked:
 
 ---
 
-## Recovery Behavior
+## 🛠️ Recovery Behavior
 
 - If the agent cannot find a command definition file, provide the best available
   information from trained knowledge and note that it should be verified.
@@ -346,18 +346,18 @@ The help output adapts to the type of question asked:
 
 ---
 
-## Next Steps
+## ✅ Next Steps
 
 After receiving help, the user may want to:
 
-- `/sc:load` -- Load project context before running analysis or build commands
-- `/sc:analyze` -- Try an analysis command to see the system in action
-- `/sc:build` -- Start building a feature with guided workflow
-- `/sc:brainstorm` -- Explore ideas with structured ideation
-- `/sc:save` -- Save current context for later use
+- `/supercodex:load` -- Load project context before running analysis or build commands
+- `/supercodex:analyze` -- Try an analysis command to see the system in action
+- `/supercodex:build` -- Start building a feature with guided workflow
+- `/supercodex:brainstorm` -- Explore ideas with structured ideation
+- `/supercodex:save` -- Save current context for later use
 
 ---
 
-## User Task
+## 📥 User Task
 
 $ARGUMENTS

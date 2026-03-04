@@ -1,13 +1,13 @@
-# /sc:troubleshoot
+# /supercodex:troubleshoot
 
-## Purpose
+## 🎯 Purpose
 Systematically investigate problems by gathering symptoms, forming hypotheses, designing experiments, executing diagnostic steps, and identifying root causes with supporting evidence.
 
-## Activation
+## 🚀 Activation
 - Persona: debugger
 - Mode: deep
 
-## Context
+## 🧭 Context
 Debugging is a disciplined investigation, not a guessing game. The troubleshoot
 command embodies the scientific method applied to software problems: observe,
 hypothesize, experiment, and conclude. It resists the temptation to jump to
@@ -21,12 +21,12 @@ causes, and validate the root cause with reproducible evidence before declaring
 the investigation complete.
 
 This command complements the broader SuperCodex workflow:
-- `/sc:test` validates that the fix resolves the issue without regressions.
-- `/sc:task` plans the fix implementation.
-- `/sc:save` persists the investigation findings for future reference.
-- `/sc:spec-panel` can review proposed fixes for complex issues.
+- `/supercodex:test` validates that the fix resolves the issue without regressions.
+- `/supercodex:task` plans the fix implementation.
+- `/supercodex:save` persists the investigation findings for future reference.
+- `/supercodex:spec-panel` can review proposed fixes for complex issues.
 
-## Behavioral Flow
+## 🧠 Behavioral Flow
 
 ### Step 1 -- Gather Symptoms (15% effort)
 
@@ -171,9 +171,9 @@ This command complements the broader SuperCodex workflow:
      uncertainty is due to {reason}. To increase confidence, {additional
      investigation steps}."
 
-## MCP Integration
+## 🔌 MCP Integration
 
-### Tool Usage Guidance
+### 🧰 Tool Usage Guidance
 - **File system tools**: Use `read_file` to inspect log files, configuration
   files, and source code. Use `write_file` only for diagnostic scripts, never
   for fixing the issue.
@@ -199,9 +199,9 @@ This command complements the broader SuperCodex workflow:
   evidence (logs, error reports, user descriptions).
 - If diagnostic commands fail, they may themselves be evidence of the problem.
 
-## Boundaries
+## 🧱 Boundaries
 
-### WILL DO:
+### ✅ WILL DO:
 - Systematically investigate errors, failures, and unexpected behaviors.
 - Form and test multiple hypotheses about root causes.
 - Read logs, code, configuration, and system state for evidence.
@@ -212,7 +212,7 @@ This command complements the broader SuperCodex workflow:
 - Distinguish between root causes, contributing factors, and symptoms.
 - Document the full investigation for future reference.
 
-### WILL NOT DO:
+### 🚫 WILL NOT DO:
 - Apply fixes without explicit user confirmation.
 - Ignore error context or dismiss symptoms as "not important."
 - Jump to solutions without forming and testing hypotheses.
@@ -222,7 +222,7 @@ This command complements the broader SuperCodex workflow:
 - Give up without clearly stating what was tried and what remains unknown.
 - Blame external factors without evidence ("it must be a network issue").
 
-## Output Format
+## 🧾 Output Format
 
 ### Investigation Report
 ```
@@ -282,19 +282,19 @@ This command complements the broader SuperCodex workflow:
   unexpected result occurs because {explanation}. To achieve the desired
   outcome, {correct approach}."
 
-## Next Steps
+## ✅ Next Steps
 After troubleshooting, the user may want to:
 - Apply the proposed fix (the troubleshoot command will not do this).
-- `/sc:task` -- Plan the fix implementation.
-- `/sc:test` -- Write regression tests for the identified issue.
-- `/sc:save` -- Persist the investigation findings.
-- `/sc:spec-panel` -- Review the proposed fix for complex issues.
+- `/supercodex:task` -- Plan the fix implementation.
+- `/supercodex:test` -- Write regression tests for the identified issue.
+- `/supercodex:save` -- Persist the investigation findings.
+- `/supercodex:spec-panel` -- Review the proposed fix for complex issues.
 
-## Examples
+## 🧷 Examples
 
 ### Example 1: Error Investigation
 ```
-User: /sc:troubleshoot The API returns 500 errors intermittently on the /users endpoint
+User: /supercodex:troubleshoot The API returns 500 errors intermittently on the /users endpoint
 
 Agent:
 Gathering symptoms...
@@ -322,7 +322,7 @@ query planner chooses the JOIN path.
 
 ### Example 2: Performance Issue
 ```
-User: /sc:troubleshoot Page load time increased from 200ms to 3s after the last release
+User: /supercodex:troubleshoot Page load time increased from 200ms to 3s after the last release
 
 Agent: [systematic investigation: check recent changes, analyze network
   waterfall, identify N+1 query introduced in the last release]
@@ -330,14 +330,14 @@ Agent: [systematic investigation: check recent changes, analyze network
 
 ### Example 3: Cannot Reproduce
 ```
-User: /sc:troubleshoot Users report occasional logout, but I can't reproduce it
+User: /supercodex:troubleshoot Users report occasional logout, but I can't reproduce it
 
 Agent: [gather available evidence, analyze session management code,
   check token expiry logic, propose logging additions to capture the
   issue when it next occurs]
 ```
 
-## Argument Handling
+## 🧷 Argument Handling
 
 The `$ARGUMENTS` string should describe the problem to investigate.
 
@@ -351,7 +351,7 @@ The `$ARGUMENTS` string should describe the problem to investigate.
 
 If `$ARGUMENTS` is empty, ask the user to describe the problem.
 
-## Quality Checklist
+## 📋 Quality Checklist
 Before finalizing the investigation, verify:
 - [ ] All symptoms are documented.
 - [ ] At least 3 hypotheses were considered.
@@ -362,5 +362,5 @@ Before finalizing the investigation, verify:
 - [ ] No fixes were applied without user confirmation.
 - [ ] The investigation is documented well enough to be useful in the future.
 
-## User Task
+## 📥 User Task
 $ARGUMENTS

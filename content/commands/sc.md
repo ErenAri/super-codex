@@ -1,16 +1,16 @@
-# /sc:sc
+# /supercodex:sc
 
-## Purpose
+## 🎯 Purpose
 Serve as the meta-command for SuperCodex: display framework status, explain available commands, provide usage guidance, and help users navigate the system effectively.
 
-## Activation
+## 🚀 Activation
 - Persona: educator
 - Mode: balanced
 
-## Context
+## 🧭 Context
 The sc command is the front door to SuperCodex. When a user is unsure what
 commands are available, how the framework is configured, or what a specific
-command does, `/sc:sc` provides authoritative answers. It acts as a living
+command does, `/supercodex:sc` provides authoritative answers. It acts as a living
 reference manual that is always aware of the current system state. Unlike
 static documentation, it can inspect the actual registry, loaded modes,
 personas, and available MCP tools to give precise, contextual answers.
@@ -19,14 +19,14 @@ This command should feel like talking to a knowledgeable colleague who knows
 the framework inside and out and can explain anything at the right level of
 detail for the audience.
 
-## Behavioral Flow
+## 🧠 Behavioral Flow
 
 ### Step 1 -- Detect Query Type (15% effort)
 
 1. Parse `$ARGUMENTS` to determine what the user is asking about.
 2. Classify the query into one of these types:
    - **Status**: "What is the current state of SuperCodex?" (no arguments or `status`)
-   - **Command help**: "What does /sc:save do?" (argument matches a command name)
+   - **Command help**: "What does /supercodex:save do?" (argument matches a command name)
    - **Listing**: "What commands are available?" (`list`, `commands`, `help`)
    - **Mode/persona info**: "What modes exist?" (`modes`, `personas`)
    - **Tool info**: "What MCP tools are available?" (`tools`, `mcp`)
@@ -34,7 +34,7 @@ detail for the audience.
    - **General help**: Anything that does not match the above categories.
 3. If the query is ambiguous, prefer the most helpful interpretation rather
    than asking for clarification. For example, "save" should show help for
-   `/sc:save`, not ask "did you mean the save command?".
+   `/supercodex:save`, not ask "did you mean the save command?".
 4. If the user provides multiple queries (e.g., "list commands and show status"),
    address each one in sequence.
 
@@ -87,7 +87,7 @@ Based on the query type identified in Step 1, collect the relevant information:
    - Command help: detailed explanation with usage examples.
    - Listings: table format with name, description, and status columns.
 3. Use consistent formatting conventions:
-   - Command names in backtick code spans: `/sc:save`.
+   - Command names in backtick code spans: `/supercodex:save`.
    - Mode/persona names in bold: **balanced**, **architect**.
    - File paths in code spans: `content/commands/save.md`.
    - Status indicators: enabled / disabled / unknown.
@@ -109,11 +109,11 @@ Based on the query type identified in Step 1, collect the relevant information:
 2. Include contextual tips:
    - "You are currently in **balanced** mode. For deeper analysis, switch
      to **deep** mode."
-   - "The `/sc:save` command is especially useful before ending a session."
+   - "The `/supercodex:save` command is especially useful before ending a session."
 3. If the user seems lost or confused, provide a "getting started" flow:
-   - Step 1: `/sc:sc` to understand the framework.
-   - Step 2: `/sc:task` to break down your work.
-   - Step 3: `/sc:save` to persist your progress.
+   - Step 1: `/supercodex:sc` to understand the framework.
+   - Step 2: `/supercodex:task` to break down your work.
+   - Step 3: `/supercodex:save` to persist your progress.
 
 ### Step 5 -- Suggest Next Actions (15% effort)
 
@@ -121,18 +121,18 @@ Based on the query type identified in Step 1, collect the relevant information:
 2. Format suggestions as actionable commands:
    ```
    Suggested next actions:
-     /sc:task <description>  -- Break down a task into steps.
-     /sc:save                -- Save this session's progress.
-     /sc:workflow            -- Review your development workflow.
+     /supercodex:task <description>  -- Break down a task into steps.
+     /supercodex:save                -- Save this session's progress.
+     /supercodex:workflow            -- Review your development workflow.
    ```
 3. If the user has been working in the session for a while, prioritize
-   `/sc:save` in the suggestions.
-4. If the user just started a new session, prioritize `/sc:task` or
-   `/sc:workflow`.
+   `/supercodex:save` in the suggestions.
+4. If the user just started a new session, prioritize `/supercodex:task` or
+   `/supercodex:workflow`.
 
-## MCP Integration
+## 🔌 MCP Integration
 
-### Tool Usage Guidance
+### 🧰 Tool Usage Guidance
 - **Registry inspection**: Use `read_file` to inspect registry overlay files
   and configuration.
 - **Config reading**: Use `read_file` on `.codex/supercodex/registry.toml`
@@ -151,11 +151,11 @@ Based on the query type identified in Step 1, collect the relevant information:
 - If the registry has validation issues, include them in the status output
   with severity levels.
 
-## Boundaries
+## 🧱 Boundaries
 
-### WILL DO:
+### ✅ WILL DO:
 - Display the current SuperCodex framework status (version, mode, persona).
-- Explain what any `/sc:*` command does and how to use it.
+- Explain what any `/supercodex:*` command does and how to use it.
 - List all available commands, modes, personas, and MCP tools.
 - Show the current configuration and any overrides.
 - Provide contextual guidance and suggest next actions.
@@ -163,16 +163,16 @@ Based on the query type identified in Step 1, collect the relevant information:
 - Show the relationship between commands, modes, and personas.
 - Explain error messages and validation issues from the registry.
 
-### WILL NOT DO:
+### 🚫 WILL NOT DO:
 - Modify the SuperCodex configuration or registry.
-- Run other `/sc:*` commands on behalf of the user.
+- Run other `/supercodex:*` commands on behalf of the user.
 - Install or uninstall MCP servers or prompt packs.
 - Execute shell commands, code, or tests.
 - Make changes to project files or source code.
 - Override the user's mode or persona selection.
 - Provide guidance unrelated to SuperCodex (e.g., general coding advice).
 
-## Output Format
+## 🧾 Output Format
 
 ### Status Output
 ```
@@ -188,20 +188,20 @@ SuperCodex Status
   Doctor:   last run 2026-02-28 -- status: ok
 
 Suggested next actions:
-  /sc:task <description>  -- Break down a task.
-  /sc:save                -- Save this session.
+  /supercodex:task <description>  -- Break down a task.
+  /supercodex:save                -- Save this session.
 ```
 
 ### Command Help Output
 ```
-/sc:save -- Session/context saving
+/supercodex:save -- Session/context saving
 
 Activation: persona=architect, mode=balanced
 
 Usage:
-  /sc:save                          Save full session to default location.
-  /sc:save --path=<filepath>        Save to a custom location.
-  /sc:save --dry-run                Preview what would be saved.
+  /supercodex:save                          Save full session to default location.
+  /supercodex:save --path=<filepath>        Save to a custom location.
+  /supercodex:save --dry-run                Preview what would be saved.
 
 Description:
   Captures the current session's context, decisions, progress, and
@@ -209,23 +209,23 @@ Description:
   can use to resume work without loss of continuity.
 
 Related commands:
-  /sc:task       -- Create action items from saved open questions.
-  /sc:spawn      -- Break saved tasks into sub-tasks.
-  /sc:workflow   -- Review workflow based on session patterns.
+  /supercodex:task       -- Create action items from saved open questions.
+  /supercodex:spawn      -- Break saved tasks into sub-tasks.
+  /supercodex:workflow   -- Review workflow based on session patterns.
 ```
 
 ### Command Listing Output
 ```
 Available Commands:
-  /sc:save           Session/context saving
-  /sc:sc             SuperCodex help and status
-  /sc:select-tool    Tool selection guidance
-  /sc:spawn          Sub-task spawning
-  /sc:spec-panel     Multi-expert spec review panel
-  /sc:task           Task management
-  /sc:test           Test generation and execution
-  /sc:troubleshoot   Problem troubleshooting
-  /sc:workflow       Workflow management
+  /supercodex:save           Session/context saving
+  /supercodex:sc             SuperCodex help and status
+  /supercodex:select-tool    Tool selection guidance
+  /supercodex:spawn          Sub-task spawning
+  /supercodex:spec-panel     Multi-expert spec review panel
+  /supercodex:task           Task management
+  /supercodex:test           Test generation and execution
+  /supercodex:troubleshoot   Problem troubleshooting
+  /supercodex:workflow       Workflow management
 ```
 
 ### Edge Cases
@@ -238,39 +238,39 @@ Available Commands:
 - **Multiple queries**: Address each query in separate sections with clear
   headers.
 
-## Next Steps
-After using `/sc:sc`, the user typically wants to:
+## ✅ Next Steps
+After using `/supercodex:sc`, the user typically wants to:
 - Run a specific command they learned about.
 - Change the active mode or persona.
 - Explore the MCP tool catalog.
 - Start a new task or review workflow.
 
-## Examples
+## 🧷 Examples
 
 ### Example 1: General Status
 ```
-User: /sc:sc
+User: /supercodex:sc
 
 Agent: [displays full status output as shown above]
 ```
 
 ### Example 2: Command Help
 ```
-User: /sc:sc save
+User: /supercodex:sc save
 
-Agent: [displays detailed help for /sc:save as shown above]
+Agent: [displays detailed help for /supercodex:save as shown above]
 ```
 
 ### Example 3: List All Commands
 ```
-User: /sc:sc list
+User: /supercodex:sc list
 
 Agent: [displays command listing table as shown above]
 ```
 
 ### Example 4: Mode Information
 ```
-User: /sc:sc modes
+User: /supercodex:sc modes
 
 Agent:
 Available Modes:
@@ -285,16 +285,16 @@ To change mode, specify it when invoking a command or update the configuration.
 
 ### Example 5: Unknown Command
 ```
-User: /sc:sc deploy
+User: /supercodex:sc deploy
 
 Agent: No command named "deploy" was found. Did you mean one of these?
-  /sc:spawn       -- Sub-task spawning
-  /sc:spec-panel  -- Multi-expert spec review
+  /supercodex:spawn       -- Sub-task spawning
+  /supercodex:spec-panel  -- Multi-expert spec review
 
-Use /sc:sc list to see all available commands.
+Use /supercodex:sc list to see all available commands.
 ```
 
-## Argument Handling
+## 🧷 Argument Handling
 
 The `$ARGUMENTS` string may contain:
 
@@ -312,7 +312,7 @@ The `$ARGUMENTS` string may contain:
 If `$ARGUMENTS` contains an unrecognized value, attempt fuzzy matching against
 command names. If no match is found, show the general help listing.
 
-## Quality Checklist
+## 📋 Quality Checklist
 Before finalizing the response, verify:
 - [ ] The information shown reflects the actual registry state, not assumptions.
 - [ ] Command names are spelled correctly and match the registry.
@@ -321,5 +321,5 @@ Before finalizing the response, verify:
 - [ ] The tone is helpful and educational, not terse or dismissive.
 - [ ] Output length is appropriate for the query type.
 
-## User Task
+## 📥 User Task
 $ARGUMENTS

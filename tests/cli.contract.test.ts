@@ -82,6 +82,10 @@ describe("cli contract", () => {
     const repairedPayload = JSON.parse(repaired.stdout);
     expect(repairedPayload.repaired).toBe(true);
     expect(["ok", "warn", "error"]).toContain(repairedPayload.status);
+
+    const plain = await runCapturedCli(["start", "--yes", "--plain", "--codex-home", codexHome]);
+    expect(plain.code).toBe(0);
+    expect(hasEmoji(plain.stdout)).toBe(false);
   });
 
   it("catalog show --json returns entry payload", async () => {
@@ -357,6 +361,18 @@ describe("cli contract", () => {
     expect(anyServer).toHaveProperty("health_score");
     expect(anyServer).toHaveProperty("suggested_fix_steps");
     expect(anyServer).toHaveProperty("test_messages");
+
+    const guidedPlain = await runCapturedCli([
+      "mcp",
+      "guided",
+      "--goal",
+      "docs",
+      "--plain",
+      "--codex-home",
+      codexHome
+    ]);
+    expect(guidedPlain.code).toBe(0);
+    expect(hasEmoji(guidedPlain.stdout)).toBe(false);
   });
 
   it("skill enable and disable persist across registry loads", async () => {
@@ -421,6 +437,10 @@ async function runCapturedCli(args: string[]): Promise<{ code: number; stdout: s
     console.warn = originalWarn;
     process.exitCode = 0;
   }
+}
+
+function hasEmoji(value: string): boolean {
+  return /[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}]/u.test(value);
 }
 
 async function createCodexHome(): Promise<string> {

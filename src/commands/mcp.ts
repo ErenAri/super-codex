@@ -22,6 +22,7 @@ import {
 import { tryRecordMetricEvent } from "../services/metrics";
 import { registerMcpCatalogCommands } from "./catalog";
 import { registerMcpDoctorCommand } from "./doctor";
+import { bullet, kv, line, resolveOutputStyle, type OutputStyle } from "./presenter";
 import { collectRepeatedOption, printWarnings, runCommand } from "./utils";
 
 const DEFAULT_GUIDED_LIMIT = 3;
@@ -88,9 +89,14 @@ export function registerMcpCommands(program: Command): void {
     .command("list")
     .description("List configured MCP servers")
     .option("--codex-home <path>", "Override Codex home directory")
+    .option("--plain", "Disable decorated output")
     .option("--json", "Output JSON")
     .action((options) =>
       runCommand(async () => {
+        const style = resolveOutputStyle({
+          json: Boolean(options.json),
+          plain: Boolean(options.plain)
+        });
         const result = await listConfiguredMcpServers(options.codexHome as string | undefined);
         if (Boolean(options.json)) {
           console.log(JSON.stringify(result.servers, null, 2));
@@ -98,13 +104,17 @@ export function registerMcpCommands(program: Command): void {
         }
 
         if (result.servers.length === 0) {
-          console.log("No MCP servers configured.");
+          console.log(line("info", "No MCP servers configured.", style));
           return;
         }
 
+        console.log(line("section", "Configured MCP servers", style));
         for (const server of result.servers) {
-          console.log(`${server.name} (${server.transport})`);
+          console.log(bullet(`${server.name} (${server.transport})`, style, "info"));
         }
+      }, {
+        json: Boolean(options.json),
+        plain: Boolean(options.plain)
       })
     );
 
@@ -115,8 +125,12 @@ export function registerMcpCommands(program: Command): void {
     .option("--profile <name>", "Install all entries from a profile")
     .option("--codex-home <path>", "Override Codex home directory")
     .option("--force", "Apply values directly when conflicts exist")
+    .option("--plain", "Disable decorated output")
     .action((id, options) =>
       runCommand(async () => {
+        const style = resolveOutputStyle({
+          plain: Boolean(options.plain)
+        });
         const codexHome = options.codexHome as string | undefined;
         const force = Boolean(options.force);
         const selectedId = normalizeToken(id as string | undefined);
@@ -139,7 +153,7 @@ export function registerMcpCommands(program: Command): void {
             );
           }
           if (profileEntries.length === 0) {
-            console.log(`MCP profile "${profileName}" has no entries.`);
+            console.log(line("info", `MCP profile "${profileName}" has no entries.`, style));
             return;
           }
 
@@ -154,7 +168,7 @@ export function registerMcpCommands(program: Command): void {
             outcomes.push(await installCatalogEntry(entry, { codexHome, force, source: "profile", goal: profileName }));
           }
 
-          printInstallOutcomes(outcomes, `profile "${profileName}"`);
+          printInstallOutcomes(outcomes, `profile "${profileName}"`, style);
           if (outcomes.some((outcome) => !outcome.testOk)) {
             process.exitCode = 1;
           }
@@ -167,10 +181,12 @@ export function registerMcpCommands(program: Command): void {
         }
 
         const outcome = await installCatalogEntry(entry, { codexHome, force, source: "manual" });
-        printInstallOutcomes([outcome], `entry "${selectedId}"`);
+        printInstallOutcomes([outcome], `entry "${selectedId}"`, style);
         if (!outcome.testOk) {
           process.exitCode = 1;
         }
+      }, {
+        plain: Boolean(options.plain)
       })
     );
 
@@ -197,9 +213,14 @@ export function registerMcpCommands(program: Command): void {
     .description("Test a configured MCP server")
     .argument("<name>", "MCP server name")
     .option("--codex-home <path>", "Override Codex home directory")
+    .option("--plain", "Disable decorated output")
     .option("--json", "Output JSON")
     .action((name, options) =>
       runCommand(async () => {
+        const style = resolveOutputStyle({
+          json: Boolean(options.json),
+          plain: Boolean(options.plain)
+        });
         const result = await testMcpServerByName(name as string, {
           codexHome: options.codexHome as string | undefined
         });
@@ -210,15 +231,20 @@ export function registerMcpCommands(program: Command): void {
         if (Boolean(options.json)) {
           console.log(JSON.stringify(result.result, null, 2));
         } else {
-          console.log(`${result.result.name}: ${result.result.ok ? "ok" : "failed"}`);
+          console.log(
+            line(result.result.ok ? "ok" : "error", `${result.result.name}: ${result.result.ok ? "ok" : "failed"}`, style)
+          );
           for (const message of result.result.messages) {
-            console.log(`- ${message}`);
+            console.log(bullet(message, style, result.result.ok ? "info" : "warn"));
           }
         }
 
         if (!result.result.ok) {
           process.exitCode = 1;
         }
+      }, {
+        json: Boolean(options.json),
+        plain: Boolean(options.plain)
       })
     );
 
@@ -229,9 +255,14 @@ export function registerMcpCommands(program: Command): void {
     .option("--yes", "Install and test top recommendations automatically")
     .option("--codex-home <path>", "Override Codex home directory")
     .option("--force", "Apply values directly when conflicts exist")
+    .option("--plain", "Disable decorated output")
     .option("--json", "Output JSON")
     .action((options) =>
       runCommand(async () => {
+        const style = resolveOutputStyle({
+          json: Boolean(options.json),
+          plain: Boolean(options.plain)
+        });
         const codexHome = options.codexHome as string | undefined;
         const force = Boolean(options.force);
         const goal = normalizeToken(options.goal as string | undefined);
@@ -282,43 +313,44 @@ export function registerMcpCommands(program: Command): void {
         if (Boolean(options.json)) {
           console.log(JSON.stringify(payload, null, 2));
         } else {
-          console.log(`Guided MCP goal: ${goal ?? "general productivity"}`);
+          console.log(line("section", "Guided MCP recommendations", style));
+          console.log(kv("Goal", goal ?? "general productivity", style));
           if (recommendations.length === 0) {
-            console.log("No catalog entries are available.");
+            console.log(line("info", "No catalog entries are available.", style));
             return;
           }
 
-          console.log("Recommended entries:");
+          console.log(line("info", "Recommended entries:", style));
           for (const recommendation of recommendations) {
             const entry = recommendation.entry;
             const complexity = entry.setup_complexity ? `, setup: ${entry.setup_complexity}` : "";
             const uxScore = typeof entry.ux_score === "number" ? `, ux: ${entry.ux_score}` : "";
-            console.log(`- ${entry.id} (${entry.transport}${uxScore}${complexity})`);
-            console.log(`  ${entry.description}`);
+            console.log(bullet(`${entry.id} (${entry.transport}${uxScore}${complexity})`, style, "step"));
+            console.log(`  ${line("info", entry.description, style)}`);
             if (recommendation.reasons.length > 0) {
-              console.log(`  Why: ${recommendation.reasons.join(" ")}`);
+              console.log(`  ${line("tip", `Why: ${recommendation.reasons.join(" ")}`, style)}`);
             }
             if ((entry.requires_keys ?? []).length > 0) {
-              console.log(`  Requires keys: ${(entry.requires_keys ?? []).join(", ")}`);
+              console.log(`  ${line("warn", `Requires keys: ${(entry.requires_keys ?? []).join(", ")}`, style)}`);
             }
           }
 
           if (!Boolean(options.yes)) {
             const installIds = recommendations.map((item) => item.entry.id).join(" ");
-            console.log(`Install all suggested now: supercodex mcp install --profile recommended`);
-            console.log(`Install one directly: supercodex mcp install ${recommendations[0]?.entry.id}`);
+            console.log(line("next", "Install all suggested now: supercodex mcp install --profile recommended", style));
+            console.log(line("next", `Install one directly: supercodex mcp install ${recommendations[0]?.entry.id}`, style));
             if (goal) {
-              console.log(`Re-run with auto install: supercodex mcp guided --goal ${goal} --yes`);
+              console.log(line("next", `Re-run with auto install: supercodex mcp guided --goal ${goal} --yes`, style));
             } else {
-              console.log("Re-run with auto install: supercodex mcp guided --yes");
+              console.log(line("next", "Re-run with auto install: supercodex mcp guided --yes", style));
             }
             if (installIds.length > 0) {
-              console.log(`Top picks: ${installIds}`);
+              console.log(line("tip", `Top picks: ${installIds}`, style));
             }
           } else {
-            console.log("Install/test results:");
+            console.log(line("info", "Install/test results:", style));
             for (const outcome of outcomes) {
-              console.log(`- ${outcome.id}: ${outcome.testOk ? "ok" : "failed"}`);
+              console.log(bullet(`${outcome.id}: ${outcome.testOk ? "ok" : "failed"}`, style, outcome.testOk ? "ok" : "error"));
               for (const message of outcome.testMessages) {
                 console.log(`  ${message}`);
               }
@@ -329,6 +361,9 @@ export function registerMcpCommands(program: Command): void {
         if (outcomes.some((outcome) => !outcome.testOk)) {
           process.exitCode = 1;
         }
+      }, {
+        json: Boolean(options.json),
+        plain: Boolean(options.plain)
       })
     );
 
@@ -374,25 +409,30 @@ async function installCatalogEntry(
   };
 }
 
-function printInstallOutcomes(outcomes: CatalogInstallOutcome[], context: string): void {
+function printInstallOutcomes(outcomes: CatalogInstallOutcome[], context: string, style: OutputStyle): void {
   if (outcomes.length === 0) {
-    console.log(`No MCP installs performed for ${context}.`);
+    console.log(line("info", `No MCP installs performed for ${context}.`, style));
     return;
   }
 
   for (const outcome of outcomes) {
-    console.log(`Backup: ${outcome.backupDir}`);
+    console.log(line("section", `MCP install result (${context})`, style));
+    console.log(kv("Backup", outcome.backupDir, style));
     console.log(
-      outcome.configChanged
-        ? `Installed MCP catalog entry "${outcome.id}" as server "${outcome.server}".`
-        : `MCP catalog entry "${outcome.id}" is already current.`
+      line(
+        outcome.configChanged ? "ok" : "info",
+        outcome.configChanged
+          ? `Installed MCP catalog entry "${outcome.id}" as server "${outcome.server}".`
+          : `MCP catalog entry "${outcome.id}" is already current.`,
+        style
+      )
     );
     for (const warning of outcome.warnings) {
-      console.warn(`- ${warning}`);
+      console.warn(line("warn", warning, style));
     }
-    console.log(`Test: ${outcome.testOk ? "ok" : "failed"}`);
+    console.log(line(outcome.testOk ? "ok" : "error", `Test: ${outcome.testOk ? "ok" : "failed"}`, style));
     for (const message of outcome.testMessages) {
-      console.log(`- ${message}`);
+      console.log(bullet(message, style, outcome.testOk ? "info" : "warn"));
     }
   }
 }

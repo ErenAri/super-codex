@@ -74,4 +74,26 @@ describe("command content files", () => {
       expect(Object.hasOwn(BUILTIN_COMMANDS, alias.target)).toBe(true);
     }
   });
+
+  it("uses canonical /supercodex naming and emoji section headers", () => {
+    const requiredHeadings = [
+      "## 🎯 Purpose",
+      "## 🚀 Activation",
+      "## 🧠 Behavioral Flow",
+      "## 🔌 MCP Integration",
+      "## 🧱 Boundaries",
+      "## 🧾 Output Format",
+      "## 📥 User Task"
+    ];
+
+    for (const file of EXPECTED_COMMAND_FILES) {
+      const content = loadContentFile("commands", file);
+      expect(content).toContain("# /supercodex:");
+      expect(content.includes("/sc:")).toBe(false);
+
+      for (const heading of requiredHeadings) {
+        expect(content).toContain(heading);
+      }
+    }
+  });
 });

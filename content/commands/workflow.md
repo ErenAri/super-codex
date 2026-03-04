@@ -1,13 +1,13 @@
-# /sc:workflow
+# /supercodex:workflow
 
-## Purpose
+## 🎯 Purpose
 Analyze the current development workflow, identify bottlenecks and inefficiencies, design targeted improvements, propose changes with clear rationale, and define metrics for measuring success.
 
-## Activation
+## 🚀 Activation
 - Persona: architect
 - Mode: balanced
 
-## Context
+## 🧭 Context
 A development workflow is the sequence of activities, tools, and handoffs that
 turn an idea into deployed software. Workflows are often evolved organically
 rather than designed deliberately, which leads to hidden inefficiencies:
@@ -18,12 +18,12 @@ and propose specific improvements.
 
 This command looks at the big picture: not individual tasks or code changes,
 but the process that produces them. It connects to other SuperCodex commands:
-- `/sc:task` and `/sc:spawn` manage work within the workflow.
-- `/sc:test` and `/sc:spec-panel` are quality gates in the workflow.
-- `/sc:save` preserves workflow context across sessions.
-- `/sc:troubleshoot` addresses process failures.
+- `/supercodex:task` and `/supercodex:spawn` manage work within the workflow.
+- `/supercodex:test` and `/supercodex:spec-panel` are quality gates in the workflow.
+- `/supercodex:save` preserves workflow context across sessions.
+- `/supercodex:troubleshoot` addresses process failures.
 
-## Behavioral Flow
+## 🧠 Behavioral Flow
 
 ### Step 1 -- Assess Current Workflow (15% effort)
 
@@ -197,11 +197,11 @@ but the process that produces them. It connects to other SuperCodex commands:
    - Include a "good enough" threshold and a "stretch goal."
 5. Recommend a review cadence:
    - "Review workflow metrics monthly to track progress."
-   - "Run `/sc:workflow` again in 2 weeks to reassess after Phase 1 changes."
+   - "Run `/supercodex:workflow` again in 2 weeks to reassess after Phase 1 changes."
 
-## MCP Integration
+## 🔌 MCP Integration
 
-### Tool Usage Guidance
+### 🧰 Tool Usage Guidance
 - **File system tools**: Use `read_file` to inspect CI/CD configuration files,
   test configuration, package manifests, and project documentation.
 - **Search tools**: Use `grep` to find workflow-related patterns (CI config
@@ -223,9 +223,9 @@ but the process that produces them. It connects to other SuperCodex commands:
 - If git history is shallow (e.g., a new repository), base the assessment
   on configuration and project structure rather than history.
 
-## Boundaries
+## 🧱 Boundaries
 
-### WILL DO:
+### ✅ WILL DO:
 - Analyze development workflows by inspecting project configuration and history.
 - Identify bottlenecks in speed, quality, communication, and feedback.
 - Propose specific, actionable improvements with clear rationale.
@@ -235,7 +235,7 @@ but the process that produces them. It connects to other SuperCodex commands:
 - Recommend review cadence for ongoing improvement.
 - Suggest tools and configurations for workflow improvements.
 
-### WILL NOT DO:
+### 🚫 WILL NOT DO:
 - Enforce processes or make unilateral changes to the workflow.
 - Modify CI/CD configuration, test settings, or deployment scripts without
   explicit user approval.
@@ -246,7 +246,7 @@ but the process that produces them. It connects to other SuperCodex commands:
 - Propose changes that require tools or infrastructure the team cannot access.
 - Treat every workflow difference from "best practices" as a problem.
 
-## Output Format
+## 🧾 Output Format
 
 ### Standard Workflow Report
 ```
@@ -291,18 +291,18 @@ but the process that produces them. It connects to other SuperCodex commands:
 - **Regulated environment**: If compliance requirements are mentioned, ensure
   proposed improvements do not weaken audit trails or approval chains.
 
-## Next Steps
+## ✅ Next Steps
 After workflow analysis, the user may want to:
-- `/sc:task` -- Plan the implementation of a specific improvement.
-- `/sc:spawn` -- Decompose a large improvement into sub-tasks.
-- `/sc:save` -- Persist the workflow analysis for future reference.
-- `/sc:sc` -- Review SuperCodex's integration with the workflow.
+- `/supercodex:task` -- Plan the implementation of a specific improvement.
+- `/supercodex:spawn` -- Decompose a large improvement into sub-tasks.
+- `/supercodex:save` -- Persist the workflow analysis for future reference.
+- `/supercodex:sc` -- Review SuperCodex's integration with the workflow.
 
-## Examples
+## 🧷 Examples
 
 ### Example 1: Full Workflow Analysis
 ```
-User: /sc:workflow
+User: /supercodex:workflow
 
 Agent:
 Analyzing project workflow...
@@ -326,7 +326,7 @@ Improvement Plan:
 
 ### Example 2: Specific Aspect
 ```
-User: /sc:workflow code review process
+User: /supercodex:workflow code review process
 
 Agent: [focused analysis of the code review workflow, including PR
   turnaround times, review thoroughness, and suggestions for
@@ -335,7 +335,7 @@ Agent: [focused analysis of the code review workflow, including PR
 
 ### Example 3: Greenfield Project
 ```
-User: /sc:workflow
+User: /supercodex:workflow
 
 Agent: This project has no CI/CD configuration, no test infrastructure,
 and no formal workflow. Recommend establishing a baseline:
@@ -345,7 +345,7 @@ and no formal workflow. Recommend establishing a baseline:
   ...
 ```
 
-## Argument Handling
+## 🧷 Argument Handling
 
 The `$ARGUMENTS` string may specify a focus area or be empty for full analysis.
 
@@ -359,7 +359,7 @@ The `$ARGUMENTS` string may specify a focus area or be empty for full analysis.
 
 If `$ARGUMENTS` is empty, perform a full workflow analysis.
 
-## Quality Checklist
+## 📋 Quality Checklist
 Before finalizing the workflow report, verify:
 - [ ] The current workflow is accurately described based on project evidence.
 - [ ] Bottlenecks are ranked by actual impact, not assumed importance.
@@ -370,5 +370,5 @@ Before finalizing the workflow report, verify:
 - [ ] The report acknowledges existing workflow strengths.
 - [ ] No changes are applied without explicit user approval.
 
-## User Task
+## 📥 User Task
 $ARGUMENTS
