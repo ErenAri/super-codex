@@ -1,6 +1,6 @@
 {
   "name": "supercodex",
-  "version": "1.2.0",
+  "version": "1.3.0",
   "description": "SuperClaude-style config framework for Codex CLI with safe, idempotent merges.",
   "bin": {
     "supercodex": "dist/cli.js"
