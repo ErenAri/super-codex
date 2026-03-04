@@ -8,6 +8,8 @@ Install or upgrade managed SuperCodex state:
 
 ```bash
 supercodex install
+supercodex start
+supercodex start --yes
 ```
 
 Inspect what is installed:
@@ -45,7 +47,7 @@ supercodex doctor --mcp-connectivity
 
 ## Command Workflows
 
-SuperCodex ships 30 command workflows. Each has a rich behavioral prompt with activation rules, execution flow, and output format.
+SuperCodex ships a broad command-workflow set. Each has a rich behavioral prompt with activation rules, execution flow, and output format. Generated counts live in `docs/METADATA.md`.
 
 ### Running commands
 
@@ -59,8 +61,8 @@ supercodex run research --mode deep --persona architect --json
 ### Via aliases
 
 ```bash
-supercodex /sc:research "map migration risks"
-supercodex sc:brainstorming "list architecture options"
+supercodex /supercodex:research "map migration risks"
+supercodex /supercodex:brainstorming "list architecture options"
 supercodex analyze "review auth module"
 supercodex estimate "migration to PostgreSQL"
 ```
@@ -112,13 +114,14 @@ supercodex aliases packs
 supercodex aliases list
 supercodex aliases search security
 supercodex aliases show research
+supercodex aliases recommend "security review"
 ```
 
 Run an alias through SuperCodex CLI:
 
 ```bash
-supercodex /sc:research "map migration risks"
-supercodex sc:brainstorming "list architecture options"
+supercodex /supercodex:research "map migration risks"
+supercodex /supercodex:brainstorming "list architecture options"
 supercodex research "scope implementation plan"
 ```
 
@@ -137,13 +140,13 @@ supercodex research "scope implementation plan"
 Inside Codex chat, use `/prompts:*` wrappers:
 
 ```text
-/prompts:sc-research map migration risks
-/prompts:sc-review review this diff for regressions
-/prompts:sc-debug isolate flaky timeout root cause
-/prompts:sc-analyze review auth module architecture
+/prompts:supercodex-research map migration risks
+/prompts:supercodex-review review this diff for regressions
+/prompts:supercodex-debug isolate flaky timeout root cause
+/prompts:supercodex-analyze review auth module architecture
 ```
 
-Wrappers are installed in `~/.codex/prompts/sc-*.md`.
+Wrappers are installed in `~/.codex/prompts/supercodex-*.md`.
 
 ## Agents
 
@@ -214,9 +217,9 @@ supercodex flag show ultrathink
 Flags are translated into mode/depth options during alias dispatch:
 
 ```bash
-supercodex /sc:research --brainstorm "explore options"   # activates brainstorming mode
-supercodex /sc:analyze --think "deep analysis"           # enables high reasoning budget
-supercodex /sc:research --c7 "use Context7"              # enables Context7 MCP
+supercodex /supercodex:research --brainstorm "explore options"   # activates brainstorming mode
+supercodex /supercodex:analyze --think "deep analysis"           # enables high reasoning budget
+supercodex /supercodex:research --c7 "use Context7"              # enables Context7 MCP
 ```
 
 ## Skills
@@ -245,6 +248,9 @@ Catalog-driven install:
 supercodex catalog list
 supercodex catalog search postgres
 supercodex mcp install postgres
+supercodex mcp install --profile recommended
+supercodex mcp guided --goal docs
+supercodex mcp guided --goal docs --yes
 ```
 
 Health and maintenance:
@@ -272,7 +278,7 @@ After install:
 
 ```bash
 sc research "plan migration"
-sc /sc:security "threat model this change"
+sc /supercodex:security "threat model this change"
 sc analyze "review auth module"
 ```
 

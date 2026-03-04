@@ -1,6 +1,7 @@
 import type { Command } from "commander";
 
 import { contentFileExists, loadContentFile } from "../content-loader";
+import { setSkillEnabled } from "../services/runtime-settings";
 import { loadRegistry } from "../registry";
 import { runCommand } from "./utils";
 
@@ -82,7 +83,11 @@ export function registerSkillCommands(program: Command): void {
         if (!definition) {
           throw new Error(`Skill "${id}" not found.`);
         }
-        console.log(`Skill "${id}" is enabled.`);
+        const result = await setSkillEnabled(id as string, true, {
+          codexHome: options.codexHome as string | undefined
+        });
+        console.log(`Backup: ${result.backup.backupDir}`);
+        console.log(result.changed ? `Skill "${id}" is enabled.` : `Skill "${id}" was already enabled.`);
       })
     );
 
@@ -98,7 +103,11 @@ export function registerSkillCommands(program: Command): void {
         if (!definition) {
           throw new Error(`Skill "${id}" not found.`);
         }
-        console.log(`Skill "${id}" is disabled.`);
+        const result = await setSkillEnabled(id as string, false, {
+          codexHome: options.codexHome as string | undefined
+        });
+        console.log(`Backup: ${result.backup.backupDir}`);
+        console.log(result.changed ? `Skill "${id}" is disabled.` : `Skill "${id}" was already disabled.`);
       })
     );
 }

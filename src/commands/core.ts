@@ -32,8 +32,8 @@ export function registerCoreCommands(program: Command): void {
             ? `Prompt pack installed at ${result.paths.promptPackDir}.`
             : `Prompt pack already current at ${result.paths.promptPackDir}.`
         );
-        console.log("Alias usage: supercodex /sc:research <args...>");
-        console.log("Codex interactive usage: /prompts:sc-research <task>");
+        console.log("Alias usage: supercodex /supercodex:research <args...> (short: /sc:research)");
+        console.log("Codex interactive usage: /prompts:supercodex-research <task>");
         console.log("Optional shell shortcut bridge: supercodex shell install");
 
         printWarnings(result.warnings);
@@ -150,7 +150,7 @@ export function registerCoreCommands(program: Command): void {
             ? `Interactive prompt commands missing: ${result.interactivePromptCommandsMissing.length}`
             : "Interactive prompt commands missing: 0"
         );
-        console.log("Codex slash invocation format: /prompts:sc-research <task>");
+        console.log("Codex slash invocation format: /prompts:supercodex-research <task>");
         console.log(
           `Shell bridge: ${shellBridge.installed ? "installed" : "missing"} ` +
             `(${shellBridge.shell}: ${shellBridge.profilePath})`

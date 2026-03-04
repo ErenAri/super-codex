@@ -3,16 +3,27 @@
 SuperCodex is a safety-first workflow layer for Codex CLI.
 It installs a curated prompt pack, manages a deterministic command/mode/persona registry, and merges config into `~/.codex/config.toml` without destructive overwrites.
 
-Built on the [SuperClaude Framework](https://github.com/superclaude/framework) behavioral model — 30 command workflows, 16 specialist agents, 11 modes, a skills system, and flag-based dispatch.
+Built on the [SuperClaude Framework](https://github.com/superclaude/framework) behavioral model with workflow commands, specialist agents, mode overlays, a skills system, and flag-based dispatch.
+
+<!-- supercodex:metadata:start -->
+## Framework Snapshot
+
+- Workflow commands: 33 (4 base + 29 extended)
+- Workflow content files: 33 (4 in content/workflows + 29 in content/commands)
+- Agent definitions: 16
+- Mode definitions: 11
+- Persona definitions: 6
+- Skill definitions: 1
+<!-- supercodex:metadata:end -->
 
 ## Why SuperCodex
 
 - Backup-first config changes (timestamped backup on every mutating command)
 - Scoped config ownership (`[supercodex]` plus optional managed `agents` and `mcp_servers` entries)
 - Idempotent install behavior
-- 30 rich command workflows with domain-specific behavioral prompts
-- 16 specialist agent definitions (PM, Security, Performance, DevOps, etc.)
-- 11 modes (balanced, deep, fast, safe, brainstorming, deep-research, etc.)
+- Rich command workflows with domain-specific behavioral prompts
+- Specialist agent definitions (PM, Security, Performance, DevOps, etc.)
+- Mode overlays (balanced, deep, fast, safe, brainstorming, deep-research, etc.)
 - Skills system with confidence-check gating
 - Flag-based dispatch (`--brainstorm`, `--think`, `--ultrathink`, `--c7`, `--seq`)
 - Cross-platform support (Windows, macOS, Linux)
@@ -22,28 +33,29 @@ Built on the [SuperClaude Framework](https://github.com/superclaude/framework) b
 ```bash
 npm install -g @erenari/supercodex
 supercodex install
+supercodex start --yes
 supercodex status
 ```
 
 After install:
 
 - Prompt pack: `~/.codex/prompts/supercodex/`
-- Interactive prompt wrappers: `~/.codex/prompts/sc-*.md`
+- Interactive prompt wrappers: `~/.codex/prompts/supercodex-*.md`
 - Config merge target: `~/.codex/config.toml`
 
 ## Alias Invocation: Which Syntax Works Where
 
 | Context | Use this syntax | Example |
 | --- | --- | --- |
-| Codex interactive chat | `/prompts:<name>` | `/prompts:sc-research "map migration risks"` |
-| SuperCodex CLI | `/sc:<name>` or `sc:<name>` | `supercodex /sc:research "map migration risks"` |
+| Codex interactive chat | `/prompts:<name>` | `/prompts:supercodex-research "map migration risks"` |
+| SuperCodex CLI | `/supercodex:<name>` or `supercodex:<name>` | `supercodex /supercodex:research "map migration risks"` |
 | SuperCodex CLI (plain alias) | `<name>` | `supercodex research "map migration risks"` |
 | Shell shortcut (optional bridge) | `sc <name>` | `sc research "map migration risks"` |
 
 Notes:
 
 - Codex interactive custom commands are exposed under `/prompts:*`.
-- `/sc:*` is a SuperCodex CLI alias parser, not a native Codex interactive namespace.
+- `/supercodex:*` and `/sc:*` are SuperCodex CLI alias parsers, not native Codex interactive namespaces.
 
 ## Install, List, Uninstall
 
@@ -54,9 +66,9 @@ supercodex status [--json] [--codex-home <path>]
 supercodex uninstall [--codex-home <path>]
 ```
 
-## Command Workflows (30 commands)
+## Command Workflows
 
-SuperCodex ships 30 command workflows, each with rich behavioral prompts:
+SuperCodex ships command workflows with rich behavioral prompts:
 
 | Category | Commands |
 | --- | --- |
@@ -72,11 +84,11 @@ Run any command:
 
 ```bash
 supercodex run analyze --json
-supercodex /sc:research "evaluate caching strategies"
+supercodex /supercodex:research "evaluate caching strategies"
 supercodex brainstorm "API redesign options"
 ```
 
-## Agents (16 specialists)
+## Agents
 
 Specialist agent definitions with triggers, capabilities, and handoff criteria:
 
@@ -87,7 +99,7 @@ supercodex agent show security-engineer
 
 Available agents: `pm`, `deep-research`, `system-architect`, `security-engineer`, `frontend-architect`, `backend-architect`, `performance-engineer`, `devops-engineer`, `data-engineer`, `qa-engineer`, `tech-writer`, `incident-responder`, `ml-engineer`, `mobile-architect`, `database-architect`, `accessibility-engineer`
 
-## Modes (11 modes)
+## Modes
 
 ```bash
 supercodex mode list
@@ -165,7 +177,7 @@ Then use:
 
 ```bash
 sc research "scope and constraints"
-sc /sc:brainstorming "alternatives"
+sc /supercodex:brainstorming "alternatives"
 ```
 
 ## Safety Model
@@ -187,17 +199,17 @@ SuperCodex never blindly overwrites `config.toml`.
 Installed under `~/.codex/prompts/supercodex/`:
 
 - Base workflows: `plan.md`, `review.md`, `refactor.md`, `debug.md`
-- Commands: `commands/*.md` (29 command-specific prompts)
-- Modes: `modes/*.md` (11 mode behavioral definitions)
-- Agents: `agents/*.md` (16 agent definitions)
+- Commands: `commands/*.md` (command workflow prompts)
+- Modes: `modes/*.md` (mode behavioral definitions)
+- Agents: `agents/*.md` (agent definitions)
 - Personas: `personas/*.md`
 - Framework: `framework/PRINCIPLES.md`, `framework/RULES.md`, `framework/FLAGS.md`
 - Skills: `skills/confidence-check/SKILL.md`
 
 Interactive wrappers installed under `~/.codex/prompts/`:
 
-- `sc-research.md` -> `/prompts:sc-research`
-- `sc-brainstorming.md` -> `/prompts:sc-brainstorming`
+- `supercodex-research.md` -> `/prompts:supercodex-research`
+- `supercodex-brainstorming.md` -> `/prompts:supercodex-brainstorming`
 - wrappers for all built-in aliases
 
 ## Core Command Groups
@@ -205,8 +217,9 @@ Interactive wrappers installed under `~/.codex/prompts/`:
 ```bash
 supercodex validate [--strict] [--json]
 supercodex doctor [--fix] [--strict] [--json] [--mcp-connectivity]
+supercodex start [--yes] [--json]
 supercodex init [--dir <path>]
-supercodex aliases list|show|packs|search
+supercodex aliases list|show|packs|search|recommend
 supercodex mode list|show|set|unset
 supercodex persona list|show|set|unset
 supercodex agent list|show
@@ -214,7 +227,7 @@ supercodex skill list|show|enable|disable
 supercodex flag list|show
 supercodex run <command> [--mode <name>] [--persona <name>] [--json]
 supercodex catalog list|search|show|sync
-supercodex mcp add|list|install|remove|test|doctor|catalog
+supercodex mcp add|list|install|remove|test|doctor|guided|catalog
 ```
 
 For detailed examples, see [docs/COMMANDS.md](docs/COMMANDS.md).
@@ -225,6 +238,8 @@ Catalog install:
 
 ```bash
 supercodex mcp install filesystem
+supercodex mcp install --profile recommended
+supercodex mcp guided --goal docs --yes
 ```
 
 Manual STDIO server:
@@ -266,6 +281,8 @@ installed_ids = ["filesystem"]
 ## Docs
 
 - [Command Reference](docs/COMMANDS.md)
+- [Framework Metadata (Generated)](docs/METADATA.md)
+- [ADR 0001: SuperClaude Compatibility Target](docs/adr/0001-superclaude-compatibility-target.md)
 - [Troubleshooting](docs/TROUBLESHOOTING.md)
 
 ## Benchmarking

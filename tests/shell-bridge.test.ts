@@ -97,9 +97,9 @@ describe("shell bridge", () => {
     const psScript = renderShellBridgeScript("powershell");
 
     expect(fishScript).toContain("function sc");
-    expect(fishScript).toContain("case '/sc:*' 'sc:*'");
+    expect(fishScript).toContain("case '/supercodex:*' 'supercodex:*' '/sc:*' 'sc:*'");
     expect(psScript).toContain("function sc {");
-    expect(psScript).toContain("$first -like '/sc:*'");
+    expect(psScript).toContain("$first -like '/supercodex:*'");
   });
 });
 

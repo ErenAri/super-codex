@@ -1,18 +1,27 @@
 import type { Command } from "commander";
 
-import { listContentFiles } from "../content-loader";
+import { contentFileExists, listContentFiles, loadContentFile } from "../content-loader";
 import { loadRegistry } from "../registry";
 import { checkCompatibility, resolveWorkflow, isBaseWorkflow } from "../runtime";
-import { runCommand } from "./utils";
+import { extractPurposeSummary } from "../workflow-summary";
+import { collectRepeatedOption, runCommand } from "./utils";
 
 const BASE_WORKFLOWS = ["plan", "review", "refactor", "debug"];
+const BASE_WORKFLOW_DESCRIPTION_FALLBACKS: Record<string, string> = {
+  plan: "Create an execution plan with scope, constraints, checkpoints, and exit criteria",
+  review: "Review code or changes for correctness, risk, regressions, and test coverage",
+  refactor: "Refactor code safely with incremental steps, validation checks, and rollback awareness",
+  debug: "Debug issues through hypothesis-driven investigation, instrumentation, and root-cause isolation"
+};
 
 export function registerRunCommands(program: Command): void {
-  const run = program.command("run").description("Resolve workflow context");
+  const run = program
+    .command("run")
+    .description("Resolve workflow context (prompt, mode, persona, reasoning budget)");
 
   // Register the 4 base workflows first
   for (const workflowName of BASE_WORKFLOWS) {
-    registerWorkflowCommand(run, workflowName, `Resolve ${workflowName} workflow context`);
+    registerWorkflowCommand(run, workflowName, resolveWorkflowCommandDescription(workflowName));
   }
 
   // Dynamically register command workflows from content/commands/
@@ -23,7 +32,7 @@ export function registerRunCommands(program: Command): void {
     if (BASE_WORKFLOWS.includes(commandName)) {
       continue;
     }
-    registerWorkflowCommand(run, commandName, `Run ${commandName} command workflow`);
+    registerWorkflowCommand(run, commandName, resolveWorkflowCommandDescription(commandName));
   }
 }
 
@@ -34,6 +43,8 @@ function registerWorkflowCommand(parent: Command, workflowName: string, descript
     .option("--codex-home <path>", "Override Codex home directory")
     .option("--mode <name>", "Override mode")
     .option("--persona <name>", "Override persona")
+    .option("--reasoning-budget <level>", "Override reasoning budget (low|medium|high|maximum)")
+    .option("--mcp <name>", "Request MCP server", collectRepeatedOption, [])
     .option("--json", "Output JSON")
     .action((options) =>
       runCommand(async () => {
@@ -46,6 +57,8 @@ function registerWorkflowCommand(parent: Command, workflowName: string, descript
           codexHome: options.codexHome as string | undefined,
           mode: options.mode as string | undefined,
           persona: options.persona as string | undefined,
+          reasoningBudget: options.reasoningBudget as string | undefined,
+          requestedMcpServers: (options.mcp as string[] | undefined) ?? [],
           projectRoot: process.cwd()
         });
 
@@ -71,6 +84,10 @@ function registerWorkflowCommand(parent: Command, workflowName: string, descript
         console.log(`Prompt: ${resolution.promptPath}`);
         console.log(`Mode: ${resolution.mode} (${resolution.modeSource})`);
         console.log(`Persona: ${resolution.persona} (${resolution.personaSource})`);
+        console.log(`Reasoning budget: ${resolution.reasoningBudget}`);
+        if (resolution.requestedMcpServers.length > 0) {
+          console.log(`Requested MCP servers: ${resolution.requestedMcpServers.join(", ")}`);
+        }
         if (resolution.overlays.modePrompt) {
           console.log(`Mode overlay: ${resolution.overlays.modePrompt}`);
         }
@@ -79,4 +96,30 @@ function registerWorkflowCommand(parent: Command, workflowName: string, descript
         }
       })
     );
+}
+
+function resolveWorkflowCommandDescription(workflowName: string): string {
+  const summary = loadWorkflowPurposeSummary(workflowName);
+  if (summary) {
+    return summary;
+  }
+
+  if (isBaseWorkflow(workflowName)) {
+    return BASE_WORKFLOW_DESCRIPTION_FALLBACKS[workflowName] ?? `Resolve ${workflowName} workflow context`;
+  }
+
+  return `Run ${workflowName} command workflow`;
+}
+
+function loadWorkflowPurposeSummary(workflowName: string): string | null {
+  const fileName = `${workflowName}.md`;
+  if (contentFileExists("commands", fileName)) {
+    return extractPurposeSummary(loadContentFile("commands", fileName), 95);
+  }
+
+  if (contentFileExists("workflows", fileName)) {
+    return extractPurposeSummary(loadContentFile("workflows", fileName), 95);
+  }
+
+  return null;
 }

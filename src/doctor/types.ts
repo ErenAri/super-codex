@@ -8,9 +8,34 @@ export interface DoctorIssue {
   path?: string;
 }
 
+export type McpHealthStatus = "healthy" | "degraded" | "failing";
+
+export interface McpHealthServer {
+  name: string;
+  transport: "stdio" | "http" | "unknown";
+  path: string;
+  health_score: number;
+  status: McpHealthStatus;
+  failure_reason_code?: string;
+  suggested_fix_steps: string[];
+  test_messages: string[];
+}
+
+export interface McpHealthSummary {
+  healthy: number;
+  degraded: number;
+  failing: number;
+}
+
+export interface McpHealthReport {
+  summary: McpHealthSummary;
+  servers: McpHealthServer[];
+}
+
 export interface DoctorReport {
   ok: boolean;
   issues: DoctorIssue[];
+  mcp_health?: McpHealthReport;
 }
 
 export interface DoctorFixResult {

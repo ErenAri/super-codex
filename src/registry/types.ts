@@ -4,6 +4,7 @@ export type ModeName = string;
 export type PersonaName = string;
 export type CommandId = string;
 export type McpTransport = "stdio" | "http";
+export type McpSetupComplexity = "low" | "medium" | "high";
 export type AliasOutputMode = "normal" | "json";
 export type AliasRiskLevel = "low" | "medium" | "high";
 export type AliasStability = "stable" | "experimental";
@@ -43,6 +44,10 @@ export interface CatalogEntry {
   url?: string;
   env?: Record<string, string>;
   tags?: string[];
+  ux_score?: number;
+  setup_complexity?: McpSetupComplexity;
+  requires_keys?: string[];
+  recommended_for?: string[];
 }
 
 export interface AliasDefinition {

@@ -40,7 +40,7 @@ describe("supercodex install/uninstall", () => {
   it("is idempotent across repeated install runs", async () => {
     const root = await createTempDir();
     const codexHome = path.join(root, ".codex");
-    const topLevelPrompt = path.join(codexHome, "prompts", "sc-research.md");
+    const topLevelPrompt = path.join(codexHome, "prompts", "supercodex-research.md");
 
     const first = await installSupercodex({
       codexHome,
@@ -59,6 +59,25 @@ describe("supercodex install/uninstall", () => {
     expect(second.promptChanged).toBe(false);
     expect(afterFirst).toBe(afterSecond);
     expect(await pathExists(topLevelPrompt)).toBe(true);
+  });
+
+  it("migrates managed legacy sc-* wrappers to supercodex-* wrappers on install", async () => {
+    const root = await createTempDir();
+    const codexHome = path.join(root, ".codex");
+    const promptsRoot = path.join(codexHome, "prompts");
+    const legacyWrapper = path.join(promptsRoot, "sc-research.md");
+    const newWrapper = path.join(promptsRoot, "supercodex-research.md");
+
+    await mkdir(promptsRoot, { recursive: true });
+    await writeFile(legacyWrapper, "<!-- supercodex:managed-prompt-wrapper -->\nlegacy\n", "utf8");
+
+    await installSupercodex({
+      codexHome,
+      now: new Date("2026-02-28T08:10:00.000Z")
+    });
+
+    expect(await pathExists(legacyWrapper)).toBe(false);
+    expect(await pathExists(newWrapper)).toBe(true);
   });
 
   it("preserves existing conflicting values and records overrides", async () => {
@@ -103,7 +122,7 @@ describe("supercodex install/uninstall", () => {
     const configPath = path.join(codexHome, "config.toml");
     const promptDir = path.join(codexHome, "prompts", "supercodex");
     const promptsRoot = path.join(codexHome, "prompts");
-    const managedInteractivePrompt = path.join(promptsRoot, "sc-research.md");
+    const managedInteractivePrompt = path.join(promptsRoot, "supercodex-research.md");
     const customPrompt = path.join(promptsRoot, "custom.md");
 
     await mkdir(promptDir, { recursive: true });

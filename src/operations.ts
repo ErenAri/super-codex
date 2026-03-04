@@ -32,6 +32,20 @@ import {
   removePromptPack
 } from "./prompts";
 import { BUILTIN_CATALOG_VERSION, type CatalogEntry } from "./registry";
+import {
+  ensureChildTable,
+  ensureSupercodexTable,
+  setDefaultMode as setDefaultModeRuntime,
+  setDefaultPersona as setDefaultPersonaRuntime,
+  setSkillEnabled as setSkillEnabledRuntime,
+  unsetDefaultMode as unsetDefaultModeRuntime,
+  unsetDefaultPersona as unsetDefaultPersonaRuntime,
+  updateDoctorState as updateDoctorStateRuntime
+} from "./services/runtime-settings";
+import {
+  validateSupercodexCommandCount as validateSupercodexCommandCountRuntime,
+  validateSupercodexCommandSet as validateSupercodexCommandSetRuntime
+} from "./services/command-validation";
 
 export interface OperationOptions {
   codexHome?: string;
@@ -95,6 +109,13 @@ export interface SetDefaultResult {
   paths: ReturnType<typeof getCodexPaths>;
   backup: BackupResult;
   changed: boolean;
+}
+
+export interface SetSkillEnabledResult {
+  paths: ReturnType<typeof getCodexPaths>;
+  backup: BackupResult;
+  changed: boolean;
+  enabled: boolean;
 }
 
 export interface McpListResult {
@@ -288,22 +309,30 @@ export async function getSupercodexStatus(codexHome?: string): Promise<StatusRes
 }
 
 export async function setDefaultMode(mode: string, options: OperationOptions = {}): Promise<SetDefaultResult> {
-  return updateRuntimeKey("default_mode", mode, options);
+  return setDefaultModeRuntime(mode, options);
 }
 
 export async function unsetDefaultMode(options: OperationOptions = {}): Promise<SetDefaultResult> {
-  return clearRuntimeKey("default_mode", options);
+  return unsetDefaultModeRuntime(options);
 }
 
 export async function setDefaultPersona(
   persona: string,
   options: OperationOptions = {}
 ): Promise<SetDefaultResult> {
-  return updateRuntimeKey("default_persona", persona, options);
+  return setDefaultPersonaRuntime(persona, options);
 }
 
 export async function unsetDefaultPersona(options: OperationOptions = {}): Promise<SetDefaultResult> {
-  return clearRuntimeKey("default_persona", options);
+  return unsetDefaultPersonaRuntime(options);
+}
+
+export async function setSkillEnabled(
+  skillId: string,
+  enabled: boolean,
+  options: OperationOptions = {}
+): Promise<SetSkillEnabledResult> {
+  return setSkillEnabledRuntime(skillId, enabled, options);
 }
 
 export async function listConfiguredMcpServers(codexHome?: string): Promise<McpListResult> {
@@ -505,103 +534,13 @@ export async function updateDoctorState(
   status: "ok" | "issues",
   options: OperationOptions = {}
 ): Promise<void> {
-  const paths = getCodexPaths(options.codexHome);
-  if (!(await pathExists(paths.configPath))) {
-    return;
-  }
+  await updateDoctorStateRuntime(status, options);
+}
 
-  const config = await loadConfig(paths.configPath);
-  const supercodex = ensureSupercodexTable(config);
-  const doctor = ensureChildTable(supercodex, "doctor");
-  const nextRunAt = new Date().toISOString();
-  const changed = doctor.last_status !== status || doctor.last_run_at !== nextRunAt;
-  doctor.last_run_at = nextRunAt;
-  doctor.last_status = status;
-  if (changed) {
-    await createTimestampedBackup(paths.configPath, paths.home, options.now ?? new Date());
-    await writeConfig(paths.configPath, config);
-  }
+export function validateSupercodexCommandSet(commandIds: string[]): ValidateResult {
+  return validateSupercodexCommandSetRuntime(commandIds);
 }
 
 export function validateSupercodexCommandCount(commandIds: string[]): ValidateResult {
-  if (commandIds.length < 56) {
-    return {
-      valid: false,
-      errors: [`Expected at least 56 commands but found ${commandIds.length}.`]
-    };
-  }
-
-  return {
-    valid: true,
-    errors: []
-  };
-}
-
-async function updateRuntimeKey(
-  key: "default_mode" | "default_persona",
-  value: string,
-  options: OperationOptions
-): Promise<SetDefaultResult> {
-  const paths = getCodexPaths(options.codexHome);
-  await mkdir(paths.home, { recursive: true });
-  const backup = await createTimestampedBackup(paths.configPath, paths.home, options.now ?? new Date());
-  const config = await loadConfig(paths.configPath);
-
-  const supercodex = ensureSupercodexTable(config);
-  const runtime = ensureChildTable(supercodex, "runtime");
-  const changed = runtime[key] !== value;
-  runtime[key] = value;
-
-  if (changed) {
-    await writeConfig(paths.configPath, config);
-  }
-
-  return {
-    paths,
-    backup,
-    changed
-  };
-}
-
-async function clearRuntimeKey(
-  key: "default_mode" | "default_persona",
-  options: OperationOptions
-): Promise<SetDefaultResult> {
-  const paths = getCodexPaths(options.codexHome);
-  await mkdir(paths.home, { recursive: true });
-  const backup = await createTimestampedBackup(paths.configPath, paths.home, options.now ?? new Date());
-  const config = await loadConfig(paths.configPath);
-
-  const supercodex = isPlainObject(config.supercodex) ? (config.supercodex as TomlTable) : null;
-  const runtime = supercodex && isPlainObject(supercodex.runtime) ? (supercodex.runtime as TomlTable) : null;
-  const changed = Boolean(runtime && Object.hasOwn(runtime, key));
-  if (runtime && Object.hasOwn(runtime, key)) {
-    delete runtime[key];
-  }
-
-  if (changed) {
-    await writeConfig(paths.configPath, config);
-  }
-
-  return {
-    paths,
-    backup,
-    changed
-  };
-}
-
-function ensureSupercodexTable(config: TomlTable): TomlTable {
-  if (!isPlainObject(config.supercodex)) {
-    config.supercodex = {};
-  }
-
-  return config.supercodex as TomlTable;
-}
-
-function ensureChildTable(parent: TomlTable, key: string): TomlTable {
-  if (!isPlainObject(parent[key])) {
-    parent[key] = {};
-  }
-
-  return parent[key] as TomlTable;
+  return validateSupercodexCommandCountRuntime(commandIds);
 }

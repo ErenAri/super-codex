@@ -78,12 +78,73 @@ export async function loadRegistry(options: RegistryLoadOptions = {}): Promise<R
     }
   }
 
+  const runtimeConfig = (await pathExists(codexPaths.configPath))
+    ? await loadConfig(codexPaths.configPath)
+    : {};
+  applyConfigOverrides(registry, runtimeConfig, codexPaths.configPath, issues);
+
   return {
     registry,
     issues,
     userOverlayPath,
     projectOverlayPath
   };
+}
+
+function applyConfigOverrides(
+  registry: RegistryData,
+  config: Record<string, unknown>,
+  sourcePath: string,
+  issues: RegistryValidationIssue[]
+): void {
+  if (!isPlainObject(config.supercodex)) {
+    return;
+  }
+
+  const supercodex = config.supercodex as Record<string, unknown>;
+  if (!isPlainObject(supercodex.skills)) {
+    return;
+  }
+
+  const skills = supercodex.skills as Record<string, unknown>;
+  for (const [skillId, rawSkill] of Object.entries(skills)) {
+    if (!Object.hasOwn(registry.skills, skillId)) {
+      issues.push({
+        level: "warn",
+        path: `${sourcePath}:supercodex.skills.${skillId}`,
+        message: `Unknown skill "${skillId}" in config override.`
+      });
+      continue;
+    }
+
+    if (!isPlainObject(rawSkill)) {
+      issues.push({
+        level: "warn",
+        path: `${sourcePath}:supercodex.skills.${skillId}`,
+        message: `Invalid skill override for "${skillId}". Expected a table with "enabled".`
+      });
+      continue;
+    }
+
+    const enabled = (rawSkill as Record<string, unknown>).enabled;
+    if (enabled === undefined) {
+      continue;
+    }
+
+    if (typeof enabled !== "boolean") {
+      issues.push({
+        level: "warn",
+        path: `${sourcePath}:supercodex.skills.${skillId}.enabled`,
+        message: `Invalid enabled override for "${skillId}". Expected boolean.`
+      });
+      continue;
+    }
+
+    registry.skills[skillId] = {
+      ...registry.skills[skillId],
+      enabled
+    };
+  }
 }
 
 export function validateRegistry(registry: RegistryData): RegistryValidationIssue[] {
@@ -156,6 +217,36 @@ export function validateRegistry(registry: RegistryData): RegistryValidationIssu
             message: `Invalid URL "${entry.url}".`
           });
         }
+      }
+    }
+
+    if (entry.setup_complexity) {
+      if (
+        entry.setup_complexity !== "low" &&
+        entry.setup_complexity !== "medium" &&
+        entry.setup_complexity !== "high"
+      ) {
+        issues.push({
+          level: "warn",
+          path: `catalog.${id}.setup_complexity`,
+          message: `Unsupported setup complexity "${entry.setup_complexity}".`
+        });
+      }
+    }
+
+    if (entry.ux_score !== undefined) {
+      if (!Number.isFinite(entry.ux_score)) {
+        issues.push({
+          level: "warn",
+          path: `catalog.${id}.ux_score`,
+          message: "ux_score must be a finite number."
+        });
+      } else if (entry.ux_score < 0 || entry.ux_score > 100) {
+        issues.push({
+          level: "warn",
+          path: `catalog.${id}.ux_score`,
+          message: "ux_score should be between 0 and 100."
+        });
       }
     }
   }
@@ -286,7 +377,7 @@ export function validateRegistry(registry: RegistryData): RegistryValidationIssu
         path: `aliases.${aliasName}`,
         message:
           `Alias "${aliasName}" collides with a top-level command name. ` +
-          `Plain form "supercodex ${aliasName}" will execute the command; use "/sc:${aliasName}" explicitly.`
+          `Plain form "supercodex ${aliasName}" will execute the command; use "/supercodex:${aliasName}" explicitly (or "/sc:${aliasName}").`
       });
     }
   }
@@ -360,6 +451,9 @@ export function searchCatalogEntries(registry: RegistryData, query: string): Cat
       entry.name,
       entry.description,
       ...(entry.tags ?? []),
+      entry.setup_complexity ?? "",
+      ...(entry.requires_keys ?? []),
+      ...(entry.recommended_for ?? []),
       entry.command ?? "",
       entry.url ?? ""
     ]
@@ -680,6 +774,26 @@ function normalizeCatalogEntry(id: string, raw: unknown): CatalogEntry | null {
 
   if (tags.length > 0) {
     entry.tags = tags;
+  }
+
+  const uxScore = asNumber(raw.ux_score);
+  if (typeof uxScore === "number") {
+    entry.ux_score = uxScore;
+  }
+
+  const setupComplexity = asString(raw.setup_complexity);
+  if (setupComplexity === "low" || setupComplexity === "medium" || setupComplexity === "high") {
+    entry.setup_complexity = setupComplexity;
+  }
+
+  const requiresKeys = asStringArray(raw.requires_keys);
+  if (requiresKeys.length > 0) {
+    entry.requires_keys = dedupeStrings(requiresKeys);
+  }
+
+  const recommendedFor = asStringArray(raw.recommended_for);
+  if (recommendedFor.length > 0) {
+    entry.recommended_for = dedupeStrings(recommendedFor);
   }
 
   return entry;

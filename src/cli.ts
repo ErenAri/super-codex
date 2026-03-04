@@ -14,6 +14,7 @@ import {
   registerPersonaCommands,
   registerRunCommands,
   registerShellCommands,
+  registerStartCommand,
   registerSkillCommands,
   registerValidateCommand
 } from "./commands";
@@ -27,6 +28,7 @@ export function createProgram(): Command {
     .version(SUPERCODEX_VERSION);
 
   registerCoreCommands(program);
+  registerStartCommand(program);
   registerValidateCommand(program);
   registerDoctorCommands(program);
   registerCatalogCommands(program);

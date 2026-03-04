@@ -10,7 +10,7 @@ import {
   validateRegistry
 } from "../registry";
 import { getRuntimeDefaults } from "../runtime";
-import type { DoctorIssue, DoctorReport } from "./types";
+import type { DoctorIssue, DoctorReport, McpHealthReport, McpHealthServer } from "./types";
 
 export interface DoctorOptions {
   codexHome?: string;
@@ -27,6 +27,11 @@ export interface DoctorContext {
 export interface DoctorRunResult {
   report: DoctorReport;
   context: DoctorContext;
+}
+
+interface McpChecksResult {
+  issues: DoctorIssue[];
+  health: McpHealthServer[];
 }
 
 export async function runDoctorChecks(options: DoctorOptions = {}): Promise<DoctorRunResult> {
@@ -129,13 +134,14 @@ export async function runDoctorChecks(options: DoctorOptions = {}): Promise<Doct
     }
   }
 
-  const mcpIssues = await runMcpChecks(config, Boolean(options.mcpConnectivity));
-  issues.push(...mcpIssues);
+  const mcpChecks = await runMcpChecks(config, Boolean(options.mcpConnectivity));
+  issues.push(...mcpChecks.issues);
 
   return {
     report: {
       ok: !issues.some((entry) => entry.level === "error"),
-      issues
+      issues,
+      mcp_health: buildMcpHealthReport(mcpChecks.health)
     },
     context: {
       config,
@@ -149,27 +155,47 @@ export async function runMcpDoctorChecks(
   config: TomlTable,
   includeConnectivity: boolean
 ): Promise<DoctorReport> {
-  const issues = await runMcpChecks(config, includeConnectivity);
+  const mcpChecks = await runMcpChecks(config, includeConnectivity);
   return {
-    ok: !issues.some((entry) => entry.level === "error"),
-    issues
+    ok: !mcpChecks.issues.some((entry) => entry.level === "error"),
+    issues: mcpChecks.issues,
+    mcp_health: buildMcpHealthReport(mcpChecks.health)
   };
 }
 
-async function runMcpChecks(config: TomlTable, includeConnectivity: boolean): Promise<DoctorIssue[]> {
+async function runMcpChecks(config: TomlTable, includeConnectivity: boolean): Promise<McpChecksResult> {
   const issues: DoctorIssue[] = [];
+  const health: McpHealthServer[] = [];
   const mcpServers = listMcpServersFromConfig(config);
 
   for (const server of mcpServers) {
     const validationMessages = validateMcpDefinition(server.definition);
+    const transport =
+      server.definition.transport === "stdio" || server.definition.transport === "http"
+        ? server.definition.transport
+        : "unknown";
+
+    let healthScore = 100;
+    const testMessages: string[] = [];
+    let failureReasonCode: string | undefined;
+    const suggestedFixSteps: string[] = [];
+
     for (const message of validationMessages) {
       issues.push(issue(`mcp.${server.name}.invalid`, "error", message, false, `mcp_servers.${server.name}`));
+      testMessages.push(message);
+      failureReasonCode = "invalid_definition";
+      healthScore = Math.min(healthScore, 30);
     }
-  }
 
-  if (includeConnectivity) {
-    for (const server of mcpServers) {
+    if (validationMessages.length > 0) {
+      suggestedFixSteps.push(
+        "Fix MCP transport/command/url fields in config.toml.",
+        `Re-run: supercodex mcp test ${server.name}`
+      );
+    } else if (includeConnectivity) {
       const testResult = await testMcpServer(server.name, server.definition);
+      testMessages.push(...testResult.messages);
+
       if (!testResult.ok) {
         issues.push(
           issue(
@@ -180,11 +206,157 @@ async function runMcpChecks(config: TomlTable, includeConnectivity: boolean): Pr
             `mcp_servers.${server.name}`
           )
         );
+        healthScore = Math.min(healthScore, 60);
+        failureReasonCode = mapConnectivityFailureReason(testResult.messages, transport);
+        suggestedFixSteps.push(...buildSuggestedFixSteps(failureReasonCode, server.name, transport));
       }
+    } else {
+      testMessages.push("Connectivity check skipped. Re-run with --connectivity.");
+      healthScore = Math.min(healthScore, 85);
+      failureReasonCode = "connectivity_not_checked";
+      suggestedFixSteps.push(`Run: supercodex mcp doctor --connectivity`);
+    }
+
+    const status = deriveMcpStatus(healthScore, failureReasonCode);
+    if (status === "healthy" && suggestedFixSteps.length === 0) {
+      suggestedFixSteps.push("No action required.");
+    }
+    if (testMessages.length === 0) {
+      testMessages.push("No MCP validation messages.");
+    }
+
+    health.push({
+      name: server.name,
+      transport,
+      path: `mcp_servers.${server.name}`,
+      health_score: clampScore(healthScore),
+      status,
+      ...(failureReasonCode ? { failure_reason_code: failureReasonCode } : {}),
+      suggested_fix_steps: dedupeStrings(suggestedFixSteps),
+      test_messages: dedupeStrings(testMessages)
+    });
+  }
+
+  return {
+    issues,
+    health
+  };
+}
+
+function buildMcpHealthReport(servers: McpHealthServer[]): McpHealthReport {
+  let healthy = 0;
+  let degraded = 0;
+  let failing = 0;
+
+  for (const server of servers) {
+    if (server.status === "healthy") {
+      healthy += 1;
+    } else if (server.status === "degraded") {
+      degraded += 1;
+    } else {
+      failing += 1;
     }
   }
 
-  return issues;
+  return {
+    summary: {
+      healthy,
+      degraded,
+      failing
+    },
+    servers
+  };
+}
+
+function mapConnectivityFailureReason(
+  messages: string[],
+  transport: "stdio" | "http" | "unknown"
+): string {
+  const normalized = messages.join(" ").toLowerCase();
+  if (normalized.includes("not found in path")) {
+    return "command_not_found";
+  }
+  if (normalized.includes("timed out") || normalized.includes("abort")) {
+    return "connection_timeout";
+  }
+  if (normalized.includes("http endpoint responded with status")) {
+    return "http_status_unexpected";
+  }
+  if (transport === "http" && normalized.includes("http request failed")) {
+    return "http_request_failed";
+  }
+  if (transport === "stdio" && normalized.includes("failed to execute")) {
+    return "command_exec_failed";
+  }
+  return "connectivity_failed";
+}
+
+function buildSuggestedFixSteps(
+  reasonCode: string,
+  serverName: string,
+  transport: "stdio" | "http" | "unknown"
+): string[] {
+  if (reasonCode === "command_not_found") {
+    return [
+      `Install the MCP command for "${serverName}" or add it to PATH.`,
+      `Check [mcp_servers.${serverName}].command in config.toml.`,
+      `Re-run: supercodex mcp test ${serverName}`
+    ];
+  }
+
+  if (
+    reasonCode === "http_status_unexpected" ||
+    reasonCode === "http_request_failed" ||
+    reasonCode === "connection_timeout"
+  ) {
+    return [
+      `Verify ${transport === "http" ? "HTTP endpoint" : "server endpoint"} reachability for "${serverName}".`,
+      `Check auth/env vars configured for "${serverName}".`,
+      `Re-run: supercodex mcp test ${serverName}`
+    ];
+  }
+
+  if (reasonCode === "command_exec_failed") {
+    return [
+      `Inspect command + args for "${serverName}" in config.toml.`,
+      "Check shell execution permissions.",
+      `Re-run: supercodex mcp test ${serverName}`
+    ];
+  }
+
+  return [
+    `Inspect MCP definition at [mcp_servers.${serverName}] for invalid values.`,
+    `Re-run: supercodex mcp test ${serverName}`
+  ];
+}
+
+function deriveMcpStatus(
+  score: number,
+  failureReasonCode: string | undefined
+): "healthy" | "degraded" | "failing" {
+  if (failureReasonCode === "invalid_definition") {
+    return "failing";
+  }
+  if (score >= 80 && !failureReasonCode) {
+    return "healthy";
+  }
+  if (score >= 55) {
+    return "degraded";
+  }
+  return "failing";
+}
+
+function clampScore(value: number): number {
+  if (!Number.isFinite(value)) {
+    return 0;
+  }
+  return Math.max(0, Math.min(100, Math.round(value)));
+}
+
+function dedupeStrings(values: string[]): string[] {
+  return Array.from(
+    new Set(values.map((value) => value.trim()).filter((value) => value.length > 0))
+  );
 }
 
 function issue(

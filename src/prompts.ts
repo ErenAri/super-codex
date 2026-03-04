@@ -5,6 +5,7 @@ import { contentFileExists, loadContentFile, listContentFiles, type ContentCateg
 import { pathExists } from "./fs-utils";
 import { BUILTIN_ALIASES } from "./registry/aliases";
 import type { AliasDefinition } from "./registry/types";
+import { extractPurposeSummary, formatDisplayName, truncateText } from "./workflow-summary";
 
 let _bundledPrompts: Record<string, string> | null = null;
 
@@ -85,6 +86,8 @@ export const BUNDLED_PROMPTS: Record<string, string> = new Proxy({} as Record<st
 });
 
 const PROMPT_WRAPPER_MARKER = "<!-- supercodex:managed-prompt-wrapper -->";
+const INTERACTIVE_PROMPT_PREFIX = "supercodex-";
+const LEGACY_INTERACTIVE_PROMPT_PREFIXES = ["sc-"];
 
 export interface PromptInstallResult {
   changed: boolean;
@@ -152,6 +155,26 @@ export async function installInteractivePromptCommands(promptsDir: string): Prom
     }
   }
 
+  // Clean up managed legacy wrapper names after migration (e.g. sc-*.md).
+  for (const legacyFileName of getLegacyInteractivePromptFileNames()) {
+    if (Object.hasOwn(bundled, legacyFileName)) {
+      continue;
+    }
+
+    const legacyPath = path.join(promptsDir, legacyFileName);
+    if (!(await pathExists(legacyPath))) {
+      continue;
+    }
+
+    const legacyContent = await readFile(legacyPath, "utf8");
+    if (!legacyContent.includes(PROMPT_WRAPPER_MARKER)) {
+      continue;
+    }
+
+    await rm(legacyPath, { force: true });
+    changed = true;
+  }
+
   return { changed, writtenFiles };
 }
 
@@ -166,9 +189,12 @@ export async function removePromptPack(promptPackDir: string): Promise<boolean> 
 
 export async function removeInteractivePromptCommands(promptsDir: string): Promise<boolean> {
   let changed = false;
-  const bundled = listBundledInteractivePromptCommands();
+  const bundled = new Set<string>([
+    ...listBundledInteractivePromptCommands(),
+    ...getLegacyInteractivePromptFileNames()
+  ]);
 
-  for (const fileName of bundled) {
+  for (const fileName of Array.from(bundled).sort()) {
     const targetPath = path.join(promptsDir, fileName);
     if (!(await pathExists(targetPath))) {
       continue;
@@ -238,11 +264,29 @@ function getBundledInteractivePromptFiles(): Record<string, string> {
       continue;
     }
 
-    const fileName = `sc-${alias.name}.md`;
+    const fileName = getInteractivePromptFileName(alias.name);
     files[fileName] = renderInteractivePrompt(alias, workflow);
   }
 
   return files;
+}
+
+function getInteractivePromptCommandName(aliasName: string): string {
+  return `${INTERACTIVE_PROMPT_PREFIX}${aliasName}`;
+}
+
+function getInteractivePromptFileName(aliasName: string): string {
+  return `${getInteractivePromptCommandName(aliasName)}.md`;
+}
+
+function getLegacyInteractivePromptFileNames(): string[] {
+  const files = new Set<string>();
+  for (const aliasName of Object.keys(BUILTIN_ALIASES)) {
+    for (const prefix of LEGACY_INTERACTIVE_PROMPT_PREFIXES) {
+      files.add(`${prefix}${aliasName}.md`);
+    }
+  }
+  return Array.from(files).sort();
 }
 
 function resolveWorkflowFromTarget(target: string): string | null {
@@ -261,22 +305,33 @@ export function renderInteractivePrompt(
   const persona = alias.default_persona ?? "architect";
   const bundled = getBundledPrompts();
 
-  // Try command-specific content first, then fall back to workflow scaffold
-  const commandContent = bundled[`commands/${alias.name}.md`];
-  const scaffold = commandContent ?? bundled[`${workflow}.md`] ?? "";
+  // Try alias-named command first, then workflow-named command, then base workflow scaffold.
+  const aliasCommandContent = bundled[`commands/${alias.name}.md`];
+  const workflowCommandContent = bundled[`commands/${workflow}.md`];
+  const workflowScaffold = bundled[`${workflow}.md`] ?? bundled[`workflows/${workflow}.md`];
+  const scaffold = aliasCommandContent ?? workflowCommandContent ?? workflowScaffold ?? "";
+
+  const purposeSummary = extractPurposeSummary(scaffold, 110);
+  const interactiveDescription = buildInteractiveDescription(alias, workflow, purposeSummary, mode, persona);
+  const argumentHint = resolveArgumentHint(alias, workflow);
+  const intentLine = purposeSummary ?? alias.description;
 
   return [
     "---",
-    `description: SuperCodex alias /sc:${alias.name}`,
-    'argument-hint: "<task>"',
+    `description: ${interactiveDescription}`,
+    `argument-hint: "${argumentHint}"`,
     "---",
     "",
     PROMPT_WRAPPER_MARKER,
-    `# SuperCodex Alias: /sc:${alias.name}`,
+    `# SuperCodex ${formatDisplayName(alias.name)}`,
     "",
+    `- Slash Command: /prompts:${getInteractivePromptCommandName(alias.name)}`,
+    `- SuperCodex Alias: /supercodex:${alias.name} (short: /sc:${alias.name})`,
+    `- Intent: ${intentLine}`,
     `- Workflow: ${workflow}`,
     `- Mode: ${mode}`,
     `- Persona: ${persona}`,
+    ...(alias.pack ? [`- Pack: ${alias.pack}`] : []),
     "",
     "Use the workflow scaffold below and focus on the user task.",
     "",
@@ -287,4 +342,52 @@ export function renderInteractivePrompt(
     scaffold.trimEnd(),
     ""
   ].join("\n");
+}
+
+const ARGUMENT_HINTS: Record<string, string> = {
+  analyze: "<target|scope|focus>",
+  brainstorm: "<problem|goal|constraints>",
+  build: "<feature|requirements|constraints>",
+  cleanup: "<module|debt|constraints>",
+  debug: "<symptom|repro|context>",
+  design: "<problem|constraints|architecture target>",
+  document: "<audience|scope|source>",
+  estimate: "<scope|constraints|timeline>",
+  explain: "<code|module|question>",
+  implement: "<spec|feature|requirements>",
+  index: "<scope|format>",
+  "index-repo": "<repo|scope|output>",
+  load: "<context|goal>",
+  plan: "<goal|constraints|deliverable>",
+  pm: "<project|objective|constraints>",
+  recommend: "<goal|constraints|options>",
+  reflect: "<work|outcome|lessons>",
+  refactor: "<target|constraints|safety>",
+  research: "<topic|question|decision>",
+  review: "<diff|module|risk focus>",
+  save: "<summary|state>",
+  "select-tool": "<task|constraints|environment>",
+  spawn: "<goal|subtasks|constraints>",
+  "spec-panel": "<spec|requirements|risk>",
+  task: "<task|acceptance criteria>",
+  test: "<target|test strategy|edge cases>",
+  troubleshoot: "<issue|signals|context>",
+  workflow: "<objective|handoffs|milestones>"
+};
+
+function resolveArgumentHint(alias: AliasDefinition, workflow: string): string {
+  return ARGUMENT_HINTS[alias.name] ?? ARGUMENT_HINTS[workflow] ?? "<task>";
+}
+
+function buildInteractiveDescription(
+  alias: AliasDefinition,
+  workflow: string,
+  purposeSummary: string | null,
+  mode: string,
+  persona: string
+): string {
+  const label = `SuperCodex ${formatDisplayName(alias.name)}`;
+  const summary = purposeSummary ?? alias.description ?? `${workflow} workflow`;
+  const profile = `${mode}/${persona}`;
+  return truncateText(`${label}: ${summary} (${profile})`, 160);
 }

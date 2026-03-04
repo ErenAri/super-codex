@@ -1,7 +1,13 @@
 import type { Command } from "commander";
 
 import { syncCatalogMetadata } from "../operations";
-import { getCatalogEntry, listCatalogEntries, loadRegistry, searchCatalogEntries } from "../registry";
+import {
+  getCatalogEntry,
+  listCatalogEntries,
+  loadRegistry,
+  searchCatalogEntries,
+  type CatalogEntry
+} from "../registry";
 import { runCommand } from "./utils";
 
 export function registerCatalogCommands(program: Command): void {
@@ -42,7 +48,7 @@ function attachCatalogSubcommands(catalog: Command, options: CatalogAttachOption
         }
 
         for (const entry of entries) {
-          console.log(`${entry.id} (${entry.transport}) - ${entry.description}`);
+          console.log(formatCatalogSummary(entry));
         }
       })
     );
@@ -67,7 +73,7 @@ function attachCatalogSubcommands(catalog: Command, options: CatalogAttachOption
           return;
         }
         for (const entry of entries) {
-          console.log(`${entry.id} (${entry.transport}) - ${entry.description}`);
+          console.log(formatCatalogSummary(entry));
         }
       })
     );
@@ -103,6 +109,21 @@ function attachCatalogSubcommands(catalog: Command, options: CatalogAttachOption
         } else {
           console.log(`URL: ${entry.url}`);
         }
+        if (typeof entry.ux_score === "number") {
+          console.log(`UX score: ${entry.ux_score}`);
+        }
+        if (entry.setup_complexity) {
+          console.log(`Setup complexity: ${entry.setup_complexity}`);
+        }
+        if ((entry.recommended_for ?? []).length > 0) {
+          console.log(`Recommended for: ${(entry.recommended_for ?? []).join(", ")}`);
+        }
+        if ((entry.requires_keys ?? []).length > 0) {
+          console.log(`Requires keys: ${(entry.requires_keys ?? []).join(", ")}`);
+        }
+        if ((entry.tags ?? []).length > 0) {
+          console.log(`Tags: ${(entry.tags ?? []).join(", ")}`);
+        }
       })
     );
 
@@ -121,4 +142,14 @@ function attachCatalogSubcommands(catalog: Command, options: CatalogAttachOption
         })
       );
   }
+}
+
+function formatCatalogSummary(entry: CatalogEntry): string {
+  const ux = typeof entry.ux_score === "number" ? `, ux=${entry.ux_score}` : "";
+  const setup = entry.setup_complexity ? `, setup=${entry.setup_complexity}` : "";
+  const keywords =
+    (entry.recommended_for ?? []).length > 0
+      ? `, for=${(entry.recommended_for ?? []).slice(0, 2).join("/")}`
+      : "";
+  return `${entry.id} (${entry.transport}${ux}${setup}${keywords}) - ${entry.description}`;
 }

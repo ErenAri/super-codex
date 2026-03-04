@@ -4,6 +4,7 @@ import { mkdtemp, mkdir, rm, writeFile } from "node:fs/promises";
 import { afterEach, describe, expect, it } from "vitest";
 
 import { runCli } from "../src/cli";
+import { BUILTIN_MODES } from "../src/registry/builtins";
 
 const tmpDirs: string[] = [];
 
@@ -24,7 +25,9 @@ describe("cli contract", () => {
     expect(result.code).toBe(0);
     const payload = JSON.parse(result.stdout);
     expect(payload.valid).toBe(true);
-    expect(payload.command_count).toBeGreaterThanOrEqual(56);
+    expect(payload.command_count).toBeGreaterThan(0);
+    expect(Array.isArray(payload.errors)).toBe(true);
+    expect(payload.errors.length).toBe(0);
   });
 
   it("validate --strict fails on alias warnings from overlays", async () => {
@@ -66,6 +69,21 @@ describe("cli contract", () => {
     expect(strict.code).toBe(1);
   });
 
+  it("start --json reports checks and start --yes repairs first-run state", async () => {
+    const codexHome = await createCodexHome();
+
+    const initial = await runCapturedCli(["start", "--json", "--codex-home", codexHome]);
+    const initialPayload = JSON.parse(initial.stdout);
+    expect(Array.isArray(initialPayload.checks)).toBe(true);
+    expect(initialPayload.checks.some((check: { id: string }) => check.id === "workflow.smoke")).toBe(true);
+
+    const repaired = await runCapturedCli(["start", "--yes", "--json", "--codex-home", codexHome]);
+    expect(repaired.code).toBe(0);
+    const repairedPayload = JSON.parse(repaired.stdout);
+    expect(repairedPayload.repaired).toBe(true);
+    expect(["ok", "warn", "error"]).toContain(repairedPayload.status);
+  });
+
   it("catalog show --json returns entry payload", async () => {
     const codexHome = await createCodexHome();
     const result = await runCapturedCli(["catalog", "show", "filesystem", "--json", "--codex-home", codexHome]);
@@ -98,9 +116,63 @@ describe("cli contract", () => {
     expect(payload.persona).toBe("architect");
   });
 
+  it("supports /supercodex:* explicit alias syntax", async () => {
+    const codexHome = await createCodexHome();
+    const result = await runCapturedCli(["/supercodex:research", "--json", "--codex-home", codexHome]);
+
+    expect(result.code).toBe(0);
+    const payload = JSON.parse(result.stdout);
+    expect(payload.workflow).toBe("research");
+    expect(payload.mode).toBe("deep");
+    expect(payload.persona).toBe("architect");
+  });
+
+  it("applies reasoning-budget and mcp flags during alias dispatch", async () => {
+    const codexHome = await createCodexHome();
+    const result = await runCapturedCli([
+      "/sc:research",
+      "--think",
+      "--c7",
+      "--seq",
+      "--json",
+      "--codex-home",
+      codexHome
+    ]);
+
+    expect(result.code).toBe(0);
+    const payload = JSON.parse(result.stdout);
+    expect(payload.reasoningBudget).toBe("high");
+    expect(payload.requestedMcpServers).toEqual(["context7", "sequential"]);
+  });
+
+  it("rejects conflicting depth flags", async () => {
+    const codexHome = await createCodexHome();
+    const result = await runCapturedCli([
+      "/sc:research",
+      "--think",
+      "--ultrathink",
+      "--codex-home",
+      codexHome
+    ]);
+
+    expect(result.code).toBe(1);
+    expect(result.stderr).toContain("conflict");
+  });
+
   it("supports sc:* explicit alias syntax", async () => {
     const codexHome = await createCodexHome();
     const result = await runCapturedCli(["sc:brainstorming", "--json", "--codex-home", codexHome]);
+
+    expect(result.code).toBe(0);
+    const payload = JSON.parse(result.stdout);
+    expect(payload.workflow).toBe("brainstorm");
+    expect(payload.mode).toBe("balanced");
+    expect(payload.persona).toBe("educator");
+  });
+
+  it("supports supercodex:* explicit alias syntax", async () => {
+    const codexHome = await createCodexHome();
+    const result = await runCapturedCli(["supercodex:brainstorming", "--json", "--codex-home", codexHome]);
 
     expect(result.code).toBe(0);
     const payload = JSON.parse(result.stdout);
@@ -124,6 +196,15 @@ describe("cli contract", () => {
 
     expect(result.code).toBe(1);
     expect(result.stderr).toContain("Unknown slash alias");
+  });
+
+  it("returns friendly error for unknown /supercodex alias with matching suggestion prefix", async () => {
+    const codexHome = await createCodexHome();
+    const result = await runCapturedCli(["/supercodex:researh", "--codex-home", codexHome]);
+
+    expect(result.code).toBe(1);
+    expect(result.stderr).toContain("Unknown slash alias");
+    expect(result.stderr).toContain("/supercodex:research");
   });
 
   it("aliases list and show return expected payloads", async () => {
@@ -174,6 +255,27 @@ describe("cli contract", () => {
     expect(filteredPayload.every((entry: { pack?: string }) => entry.pack === "quality-review")).toBe(true);
   });
 
+  it("aliases recommend returns ranked suggestions", async () => {
+    const codexHome = await createCodexHome();
+    const result = await runCapturedCli([
+      "aliases",
+      "recommend",
+      "security review",
+      "--limit",
+      "3",
+      "--json",
+      "--codex-home",
+      codexHome
+    ]);
+
+    expect(result.code).toBe(0);
+    const payload = JSON.parse(result.stdout);
+    expect(Array.isArray(payload)).toBe(true);
+    expect(payload.length).toBeGreaterThan(0);
+    expect(typeof payload[0].score).toBe("number");
+    expect(payload.some((item: { alias: { name: string } }) => item.alias.name === "security")).toBe(true);
+  });
+
   it("fails fast when alias points to unknown command target", async () => {
     const codexHome = await createCodexHome();
     await writeRegistryOverlay(
@@ -198,10 +300,93 @@ describe("cli contract", () => {
     expect(doctor.code).toBe(0);
     const doctorPayload = JSON.parse(doctor.stdout);
     expect(doctorPayload.ok).toBe(true);
+    expect(doctorPayload.mcp_health).toBeTruthy();
+    expect(doctorPayload.mcp_health.summary).toMatchObject({
+      healthy: 0,
+      degraded: 0,
+      failing: 0
+    });
+    expect(Array.isArray(doctorPayload.mcp_health.servers)).toBe(true);
 
     const missingTest = await runCapturedCli(["mcp", "test", "missing", "--codex-home", codexHome]);
     expect(missingTest.code).toBe(1);
     expect(missingTest.stderr).toContain("MCP server \"missing\" not found");
+  });
+
+  it("mcp guided returns recommendations and mcp install supports profiles", async () => {
+    const codexHome = await createCodexHome();
+
+    const guided = await runCapturedCli([
+      "mcp",
+      "guided",
+      "--goal",
+      "docs",
+      "--json",
+      "--codex-home",
+      codexHome
+    ]);
+    expect(guided.code).toBe(0);
+    const guidedPayload = JSON.parse(guided.stdout);
+    expect(Array.isArray(guidedPayload.recommendations)).toBe(true);
+    expect(guidedPayload.recommendations.length).toBeGreaterThan(0);
+    expect(guidedPayload.recommendations.some((entry: { id: string }) => entry.id === "fetch")).toBe(true);
+
+    const profileInstall = await runCapturedCli([
+      "mcp",
+      "install",
+      "--profile",
+      "recommended",
+      "--codex-home",
+      codexHome
+    ]);
+    expect(profileInstall.code).toBe(0);
+    expect(profileInstall.stdout).toContain("filesystem");
+    expect(profileInstall.stdout).toContain("fetch");
+
+    const doctor = await runCapturedCli([
+      "mcp",
+      "doctor",
+      "--connectivity",
+      "--json",
+      "--codex-home",
+      codexHome
+    ]);
+    const doctorPayload = JSON.parse(doctor.stdout);
+    expect(doctorPayload.mcp_health).toBeTruthy();
+    const anyServer = doctorPayload.mcp_health.servers[0];
+    expect(anyServer).toHaveProperty("health_score");
+    expect(anyServer).toHaveProperty("suggested_fix_steps");
+    expect(anyServer).toHaveProperty("test_messages");
+  });
+
+  it("skill enable and disable persist across registry loads", async () => {
+    const codexHome = await createCodexHome();
+
+    const disable = await runCapturedCli(["skill", "disable", "confidence-check", "--codex-home", codexHome]);
+    expect(disable.code).toBe(0);
+
+    const showDisabled = await runCapturedCli(["skill", "show", "confidence-check", "--json", "--codex-home", codexHome]);
+    expect(showDisabled.code).toBe(0);
+    const disabledPayload = JSON.parse(showDisabled.stdout);
+    expect(disabledPayload.enabled).toBe(false);
+
+    const enable = await runCapturedCli(["skill", "enable", "confidence-check", "--codex-home", codexHome]);
+    expect(enable.code).toBe(0);
+
+    const showEnabled = await runCapturedCli(["skill", "show", "confidence-check", "--json", "--codex-home", codexHome]);
+    expect(showEnabled.code).toBe(0);
+    const enabledPayload = JSON.parse(showEnabled.stdout);
+    expect(enabledPayload.enabled).toBe(true);
+  });
+
+  it("run plan supports every built-in mode", async () => {
+    const codexHome = await createCodexHome();
+    for (const modeName of Object.keys(BUILTIN_MODES)) {
+      const result = await runCapturedCli(["run", "plan", "--mode", modeName, "--json", "--codex-home", codexHome]);
+      expect(result.code).toBe(0);
+      const payload = JSON.parse(result.stdout);
+      expect(payload.mode).toBe(modeName);
+    }
   });
 });
 

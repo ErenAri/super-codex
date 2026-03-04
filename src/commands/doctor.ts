@@ -2,7 +2,7 @@ import type { Command } from "commander";
 
 import { applyDoctorFixes, formatDoctorReport, formatDoctorReportJson, runDoctorChecks, runMcpDoctorChecks } from "../doctor";
 import { loadConfig } from "../config";
-import { updateDoctorState } from "../operations";
+import { updateDoctorState } from "../services/runtime-settings";
 import { getCodexPaths } from "../paths";
 import { pathExists } from "../fs-utils";
 import { runCommand } from "./utils";

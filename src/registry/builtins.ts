@@ -124,6 +124,7 @@ export const BUILTIN_COMMANDS: Record<string, CommandDefinition> = {
   uninstall: command("uninstall", "Remove SuperCodex-managed config and prompts"),
   list: command("list", "List bundled and installed prompts"),
   status: command("status", "Show install/runtime status"),
+  start: command("start", "Guided first-run setup and verification"),
   init: command("init", "Create project-level .codex template"),
   validate: command("validate", "Validate config and registries"),
   doctor: command("doctor", "Run diagnostics and optional fixes"),
@@ -139,6 +140,7 @@ export const BUILTIN_COMMANDS: Record<string, CommandDefinition> = {
   "aliases.show": command("aliases.show", "Show slash alias mapping"),
   "aliases.packs": command("aliases.packs", "List alias packs"),
   "aliases.search": command("aliases.search", "Search alias mappings"),
+  "aliases.recommend": command("aliases.recommend", "Recommend aliases for an intent"),
 
   // Mode commands
   "mode.list": command("mode.list", "List available modes"),
@@ -159,6 +161,7 @@ export const BUILTIN_COMMANDS: Record<string, CommandDefinition> = {
   "mcp.remove": command("mcp.remove", "Remove configured MCP server"),
   "mcp.test": command("mcp.test", "Test MCP server definition"),
   "mcp.doctor": command("mcp.doctor", "Run MCP-specific diagnostics"),
+  "mcp.guided": command("mcp.guided", "Guided MCP discovery and installation flow"),
   "mcp.catalog.list": command("mcp.catalog.list", "List MCP catalog entries"),
   "mcp.catalog.search": command("mcp.catalog.search", "Search MCP catalog entries"),
   "mcp.catalog.show": command("mcp.catalog.show", "Show MCP catalog entry"),
@@ -169,7 +172,7 @@ export const BUILTIN_COMMANDS: Record<string, CommandDefinition> = {
   "run.refactor": command("run.refactor", "Resolve context for refactor workflow"),
   "run.debug": command("run.debug", "Resolve context for debugging workflow"),
 
-  // Extended command workflows (30 commands ported from SuperClaude)
+  // Extended command workflows ported from SuperClaude
   "run.analyze": command("run.analyze", "Analyze code or architecture"),
   "run.brainstorm": command("run.brainstorm", "Brainstorm ideas and options"),
   "run.build": command("run.build", "Build a feature from requirements"),
@@ -215,7 +218,10 @@ export const BUILTIN_CATALOG: Record<string, CatalogEntry> = {
     transport: "stdio",
     command: "npx",
     args: ["-y", "@modelcontextprotocol/server-filesystem", "."],
-    tags: ["files", "local"]
+    tags: ["files", "local"],
+    ux_score: 95,
+    setup_complexity: "low",
+    recommended_for: ["files", "indexing", "project-analysis"]
   },
   fetch: {
     id: "fetch",
@@ -224,7 +230,10 @@ export const BUILTIN_CATALOG: Record<string, CatalogEntry> = {
     transport: "stdio",
     command: "npx",
     args: ["-y", "@modelcontextprotocol/server-fetch"],
-    tags: ["http", "docs"]
+    tags: ["http", "docs"],
+    ux_score: 92,
+    setup_complexity: "low",
+    recommended_for: ["docs", "research", "web-content"]
   },
   github: {
     id: "github",
@@ -233,7 +242,11 @@ export const BUILTIN_CATALOG: Record<string, CatalogEntry> = {
     transport: "stdio",
     command: "npx",
     args: ["-y", "@modelcontextprotocol/server-github"],
-    tags: ["git", "github", "prs"]
+    tags: ["git", "github", "prs"],
+    ux_score: 84,
+    setup_complexity: "medium",
+    requires_keys: ["GITHUB_TOKEN"],
+    recommended_for: ["pull-requests", "repo-automation", "issues"]
   },
   postgres: {
     id: "postgres",
@@ -242,7 +255,11 @@ export const BUILTIN_CATALOG: Record<string, CatalogEntry> = {
     transport: "stdio",
     command: "npx",
     args: ["-y", "@modelcontextprotocol/server-postgres"],
-    tags: ["db", "postgres"]
+    tags: ["db", "postgres"],
+    ux_score: 74,
+    setup_complexity: "high",
+    requires_keys: ["DATABASE_URL"],
+    recommended_for: ["database", "sql", "data-analysis"]
   },
   sqlite: {
     id: "sqlite",
@@ -251,7 +268,10 @@ export const BUILTIN_CATALOG: Record<string, CatalogEntry> = {
     transport: "stdio",
     command: "npx",
     args: ["-y", "@modelcontextprotocol/server-sqlite"],
-    tags: ["db", "sqlite"]
+    tags: ["db", "sqlite"],
+    ux_score: 89,
+    setup_complexity: "low",
+    recommended_for: ["database", "local-dev", "sql"]
   },
   slack: {
     id: "slack",
@@ -260,7 +280,11 @@ export const BUILTIN_CATALOG: Record<string, CatalogEntry> = {
     transport: "stdio",
     command: "npx",
     args: ["-y", "@modelcontextprotocol/server-slack"],
-    tags: ["chat", "slack"]
+    tags: ["chat", "slack"],
+    ux_score: 70,
+    setup_complexity: "high",
+    requires_keys: ["SLACK_BOT_TOKEN"],
+    recommended_for: ["team-comms", "incident-response"]
   },
   notion: {
     id: "notion",
@@ -269,7 +293,11 @@ export const BUILTIN_CATALOG: Record<string, CatalogEntry> = {
     transport: "stdio",
     command: "npx",
     args: ["-y", "@modelcontextprotocol/server-notion"],
-    tags: ["docs", "notion"]
+    tags: ["docs", "notion"],
+    ux_score: 72,
+    setup_complexity: "high",
+    requires_keys: ["NOTION_TOKEN"],
+    recommended_for: ["knowledge-base", "docs", "notes"]
   },
   "local-http": {
     id: "local-http",
@@ -277,8 +305,15 @@ export const BUILTIN_CATALOG: Record<string, CatalogEntry> = {
     description: "Example local HTTP MCP endpoint",
     transport: "http",
     url: "http://localhost:3333/mcp",
-    tags: ["http", "local"]
+    tags: ["http", "local"],
+    ux_score: 68,
+    setup_complexity: "medium",
+    recommended_for: ["custom-integrations", "internal-tools"]
   }
+};
+
+export const BUILTIN_MCP_PROFILES: Record<string, string[]> = {
+  recommended: ["filesystem", "fetch", "github"]
 };
 
 export const BUILTIN_AGENT_DEFINITIONS: Record<string, AgentDefinition> = {
@@ -489,7 +524,7 @@ function command(id: string, description: string): CommandDefinition {
     id,
     description,
     enabled: true,
-    mode_compatible: ["balanced", "deep", "fast", "safe"],
-    persona_compatible: ["architect", "reviewer", "refactorer", "debugger", "shipper", "educator"]
+    mode_compatible: Object.keys(BUILTIN_MODES),
+    persona_compatible: Object.keys(BUILTIN_PERSONAS)
   };
 }

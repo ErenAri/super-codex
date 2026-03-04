@@ -1,7 +1,7 @@
 import type { Command } from "commander";
 
-import { validateSupercodexCommandCount } from "../operations";
 import { loadRegistry, validateRegistry } from "../registry";
+import { validateSupercodexCommandSet } from "../services/command-validation";
 import { runCommand } from "./utils";
 
 export function registerValidateCommand(program: Command): void {
@@ -19,7 +19,7 @@ export function registerValidateCommand(program: Command): void {
           ...validateRegistry(registryResult.registry)
         ];
         const strict = Boolean(options.strict);
-        const commandCountValidation = validateSupercodexCommandCount(
+        const commandSetValidation = validateSupercodexCommandSet(
           Object.keys(registryResult.registry.commands)
         );
         const hasErrors = issues.some((issue) => issue.level === "error");
@@ -28,7 +28,7 @@ export function registerValidateCommand(program: Command): void {
         const payload = {
           valid:
             !hasErrors &&
-            commandCountValidation.valid &&
+            commandSetValidation.valid &&
             (!strict || !hasWarnings),
           command_count: Object.keys(registryResult.registry.commands).length,
           strict,
@@ -37,7 +37,7 @@ export function registerValidateCommand(program: Command): void {
             path: issue.path,
             message: issue.message
           })),
-          errors: commandCountValidation.errors
+          errors: commandSetValidation.errors
         };
 
         if (Boolean(options.json)) {
@@ -46,7 +46,7 @@ export function registerValidateCommand(program: Command): void {
           console.log(`Registry valid: ${payload.valid ? "yes" : "no"}`);
           console.log(`Strict mode: ${strict ? "on" : "off"}`);
           console.log(`Command count: ${payload.command_count}`);
-          for (const error of commandCountValidation.errors) {
+          for (const error of commandSetValidation.errors) {
             console.log(`- [error] ${error}`);
           }
           for (const issue of payload.issues) {

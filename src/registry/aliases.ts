@@ -11,6 +11,7 @@ export const RESERVED_TOP_LEVEL_COMMAND_NAMES = new Set<string>([
   "uninstall",
   "list",
   "status",
+  "start",
   "init",
   "validate",
   "doctor",
@@ -576,10 +577,30 @@ export interface AliasListOptions {
   pack?: string;
 }
 
+export interface AliasRecommendOptions extends AliasListOptions {
+  limit?: number;
+}
+
+export interface AliasRecommendation {
+  alias: AliasDefinition;
+  score: number;
+  reasons: string[];
+}
+
 export function normalizeAliasToken(token: string): NormalizedAliasToken | null {
   const trimmed = token.trim();
   if (!trimmed) {
     return null;
+  }
+
+  if (trimmed.startsWith("/supercodex:")) {
+    const name = trimmed.slice("/supercodex:".length).trim().toLowerCase();
+    return name ? { name, explicitPrefix: true } : null;
+  }
+
+  if (trimmed.startsWith("supercodex:")) {
+    const name = trimmed.slice("supercodex:".length).trim().toLowerCase();
+    return name ? { name, explicitPrefix: true } : null;
   }
 
   if (trimmed.startsWith("/sc:")) {
@@ -631,6 +652,102 @@ export function searchAliases(
   });
 }
 
+export function recommendAliases(
+  registry: Pick<RegistryData, "aliases">,
+  query: string,
+  options: AliasRecommendOptions = {}
+): AliasRecommendation[] {
+  const normalizedQuery = query.trim().toLowerCase();
+  const entries = listAliases(registry, { pack: options.pack });
+  if (!normalizedQuery) {
+    return entries.slice(0, options.limit ?? 5).map((alias) => ({
+      alias,
+      score: 0,
+      reasons: ["No intent provided; showing default aliases."]
+    }));
+  }
+
+  const queryTokens = tokenize(normalizedQuery);
+  const recommendations: AliasRecommendation[] = [];
+
+  for (const entry of entries) {
+    const name = entry.name.toLowerCase();
+    const description = entry.description.toLowerCase();
+    const target = entry.target.toLowerCase();
+    const tags = (entry.tags ?? []).map((tag) => tag.toLowerCase());
+
+    let score = 0;
+    const reasons: string[] = [];
+
+    if (name === normalizedQuery) {
+      score += 120;
+      reasons.push("Exact alias name match.");
+    } else if (name.startsWith(normalizedQuery)) {
+      score += 80;
+      reasons.push("Alias name prefix match.");
+    } else if (name.includes(normalizedQuery)) {
+      score += 60;
+      reasons.push("Alias name contains intent.");
+    }
+
+    if (description.includes(normalizedQuery)) {
+      score += 45;
+      reasons.push("Description contains intent.");
+    }
+
+    if (target.includes(normalizedQuery)) {
+      score += 30;
+      reasons.push("Target command matches intent.");
+    }
+
+    const matchedTags = tags.filter((tag) => tag.includes(normalizedQuery));
+    if (matchedTags.length > 0) {
+      score += 25 + (matchedTags.length - 1) * 8;
+      reasons.push(`Tag match: ${matchedTags.join(", ")}.`);
+    }
+
+    let tokenHits = 0;
+    for (const token of queryTokens) {
+      if (token.length < 3) {
+        continue;
+      }
+      if (name.includes(token)) {
+        tokenHits += 2;
+      }
+      if (description.includes(token)) {
+        tokenHits += 1;
+      }
+      if (target.includes(token)) {
+        tokenHits += 1;
+      }
+      if (tags.some((tag) => tag.includes(token))) {
+        tokenHits += 1;
+      }
+    }
+    if (tokenHits > 0) {
+      score += tokenHits * 6;
+      reasons.push("Keyword overlap detected.");
+    }
+
+    if (score > 0) {
+      recommendations.push({
+        alias: entry,
+        score,
+        reasons
+      });
+    }
+  }
+
+  return recommendations
+    .sort((a, b) => {
+      if (b.score !== a.score) {
+        return b.score - a.score;
+      }
+      return a.alias.name.localeCompare(b.alias.name);
+    })
+    .slice(0, normalizeLimit(options.limit));
+}
+
 export function listAliasPacks(registry: Pick<RegistryData, "alias_packs">): AliasPackDefinition[] {
   return Object.values(registry.alias_packs).sort((a, b) => a.name.localeCompare(b.name));
 }
@@ -664,4 +781,18 @@ function alias(options: AliasFactoryOptions): AliasDefinition {
     ...(options.mode ? { default_mode: options.mode } : {}),
     ...(options.persona ? { default_persona: options.persona } : {})
   };
+}
+
+function normalizeLimit(limit: number | undefined): number {
+  if (typeof limit !== "number" || !Number.isFinite(limit)) {
+    return 5;
+  }
+  return Math.min(20, Math.max(1, Math.trunc(limit)));
+}
+
+function tokenize(value: string): string[] {
+  return value
+    .split(/[^a-z0-9]+/i)
+    .map((token) => token.trim().toLowerCase())
+    .filter((token) => token.length > 0);
 }

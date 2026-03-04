@@ -2,6 +2,7 @@ export * from "./agent";
 export * from "./aliases";
 export * from "./catalog";
 export * from "./core";
+export * from "./start";
 export * from "./doctor";
 export * from "./flag";
 export * from "./mcp";

@@ -1,6 +1,6 @@
 import type { Command } from "commander";
 
-import { setDefaultPersona, unsetDefaultPersona } from "../operations";
+import { setDefaultPersona, unsetDefaultPersona } from "../services/runtime-settings";
 import { loadRegistry } from "../registry";
 import { runCommand } from "./utils";
 

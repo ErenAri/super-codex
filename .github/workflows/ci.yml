@@ -28,6 +28,8 @@ jobs:
         run: npm ci
       - name: Build
         run: npm run build
+      - name: Verify generated metadata
+        run: npm run metadata:check
       - name: Test
         run: npm test
 

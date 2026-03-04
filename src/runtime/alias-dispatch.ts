@@ -44,9 +44,10 @@ export async function dispatchAliasArgv(
   if (!alias) {
     if (normalized.explicitPrefix) {
       const suggestion = suggestAlias(normalized.name, Object.keys(registryResult.registry.aliases));
+      const suggestionPrefix = getSuggestionPrefix(firstToken);
       throw new Error(
         suggestion
-          ? `Unknown slash alias "${firstToken}". Did you mean "/sc:${suggestion}"?`
+          ? `Unknown slash alias "${firstToken}". Did you mean "${suggestionPrefix}${suggestion}"?`
           : `Unknown slash alias "${firstToken}".`
       );
     }
@@ -101,12 +102,17 @@ export function preprocessFlags(argv: string[]): { argv: string[]; appliedFlags:
       continue;
     }
 
-    // Check for conflicts
-    for (const conflict of def.conflicts_with ?? []) {
-      const conflictDef = BUILTIN_FLAGS[conflict];
-      if (conflictDef && processed.includes(conflictDef.flag)) {
+    // Check conflicts in both directions so one-sided declarations still work.
+    for (const [otherFlagName, otherDef] of Object.entries(BUILTIN_FLAGS)) {
+      if (otherFlagName === flagName || !processed.includes(otherDef.flag)) {
+        continue;
+      }
+
+      const directConflict = (def.conflicts_with ?? []).includes(otherFlagName);
+      const reverseConflict = (otherDef.conflicts_with ?? []).includes(flagName);
+      if (directConflict || reverseConflict) {
         throw new Error(
-          `Flags "${def.flag}" and "${conflictDef.flag}" conflict and cannot be used together.`
+          `Flags "${def.flag}" and "${otherDef.flag}" conflict and cannot be used together.`
         );
       }
     }
@@ -116,6 +122,20 @@ export function preprocessFlags(argv: string[]): { argv: string[]; appliedFlags:
 
     if (def.activates_mode && !hasOption(processed, "--mode")) {
       processed.push("--mode", def.activates_mode);
+    }
+
+    if (def.reasoning_budget && !hasOption(processed, "--reasoning-budget")) {
+      processed.push("--reasoning-budget", def.reasoning_budget);
+    }
+
+    if (def.activates_mcp && def.activates_mcp.length > 0) {
+      const existingMcp = new Set(getOptionValues(processed, "--mcp"));
+      for (const serverName of def.activates_mcp) {
+        if (!existingMcp.has(serverName)) {
+          processed.push("--mcp", serverName);
+          existingMcp.add(serverName);
+        }
+      }
     }
   }
 
@@ -132,6 +152,28 @@ function targetToArgv(target: string): string[] {
 
 function hasOption(argv: string[], optionName: string): boolean {
   return argv.some((item) => item === optionName || item.startsWith(`${optionName}=`));
+}
+
+function getOptionValues(argv: string[], optionName: string): string[] {
+  const values: string[] = [];
+  for (let index = 0; index < argv.length; index += 1) {
+    const current = argv[index];
+    if (current === optionName) {
+      const next = argv[index + 1];
+      if (typeof next === "string" && next.length > 0 && !next.startsWith("-")) {
+        values.push(next);
+      }
+      continue;
+    }
+
+    if (current.startsWith(`${optionName}=`)) {
+      const value = current.slice(`${optionName}=`.length);
+      if (value.length > 0) {
+        values.push(value);
+      }
+    }
+  }
+  return values;
 }
 
 function parseCodexHome(argv: string[]): string | undefined {
@@ -167,6 +209,19 @@ function suggestAlias(input: string, candidates: string[]): string | null {
   }
 
   return best;
+}
+
+function getSuggestionPrefix(token: string): string {
+  if (token.startsWith("/supercodex:")) {
+    return "/supercodex:";
+  }
+  if (token.startsWith("supercodex:")) {
+    return "supercodex:";
+  }
+  if (token.startsWith("sc:")) {
+    return "sc:";
+  }
+  return "/supercodex:";
 }
 
 function levenshtein(a: string, b: string): number {

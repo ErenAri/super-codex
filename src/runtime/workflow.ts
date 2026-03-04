@@ -8,6 +8,8 @@ import { resolveRuntimeContext, type RuntimeContextOptions } from "./context";
 
 export interface WorkflowResolutionOptions extends RuntimeContextOptions {
   workflow: string;
+  reasoningBudget?: string;
+  requestedMcpServers?: string[];
 }
 
 export interface WorkflowResolution {
@@ -15,6 +17,8 @@ export interface WorkflowResolution {
   promptPath: string;
   mode: string;
   persona: string;
+  reasoningBudget: string;
+  requestedMcpServers: string[];
   modeSource: "flag" | "project" | "user" | "builtin";
   personaSource: "flag" | "project" | "user" | "builtin";
   overlays: {
@@ -40,12 +44,17 @@ export async function resolveWorkflow(
   const promptPath = resolvePromptPath(config, codexPaths.promptPackDir, options.workflow);
   const modePrompt = registry.modes[context.mode]?.prompt_overlay;
   const personaPrompt = registry.personas[context.persona]?.system_prompt;
+  const modeReasoningBudget = registry.modes[context.mode]?.reasoning_budget;
+  const reasoningBudget = normalizeReasoningBudget(options.reasoningBudget) ?? modeReasoningBudget ?? "medium";
+  const requestedMcpServers = normalizeRequestedMcpServers(options.requestedMcpServers);
 
   return {
     workflow: options.workflow,
     promptPath,
     mode: context.mode,
     persona: context.persona,
+    reasoningBudget,
+    requestedMcpServers,
     modeSource: context.source.mode,
     personaSource: context.source.persona,
     overlays: {
@@ -86,4 +95,37 @@ function resolvePromptPath(config: TomlTable, promptPackDir: string, workflow: s
 
   const normalized = relative.replaceAll("\\", "/").replace(/^supercodex\//, "");
   return path.join(promptPackDir, normalized);
+}
+
+function normalizeReasoningBudget(value: string | undefined): string | undefined {
+  if (!value) {
+    return undefined;
+  }
+
+  const normalized = value.trim().toLowerCase();
+  if (!normalized) {
+    return undefined;
+  }
+
+  if (normalized === "low" || normalized === "medium" || normalized === "high" || normalized === "maximum") {
+    return normalized;
+  }
+
+  return undefined;
+}
+
+function normalizeRequestedMcpServers(values: string[] | undefined): string[] {
+  if (!values || values.length === 0) {
+    return [];
+  }
+
+  const unique = new Set<string>();
+  for (const value of values) {
+    const trimmed = value.trim();
+    if (trimmed.length > 0) {
+      unique.add(trimmed);
+    }
+  }
+
+  return Array.from(unique).sort();
 }

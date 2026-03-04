@@ -1,7 +1,7 @@
 import type { Command } from "commander";
 
 import { loadContentFile, contentFileExists } from "../content-loader";
-import { setDefaultMode, unsetDefaultMode } from "../operations";
+import { setDefaultMode, unsetDefaultMode } from "../services/runtime-settings";
 import { loadRegistry } from "../registry";
 import { runCommand } from "./utils";
 

@@ -1,25 +1,25 @@
 # Troubleshooting
 
-## `/sc:...` does not work inside Codex interactive chat
+## `/supercodex:...` does not work inside Codex interactive chat
 
 Expected behavior.
 
 - Codex interactive custom commands are exposed as `/prompts:<name>`.
-- SuperCodex installs wrappers such as `/prompts:sc-research`.
+- SuperCodex installs wrappers such as `/prompts:supercodex-research`.
 
 Use this inside Codex chat:
 
 ```text
-/prompts:sc-research map migration risks
+/prompts:supercodex-research map migration risks
 ```
 
 Use this in terminal (outside Codex chat):
 
 ```bash
-supercodex /sc:research "map migration risks"
+supercodex /supercodex:research "map migration risks"
 ```
 
-## `/prompts:sc-*` commands are missing
+## `/prompts:supercodex-*` commands are missing
 
 Run:
 
@@ -30,7 +30,7 @@ supercodex list
 
 Then verify files exist in:
 
-- `~/.codex/prompts/sc-research.md` (and other `sc-*.md` files)
+- `~/.codex/prompts/supercodex-research.md` (and other `supercodex-*.md` files)
 
 If still missing, check your Codex home override:
 
@@ -147,10 +147,10 @@ Flags like `--brainstorm`, `--think`, `--ultrathink` are processed during alias 
 
 ```bash
 # Correct
-supercodex /sc:research --brainstorm "explore options"
+supercodex /supercodex:research --brainstorm "explore options"
 
 # Incorrect (flag before alias)
-supercodex --brainstorm /sc:research "explore options"
+supercodex --brainstorm /supercodex:research "explore options"
 ```
 
 ## Need a clean local repro environment
