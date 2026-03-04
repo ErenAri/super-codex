@@ -1,5 +1,5 @@
 {
-  "name": "@erenari/supercodex",
+  "name": "supercodex",
   "version": "1.2.0",
   "description": "SuperClaude-style config framework for Codex CLI with safe, idempotent merges.",
   "bin": {
@@ -48,6 +48,7 @@
     "node": ">=18"
   },
   "dependencies": {
+    "@erenari/supercodex": "^1.2.0",
     "@iarna/toml": "^2.2.5",
     "commander": "^14.0.3"
   },
