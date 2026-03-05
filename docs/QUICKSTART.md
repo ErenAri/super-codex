@@ -5,7 +5,7 @@ This guide gets a new installation from zero to first useful output quickly.
 ## 1) Install and Verify
 
 ```bash
-npm install -g @erenari/supercodex
+npm install -g supercodex
 supercodex install
 supercodex start --yes
 supercodex status

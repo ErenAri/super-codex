@@ -1,4 +1,8 @@
-# @erenari/supercodex
+﻿# supercodex
+
+[![npm version](https://img.shields.io/npm/v/supercodex.svg)](https://www.npmjs.com/package/supercodex)
+[![npm downloads](https://img.shields.io/npm/dw/supercodex.svg)](https://www.npmjs.com/package/supercodex)
+[![license](https://img.shields.io/npm/l/supercodex.svg)](https://www.npmjs.com/package/supercodex)
 
 SuperCodex is a safety-first workflow layer for Codex CLI.
 It installs a curated prompt pack, manages a deterministic command/mode/persona registry, and merges config into `~/.codex/config.toml` without destructive overwrites.
@@ -16,25 +20,24 @@ Built on the [SuperClaude Framework](https://github.com/SuperClaude-Org/SuperCla
 - Skill definitions: 1
 <!-- supercodex:metadata:end -->
 
-## Why SuperCodex
+## Why SuperCodex âœ¨
 
-- Backup-first config changes (timestamped backup on every mutating command)
-- Scoped config ownership (`[supercodex]` plus optional managed `agents` and `mcp_servers` entries)
-- Idempotent install behavior
-- Rich command workflows with domain-specific behavioral prompts
-- Specialist agent definitions (PM, Security, Performance, DevOps, etc.)
-- Mode overlays (balanced, deep, fast, safe, brainstorming, deep-research, etc.)
-- Skills system with confidence-check gating
-- Intent-aware command guidance (`supercodex guide "<intent>"`)
-- Persistent session checkpoints (`supercodex session save|load|reflect`)
-- Policy + lockfile verification gates (`supercodex verify`, `supercodex policy validate`, `supercodex lock refresh`)
-- Flag-based dispatch (`--brainstorm`, `--think`, `--ultrathink`, `--c7`, `--seq`)
-- Cross-platform support (Windows, macOS, Linux)
+- Safe-by-default config changes with automatic backups.
+- Scoped config ownership (`[supercodex]` plus optional managed `agents` and `mcp_servers` entries).
+- Idempotent install/update behavior.
+- Rich workflow command system with mode/persona overlays.
+- Specialist agents (PM, Security, Performance, DevOps, and more).
+- Skills + confidence-check gating.
+- Intent-aware command guidance (`supercodex guide "<intent>"`).
+- Persistent session checkpoints (`supercodex session save|load|reflect`).
+- Policy + lockfile verification gates (`supercodex verify`, `supercodex policy validate`, `supercodex lock refresh`).
+- Flag-based dispatch (`--brainstorm`, `--think`, `--ultrathink`, `--c7`, `--seq`).
+- Cross-platform support (Windows, macOS, Linux).
 
-## 2-Minute Quickstart
+## 2-Minute Quickstart âš¡
 
 ```bash
-npm install -g @erenari/supercodex
+npm install -g supercodex
 supercodex install
 supercodex start --yes
 supercodex guide "review auth security"
@@ -48,7 +51,31 @@ After install:
 - Interactive prompt wrappers: `~/.codex/prompts/supercodex-*.md`
 - Config merge target: `~/.codex/config.toml`
 
-## Alias Invocation: Which Syntax Works Where
+## When To Use / Not Use ğŸ›ï¸
+
+Use SuperCodex when you need:
+- repeatable AI workflow command quality in teams
+- stable aliases/modes/personas with registry validation
+- MCP + prompt pack automation with safe config merges
+
+Skip SuperCodex when you need:
+- a minimal one-command wrapper only
+- no prompt scaffolding, no policy checks, and no lockfile consistency gates
+
+## 30-Second Value Demo ğŸš€
+
+```bash
+supercodex guide "review auth security"
+supercodex run analyze --dry-run --explain
+supercodex verify --strict
+```
+
+Expected outcome:
+- You get the best command path for intent.
+- You can preview workflow decisions before acting.
+- You can enforce consistency in CI with one gate.
+
+## Alias Invocation: Which Syntax Works Where ğŸ§­
 
 | Context | Use this syntax | Example |
 | --- | --- | --- |
@@ -62,7 +89,7 @@ Notes:
 - Codex interactive custom commands are exposed under `/prompts:*`.
 - `/supercodex:*` and `/sc:*` are SuperCodex CLI alias parsers, not native Codex interactive namespaces.
 
-## Install, List, Uninstall
+## Install, List, Uninstall ğŸ› ï¸
 
 ```bash
 supercodex install [--force] [--codex-home <path>]
@@ -71,7 +98,7 @@ supercodex status [--json] [--codex-home <path>]
 supercodex uninstall [--codex-home <path>]
 ```
 
-## Command Workflows
+## Command Workflows ğŸ§ 
 
 SuperCodex ships command workflows with rich behavioral prompts:
 
@@ -93,7 +120,7 @@ supercodex /supercodex:research "evaluate caching strategies"
 supercodex brainstorm "API redesign options"
 ```
 
-## Guided Command Selection
+## Guided Command Selection ğŸ¯
 
 Use `guide` when you know intent but are unsure which command syntax/path to run:
 
@@ -105,7 +132,7 @@ supercodex guide "improve CI reliability" --json
 
 `guide` returns the best alias plus terminal/slash/prompt command forms and recommended next commands.
 
-## Agents
+## Agents ğŸ¤–
 
 Specialist agent definitions with triggers, capabilities, and handoff criteria:
 
@@ -116,7 +143,7 @@ supercodex agent show security-engineer
 
 Available agents: `pm`, `deep-research`, `system-architect`, `security-engineer`, `frontend-architect`, `backend-architect`, `performance-engineer`, `devops-engineer`, `data-engineer`, `qa-engineer`, `tech-writer`, `incident-responder`, `ml-engineer`, `mobile-architect`, `database-architect`, `accessibility-engineer`
 
-## Modes
+## Modes ğŸ§©
 
 ```bash
 supercodex mode list
@@ -140,7 +167,7 @@ supercodex mode unset
 | `business-panel` | high | Multi-expert business analysis |
 | `introspection` | high | Self-analysis with bias detection |
 
-## Flags
+## Flags ğŸš©
 
 Shorthand flags that activate modes, reasoning depth, or MCP servers:
 
@@ -157,7 +184,7 @@ supercodex flag show brainstorm
 | `--c7` | mcp | Enable Context7 MCP server |
 | `--seq` | mcp | Enable Sequential MCP server |
 
-## Skills
+## Skills ğŸ§°
 
 ```bash
 supercodex skill list
@@ -170,7 +197,7 @@ Current skills:
 
 - **confidence-check**: Pre-implementation confidence assessment (>=90% threshold)
 
-## Personas
+## Personas ğŸ­
 
 ```bash
 supercodex persona list
@@ -181,7 +208,7 @@ supercodex persona unset
 
 Built-in personas: `architect`, `reviewer`, `refactorer`, `debugger`, `shipper`, `educator`
 
-## Shell Bridge (Optional)
+## Shell Bridge (Optional) ğŸš
 
 Install a lightweight shell function named `sc` for shorthand alias use:
 
@@ -197,7 +224,7 @@ sc research "scope and constraints"
 sc /supercodex:brainstorming "alternatives"
 ```
 
-## Session Memory
+## Session Memory ğŸ“
 
 Persist lightweight session checkpoints across runs:
 
@@ -212,7 +239,7 @@ Memory defaults to local JSONL storage:
 - path: `~/.codex/supercodex/memory/sessions.jsonl`
 - max entries: `5000` (configurable via `[supercodex.memory]`)
 
-## Safety Model
+## Safety Model ğŸ”’
 
 SuperCodex never blindly overwrites `config.toml`.
 
@@ -226,7 +253,7 @@ SuperCodex never blindly overwrites `config.toml`.
   - record desired value under `[supercodex.overrides]`
 - Use `--force` to apply desired values into conflicting locations
 
-## Prompt Pack
+## Prompt Pack ğŸ“¦
 
 Installed under `~/.codex/prompts/supercodex/`:
 
@@ -244,7 +271,7 @@ Interactive wrappers installed under `~/.codex/prompts/`:
 - `supercodex-brainstorming.md` -> `/prompts:supercodex-brainstorming`
 - wrappers for all built-in aliases
 
-## Core Command Groups
+## Core Command Groups ğŸ“š
 
 ```bash
 supercodex validate [--strict] [--json]
@@ -269,7 +296,7 @@ supercodex mcp add|list|install|remove|test|doctor|guided|catalog
 
 For detailed examples, see [docs/COMMANDS.md](docs/COMMANDS.md).
 
-## MCP Quick Examples
+## MCP Quick Examples ğŸ”Œ
 
 Catalog install:
 
@@ -291,7 +318,7 @@ Manual HTTP server:
 supercodex mcp add internal-api --http http://localhost:3333/mcp --env API_TOKEN=secret
 ```
 
-## Config Snippet
+## Config Snippet âš™ï¸
 
 ```toml
 [supercodex]
@@ -328,18 +355,37 @@ path = ".supercodex.lock.json"
 enforce_in_ci = true
 ```
 
-## Docs
+## Docs ğŸ“–
 
 - [Quickstart Guide](docs/QUICKSTART.md)
 - [Command Reference](docs/COMMANDS.md)
 - [Command Chooser](docs/COMMAND_CHOOSER.md)
 - [Session Memory Guide](docs/SESSION_MEMORY.md)
+- [Release Channels](docs/RELEASE_CHANNELS.md)
+- [Growth Playbook](docs/GROWTH_PLAYBOOK.md)
+- [Growth Dashboard](docs/GROWTH_DASHBOARD.md)
 - [Framework Metadata (Generated)](docs/METADATA.md)
 - [Prompt Quality Checklist](docs/PROMPT_QUALITY_CHECKLIST.md)
 - [ADR 0001: SuperClaude Compatibility Target](docs/adr/0001-superclaude-compatibility-target.md)
 - [Troubleshooting](docs/TROUBLESHOOTING.md)
 
-## Benchmarking
+## Publishing and Channels 📣
+
+Stable publish:
+
+```bash
+npm publish --access public --tag latest
+```
+
+Pre-release publish:
+
+```bash
+npm publish --access public --tag next
+```
+
+Full guide: [docs/RELEASE_CHANNELS.md](docs/RELEASE_CHANNELS.md)
+
+## Benchmarking ğŸ“ˆ
 
 Run evaluation harness and scorecards:
 

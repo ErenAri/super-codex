@@ -1,7 +1,7 @@
 {
   "name": "supercodex",
-  "version": "1.6.0",
-  "description": "SuperClaude-style config framework for Codex CLI with safe, idempotent merges.",
+  "version": "1.6.1",
+  "description": "Workflow and prompt framework for Codex CLI with aliases, modes, MCP integration, and safe config automation.",
   "bin": {
     "supercodex": "dist/cli.js"
   },
@@ -15,6 +15,7 @@
     "build": "tsc -p tsconfig.json",
     "test": "vitest run",
     "dev": "tsx src/cli.ts",
+    "prepublishOnly": "npm run build && npm test && npm run verify:consistency",
     "verify:consistency": "node dist/cli.js verify --strict",
     "lock:refresh": "tsx src/cli.ts lock refresh --json",
     "metadata:sync": "tsx scripts/sync-metadata.ts --write",
@@ -28,9 +29,18 @@
   },
   "keywords": [
     "codex",
-    "cli",
-    "toml",
-    "mcp"
+    "codex-cli",
+    "ai",
+    "ai-cli",
+    "workflow",
+    "prompt-framework",
+    "developer-productivity",
+    "mcp",
+    "model-context-protocol",
+    "agent",
+    "superclaude",
+    "automation",
+    "cli"
   ],
   "author": "ErenAri",
   "license": "MIT",
@@ -50,7 +60,6 @@
     "node": ">=18"
   },
   "dependencies": {
-    "@erenari/supercodex": "^1.2.0",
     "@iarna/toml": "^2.2.5",
     "commander": "^14.0.3"
   },

@@ -52,14 +52,14 @@ Check version:
 
 ```bash
 supercodex --version
-npm view @erenari/supercodex version
+npm view supercodex version
 ```
 
 Reinstall globally:
 
 ```bash
-npm uninstall -g @erenari/supercodex
-npm install -g @erenari/supercodex@latest
+npm uninstall -g supercodex
+npm install -g supercodex@latest
 ```
 
 Then run:
@@ -161,7 +161,7 @@ supercodex --version
 The `agent`, `skill`, and `flag` commands were added in v1.0.0. Update if needed:
 
 ```bash
-npm install -g @erenari/supercodex@latest
+npm install -g supercodex@latest
 ```
 
 ## Mode `--full` flag shows "Content file not found"
