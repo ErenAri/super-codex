@@ -15,6 +15,7 @@ import {
   registerModeCommands,
   registerPersonaCommands,
   registerPolicyCommands,
+  registerQualityCommands,
   registerRunCommands,
   registerSessionCommands,
   registerShellCommands,
@@ -38,6 +39,7 @@ export function createProgram(): Command {
   registerVerifyCommand(program);
   registerDoctorCommands(program);
   registerPolicyCommands(program);
+  registerQualityCommands(program);
   registerLockCommands(program);
   registerCatalogCommands(program);
   registerAliasCommands(program);

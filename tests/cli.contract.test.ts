@@ -33,6 +33,22 @@ describe("cli contract", { timeout: 120000 }, () => {
     expect(Array.isArray(payload.command_quality.issues)).toBe(true);
   });
 
+  it("quality prompts --json returns passing quality payload", async () => {
+    const codexHome = await createCodexHome();
+    const result = await runCapturedCli(["quality", "prompts", "--json", "--codex-home", codexHome]);
+
+    expect(result.code).toBe(0);
+    const payload = JSON.parse(result.stdout);
+    expect(payload.valid).toBe(true);
+    expect(payload.strict).toBe(false);
+    expect(payload.score).toBeGreaterThanOrEqual(90);
+    expect(payload.error_count).toBe(0);
+    expect(payload.warn_count).toBe(0);
+    expect(payload.command_count).toBeGreaterThanOrEqual(29);
+    expect(Array.isArray(payload.commands)).toBe(true);
+    expect(Array.isArray(payload.issues)).toBe(true);
+  });
+
   it("policy validate --json returns valid policy payload", async () => {
     const codexHome = await createCodexHome();
     const result = await runCapturedCli(["policy", "validate", "--json", "--codex-home", codexHome]);

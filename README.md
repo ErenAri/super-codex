@@ -276,6 +276,7 @@ Interactive wrappers installed under `~/.codex/prompts/`:
 ```bash
 supercodex validate [--strict] [--json]
 supercodex verify [--strict] [--json]
+supercodex quality prompts [--strict] [--json]
 supercodex policy validate [--strict] [--json]
 supercodex lock refresh|status [--json]
 supercodex doctor [--fix] [--strict] [--json] [--plain] [--mcp-connectivity]
@@ -364,6 +365,7 @@ enforce_in_ci = true
 - [Release Channels](docs/RELEASE_CHANNELS.md)
 - [Growth Playbook](docs/GROWTH_PLAYBOOK.md)
 - [Growth Dashboard](docs/GROWTH_DASHBOARD.md)
+- [V2 Backlog](BACKLOG_V2.md)
 - [Framework Metadata (Generated)](docs/METADATA.md)
 - [Prompt Quality Checklist](docs/PROMPT_QUALITY_CHECKLIST.md)
 - [ADR 0001: SuperClaude Compatibility Target](docs/adr/0001-superclaude-compatibility-target.md)
