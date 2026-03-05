@@ -127,7 +127,9 @@ export const BUILTIN_COMMANDS: Record<string, CommandDefinition> = {
   start: command("start", "Guided first-run setup and verification"),
   init: command("init", "Create project-level .codex template"),
   validate: command("validate", "Validate config and registries"),
+  verify: command("verify", "Verify registry, policy, and lock consistency"),
   doctor: command("doctor", "Run diagnostics and optional fixes"),
+  guide: command("guide", "Recommend the best command/alias for an intent"),
 
   // Catalog commands
   "catalog.list": command("catalog.list", "List MCP catalog entries"),
@@ -154,6 +156,11 @@ export const BUILTIN_COMMANDS: Record<string, CommandDefinition> = {
   "persona.set": command("persona.set", "Set default persona"),
   "persona.unset": command("persona.unset", "Unset default persona"),
 
+  // Policy and lock commands
+  "policy.validate": command("policy.validate", "Validate policy checks"),
+  "lock.refresh": command("lock.refresh", "Refresh deterministic lock file"),
+  "lock.status": command("lock.status", "Check lock file consistency"),
+
   // MCP commands
   "mcp.add": command("mcp.add", "Add MCP server"),
   "mcp.list": command("mcp.list", "List configured MCP servers"),
@@ -165,6 +172,11 @@ export const BUILTIN_COMMANDS: Record<string, CommandDefinition> = {
   "mcp.catalog.list": command("mcp.catalog.list", "List MCP catalog entries"),
   "mcp.catalog.search": command("mcp.catalog.search", "Search MCP catalog entries"),
   "mcp.catalog.show": command("mcp.catalog.show", "Show MCP catalog entry"),
+
+  // Session memory commands
+  "session.save": command("session.save", "Save a persistent session checkpoint"),
+  "session.load": command("session.load", "Load recent session checkpoints"),
+  "session.reflect": command("session.reflect", "Reflect on recent session checkpoints"),
 
   // Base workflow commands
   "run.plan": command("run.plan", "Resolve context for planning workflow"),

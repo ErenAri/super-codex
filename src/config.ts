@@ -136,6 +136,22 @@ export function createInstallSpec(promptPackDir: string, version = SUPERCODEX_VE
         enabled: true,
         path: "~/.codex/supercodex/metrics.jsonl"
       },
+      memory: {
+        enabled: true,
+        path: "~/.codex/supercodex/memory/sessions.jsonl",
+        max_entries: 5000
+      },
+      policy: {
+        enabled: true,
+        strictness: "standard",
+        require_command_scaffold: true,
+        require_wrapper_sync: true,
+        require_metadata_sync: true
+      },
+      lock: {
+        path: ".supercodex.lock.json",
+        enforce_in_ci: true
+      },
       doctor: {
         last_run_at: "",
         last_status: "unknown"

@@ -35,7 +35,8 @@ export function registerAliasCommands(program: Command): void {
 
         for (const entry of entries) {
           const packLabel = entry.pack ? ` [${entry.pack}]` : "";
-          console.log(`/supercodex:${entry.name} (/sc:${entry.name}) -> ${entry.target}${packLabel}`);
+          const stabilityLabel = entry.stability ? ` [${entry.stability}]` : "";
+          console.log(`/supercodex:${entry.name} (/sc:${entry.name}) -> ${entry.target}${packLabel}${stabilityLabel}`);
         }
       })
     );

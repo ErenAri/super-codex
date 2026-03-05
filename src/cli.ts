@@ -9,14 +9,19 @@ import {
   registerCoreCommands,
   registerDoctorCommands,
   registerFlagCommands,
+  registerGuideCommands,
+  registerLockCommands,
   registerMcpCommands,
   registerModeCommands,
   registerPersonaCommands,
+  registerPolicyCommands,
   registerRunCommands,
+  registerSessionCommands,
   registerShellCommands,
   registerStartCommand,
   registerSkillCommands,
-  registerValidateCommand
+  registerValidateCommand,
+  registerVerifyCommand
 } from "./commands";
 import { dispatchAliasArgv } from "./runtime";
 
@@ -30,12 +35,17 @@ export function createProgram(): Command {
   registerCoreCommands(program);
   registerStartCommand(program);
   registerValidateCommand(program);
+  registerVerifyCommand(program);
   registerDoctorCommands(program);
+  registerPolicyCommands(program);
+  registerLockCommands(program);
   registerCatalogCommands(program);
   registerAliasCommands(program);
+  registerGuideCommands(program);
   registerModeCommands(program);
   registerPersonaCommands(program);
   registerMcpCommands(program);
+  registerSessionCommands(program);
   registerRunCommands(program);
   registerShellCommands(program);
   registerAgentCommands(program);

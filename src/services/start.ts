@@ -143,10 +143,14 @@ function deriveOverallStatus(checks: StartCheckResult[]): StartCheckStatus {
 
 function buildNextCommands(status: StartCheckStatus): string[] {
   const defaults = [
+    "supercodex guide <intent>",
     "supercodex /supercodex:research <topic>",
     "supercodex /supercodex:analyze <target>",
     "supercodex /supercodex:build <feature>",
     "/prompts:supercodex-research <topic>",
+    "supercodex verify --strict",
+    "supercodex lock refresh",
+    "supercodex session save <summary>",
     "supercodex mcp guided --goal docs --yes",
     "supercodex doctor --strict"
   ];

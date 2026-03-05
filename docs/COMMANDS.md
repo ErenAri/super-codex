@@ -35,6 +35,16 @@ supercodex validate
 supercodex validate --strict
 ```
 
+Run full consistency checks (registry + policy + lockfile):
+
+```bash
+supercodex verify
+supercodex verify --strict
+supercodex policy validate --strict
+supercodex lock status --strict
+supercodex lock refresh
+```
+
 Run diagnostics (report-only by default):
 
 ```bash
@@ -46,6 +56,23 @@ supercodex doctor --fix
 supercodex doctor --mcp-connectivity
 ```
 
+## Guided Command Selection
+
+Use `guide` when intent is clear but command choice is not:
+
+```bash
+supercodex guide "security review for auth flow"
+supercodex guide "plan migration risks" --context chat
+supercodex guide "improve CI reliability" --pack command-workflows
+supercodex guide "debug flaky tests" --json
+```
+
+`guide` returns:
+
+- recommended alias
+- terminal/slash/prompt command forms
+- next suggested commands
+
 ## Command Workflows
 
 SuperCodex ships a broad command-workflow set. Each has a rich behavioral prompt with activation rules, execution flow, and output format. Generated counts live in `docs/METADATA.md`.
@@ -54,7 +81,7 @@ SuperCodex ships a broad command-workflow set. Each has a rich behavioral prompt
 
 ```bash
 supercodex run analyze --json
-supercodex run brainstorm "API redesign options"
+supercodex run brainstorm --dry-run --explain "API redesign options"
 supercodex run build --mode fast --persona shipper
 supercodex run research --mode deep --persona architect --json
 ```
@@ -105,6 +132,28 @@ supercodex estimate "migration to PostgreSQL"
 | `run test` | Test generation and execution |
 | `run troubleshoot` | Problem troubleshooting |
 | `run workflow` | Workflow management and optimization |
+
+## Session Memory
+
+Persist and resume lightweight checkpoints:
+
+```bash
+supercodex session save "implemented cache invalidation" --decision "use tag-based invalidation" --next "add eviction metrics"
+supercodex session load --recent 5
+supercodex session reflect
+```
+
+Session options:
+
+- `--project <path>`: scope checkpoints to a project
+- `--all-projects`: disable project filtering for load/reflect
+- `--recent <count>`: cap returned/analyzed checkpoints
+- `--json`: machine-readable output
+
+Defaults:
+
+- path: `~/.codex/supercodex/memory/sessions.jsonl`
+- max entries: `5000` (from `[supercodex.memory.max_entries]`)
 
 ## Alias Workflows
 
@@ -307,3 +356,6 @@ Generated files:
 - `--strict`: fail on warnings where supported
 - `--force`: override conflict-preserving merge behavior
 - `--full`: show rich content (used with `mode show`)
+- `--context auto|terminal|chat`: output recommendation style for `guide`
+- `--dry-run`: preview workflow resolution without downstream side effects (`run` commands)
+- `--explain`: show reasoning behind workflow/mode/persona resolution (`run` commands)

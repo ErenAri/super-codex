@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "supercodex_version": "1.6.0",
+  "hashes": {
+    "registry_commands": "5475b29df42d0145c40d55cccf41bf36bffae687aec41fca666259a6204f63b5",
+    "alias_map": "4c7f325478225df2d5eacbab2c3fac9872dccb393b8e016635fe9e9eec9bd425",
+    "workflow_content": "f57fd286df2457dca88fe8e65eaff4d8a8f96d435c445c5c7e3e22a28eac6c8a",
+    "wrapper_content": "c7e3321c6a790058c9ede253165a874ccb22327cd2636169dd167db6b9678759",
+    "metadata_doc": "3493e16b21585c3a07435f22e00d1a3622a0d3944c0da501db827abf3efa8415",
+    "policy_report": "77046d73a82d23ad2b226f25ce626596366622214173eae794337cf0bb596a1d"
+  },
+  "counts": {
+    "commands": 80,
+    "aliases": 50,
+    "workflows": 33,
+    "wrappers": 50
+  }
+}

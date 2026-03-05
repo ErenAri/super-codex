@@ -180,6 +180,13 @@ export function registerCoreCommands(program: Command): void {
         console.log(kv("Default mode", result.defaultMode ?? "(builtin)", style));
         console.log(kv("Default persona", result.defaultPersona ?? "(builtin)", style));
         console.log(kv("Catalog version", result.catalogVersion ?? "(unknown)", style));
+        console.log(kv("Session memory enabled", result.memoryEnabled ? "yes" : "no", style));
+        console.log(kv("Session memory path", result.memoryPath, style));
+        console.log(kv("Session memory max entries", String(result.memoryMaxEntries), style));
+        console.log(kv("Policy enabled", result.policyEnabled ? "yes" : "no", style));
+        console.log(kv("Policy strictness", result.policyStrictness, style));
+        console.log(kv("Lock path", result.lockPath, style));
+        console.log(kv("Lock enforce in CI", result.lockEnforceInCi ? "yes" : "no", style));
         console.log(
           kv(
             "Managed agents",

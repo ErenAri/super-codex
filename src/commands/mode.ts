@@ -49,8 +49,8 @@ export function registerModeCommands(program: Command): void {
           }
 
           if (Boolean(options.full) && definition.content_file) {
-            if (contentFileExists("modes", definition.content_file.replace(/\.md$/, ""))) {
-              const content = loadContentFile("modes", definition.content_file.replace(/\.md$/, ""));
+            if (contentFileExists("modes", definition.content_file)) {
+              const content = loadContentFile("modes", definition.content_file);
               console.log("\n" + content);
             } else {
               console.log(`\nContent file not found: ${definition.content_file}`);

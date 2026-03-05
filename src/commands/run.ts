@@ -45,6 +45,8 @@ function registerWorkflowCommand(parent: Command, workflowName: string, descript
     .option("--persona <name>", "Override persona")
     .option("--reasoning-budget <level>", "Override reasoning budget (low|medium|high|maximum)")
     .option("--mcp <name>", "Request MCP server", collectRepeatedOption, [])
+    .option("--dry-run", "Preview the resolved workflow without executing follow-up actions")
+    .option("--explain", "Explain why this workflow/mode/persona resolution was selected")
     .option("--json", "Output JSON")
     .action((options) =>
       runCommand(async () => {
@@ -63,6 +65,9 @@ function registerWorkflowCommand(parent: Command, workflowName: string, descript
         });
 
         const commandId = `run.${workflowName}`;
+        const dryRun = Boolean(options.dryRun);
+        const explain = Boolean(options.explain);
+        let compatibilityDetails: string[] = [];
         if (Object.hasOwn(registry.registry.commands, commandId)) {
           const compat = checkCompatibility(
             registry.registry,
@@ -73,10 +78,18 @@ function registerWorkflowCommand(parent: Command, workflowName: string, descript
           if (!compat.ok) {
             throw new Error(compat.errors.join(" "));
           }
+          compatibilityDetails = compat.details;
         }
 
         if (Boolean(options.json)) {
-          console.log(JSON.stringify(resolution, null, 2));
+          const payload = {
+            ...resolution,
+            dryRun,
+            explanation: explain
+              ? buildExplanation(workflowName, resolution.modeSource, resolution.personaSource, compatibilityDetails)
+              : undefined
+          };
+          console.log(JSON.stringify(payload, null, 2));
           return;
         }
 
@@ -93,6 +106,21 @@ function registerWorkflowCommand(parent: Command, workflowName: string, descript
         }
         if (resolution.overlays.personaPrompt) {
           console.log(`Persona overlay: ${resolution.overlays.personaPrompt}`);
+        }
+        if (dryRun) {
+          console.log("Dry run: yes (no files are modified).");
+        }
+        if (explain) {
+          const explanation = buildExplanation(
+            workflowName,
+            resolution.modeSource,
+            resolution.personaSource,
+            compatibilityDetails
+          );
+          console.log("Explanation:");
+          for (const line of explanation) {
+            console.log(`- ${line}`);
+          }
         }
       })
     );
@@ -122,4 +150,21 @@ function loadWorkflowPurposeSummary(workflowName: string): string | null {
   }
 
   return null;
+}
+
+function buildExplanation(
+  workflowName: string,
+  modeSource: "flag" | "project" | "user" | "builtin",
+  personaSource: "flag" | "project" | "user" | "builtin",
+  compatibilityDetails: string[]
+): string[] {
+  const details: string[] = [
+    `Selected workflow "${workflowName}" from requested run command.`,
+    `Mode source: ${modeSource}.`,
+    `Persona source: ${personaSource}.`
+  ];
+  if (compatibilityDetails.length > 0) {
+    details.push(...compatibilityDetails.map((detail) => `Compatibility: ${detail}`));
+  }
+  return details;
 }

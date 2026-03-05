@@ -3,7 +3,7 @@
 SuperCodex is a safety-first workflow layer for Codex CLI.
 It installs a curated prompt pack, manages a deterministic command/mode/persona registry, and merges config into `~/.codex/config.toml` without destructive overwrites.
 
-Built on the [SuperClaude Framework](https://github.com/superclaude/framework) behavioral model with workflow commands, specialist agents, mode overlays, a skills system, and flag-based dispatch.
+Built on the [SuperClaude Framework](https://github.com/SuperClaude-Org/SuperClaude_Framework) behavioral model with workflow commands, specialist agents, mode overlays, a skills system, and flag-based dispatch.
 
 <!-- supercodex:metadata:start -->
 ## Framework Snapshot
@@ -25,6 +25,9 @@ Built on the [SuperClaude Framework](https://github.com/superclaude/framework) b
 - Specialist agent definitions (PM, Security, Performance, DevOps, etc.)
 - Mode overlays (balanced, deep, fast, safe, brainstorming, deep-research, etc.)
 - Skills system with confidence-check gating
+- Intent-aware command guidance (`supercodex guide "<intent>"`)
+- Persistent session checkpoints (`supercodex session save|load|reflect`)
+- Policy + lockfile verification gates (`supercodex verify`, `supercodex policy validate`, `supercodex lock refresh`)
 - Flag-based dispatch (`--brainstorm`, `--think`, `--ultrathink`, `--c7`, `--seq`)
 - Cross-platform support (Windows, macOS, Linux)
 
@@ -34,7 +37,9 @@ Built on the [SuperClaude Framework](https://github.com/superclaude/framework) b
 npm install -g @erenari/supercodex
 supercodex install
 supercodex start --yes
+supercodex guide "review auth security"
 supercodex status
+supercodex verify --strict
 ```
 
 After install:
@@ -87,6 +92,18 @@ supercodex run analyze --json
 supercodex /supercodex:research "evaluate caching strategies"
 supercodex brainstorm "API redesign options"
 ```
+
+## Guided Command Selection
+
+Use `guide` when you know intent but are unsure which command syntax/path to run:
+
+```bash
+supercodex guide "security review for auth flow"
+supercodex guide "plan migration risks" --context chat
+supercodex guide "improve CI reliability" --json
+```
+
+`guide` returns the best alias plus terminal/slash/prompt command forms and recommended next commands.
 
 ## Agents
 
@@ -180,6 +197,21 @@ sc research "scope and constraints"
 sc /supercodex:brainstorming "alternatives"
 ```
 
+## Session Memory
+
+Persist lightweight session checkpoints across runs:
+
+```bash
+supercodex session save "implemented cache invalidation" --decision "use tag-based invalidation" --next "add eviction metrics"
+supercodex session load --recent 5
+supercodex session reflect
+```
+
+Memory defaults to local JSONL storage:
+
+- path: `~/.codex/supercodex/memory/sessions.jsonl`
+- max entries: `5000` (configurable via `[supercodex.memory]`)
+
 ## Safety Model
 
 SuperCodex never blindly overwrites `config.toml`.
@@ -216,16 +248,21 @@ Interactive wrappers installed under `~/.codex/prompts/`:
 
 ```bash
 supercodex validate [--strict] [--json]
+supercodex verify [--strict] [--json]
+supercodex policy validate [--strict] [--json]
+supercodex lock refresh|status [--json]
 supercodex doctor [--fix] [--strict] [--json] [--plain] [--mcp-connectivity]
 supercodex start [--yes] [--json] [--plain]
 supercodex init [--dir <path>]
+supercodex guide <intent> [--pack <name>] [--context auto|terminal|chat] [--json]
 supercodex aliases list|show|packs|search|recommend
 supercodex mode list|show|set|unset
 supercodex persona list|show|set|unset
 supercodex agent list|show
 supercodex skill list|show|enable|disable
 supercodex flag list|show
-supercodex run <command> [--mode <name>] [--persona <name>] [--json]
+supercodex session save|load|reflect [--json]
+supercodex run <command> [--mode <name>] [--persona <name>] [--dry-run] [--explain] [--json]
 supercodex catalog list|search|show|sync
 supercodex mcp add|list|install|remove|test|doctor|guided|catalog
 ```
@@ -276,11 +313,27 @@ flags = "supercodex/framework/FLAGS.md"
 [supercodex.catalog]
 source = "local"
 installed_ids = ["filesystem"]
+
+[supercodex.memory]
+enabled = true
+path = "~/.codex/supercodex/memory/sessions.jsonl"
+max_entries = 5000
+
+[supercodex.policy]
+enabled = true
+strictness = "standard"
+
+[supercodex.lock]
+path = ".supercodex.lock.json"
+enforce_in_ci = true
 ```
 
 ## Docs
 
+- [Quickstart Guide](docs/QUICKSTART.md)
 - [Command Reference](docs/COMMANDS.md)
+- [Command Chooser](docs/COMMAND_CHOOSER.md)
+- [Session Memory Guide](docs/SESSION_MEMORY.md)
 - [Framework Metadata (Generated)](docs/METADATA.md)
 - [Prompt Quality Checklist](docs/PROMPT_QUALITY_CHECKLIST.md)
 - [ADR 0001: SuperClaude Compatibility Target](docs/adr/0001-superclaude-compatibility-target.md)

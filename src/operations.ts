@@ -103,6 +103,13 @@ export interface StatusResult {
   defaultPersona?: string;
   catalogVersion?: string;
   catalogInstalledIds: string[];
+  memoryEnabled: boolean;
+  memoryPath: string;
+  memoryMaxEntries: number;
+  policyEnabled: boolean;
+  policyStrictness: string;
+  lockPath: string;
+  lockEnforceInCi: boolean;
 }
 
 export interface SetDefaultResult {
@@ -278,11 +285,26 @@ export async function getSupercodexStatus(codexHome?: string): Promise<StatusRes
       : [];
   const runtime = supercodex && isPlainObject(supercodex.runtime) ? (supercodex.runtime as TomlTable) : null;
   const catalog = supercodex && isPlainObject(supercodex.catalog) ? (supercodex.catalog as TomlTable) : null;
+  const memory = supercodex && isPlainObject(supercodex.memory) ? (supercodex.memory as TomlTable) : null;
+  const policy = supercodex && isPlainObject(supercodex.policy) ? (supercodex.policy as TomlTable) : null;
+  const lock = supercodex && isPlainObject(supercodex.lock) ? (supercodex.lock as TomlTable) : null;
   const catalogInstalledIds = Array.isArray(catalog?.installed_ids)
     ? (catalog?.installed_ids as unknown[])
         .filter((value): value is string => typeof value === "string" && value.trim().length > 0)
         .sort()
     : [];
+  const memoryEnabled = typeof memory?.enabled === "boolean" ? memory.enabled : true;
+  const memoryPath = typeof memory?.path === "string"
+    ? memory.path
+    : "~/.codex/supercodex/memory/sessions.jsonl";
+  const memoryMaxEntriesRaw = typeof memory?.max_entries === "number" ? memory.max_entries : 5000;
+  const memoryMaxEntries = Number.isFinite(memoryMaxEntriesRaw) && memoryMaxEntriesRaw > 0
+    ? Math.trunc(memoryMaxEntriesRaw)
+    : 5000;
+  const policyEnabled = typeof policy?.enabled === "boolean" ? policy.enabled : true;
+  const policyStrictness = typeof policy?.strictness === "string" ? policy.strictness : "standard";
+  const lockPath = typeof lock?.path === "string" ? lock.path : ".supercodex.lock.json";
+  const lockEnforceInCi = typeof lock?.enforce_in_ci === "boolean" ? lock.enforce_in_ci : true;
   const interactiveBundled = listBundledInteractivePromptCommands();
   const interactiveInstalled = await listInstalledInteractivePromptCommands(paths.promptsDir);
   const interactiveInstalledSet = new Set(interactiveInstalled);
@@ -304,7 +326,14 @@ export async function getSupercodexStatus(codexHome?: string): Promise<StatusRes
     defaultMode: typeof runtime?.default_mode === "string" ? runtime.default_mode : undefined,
     defaultPersona: typeof runtime?.default_persona === "string" ? runtime.default_persona : undefined,
     catalogVersion: typeof runtime?.catalog_version === "string" ? runtime.catalog_version : undefined,
-    catalogInstalledIds
+    catalogInstalledIds,
+    memoryEnabled,
+    memoryPath,
+    memoryMaxEntries,
+    policyEnabled,
+    policyStrictness,
+    lockPath,
+    lockEnforceInCi
   };
 }
 

@@ -7,7 +7,7 @@ Do not edit manually. Run `npm run metadata:sync`.
 
 | Metric | Value |
 | --- | ---: |
-| Total command definitions | 69 |
+| Total command definitions | 80 |
 | Workflow command definitions (run.*) | 33 |
 | Base workflow definitions | 4 |
 | Extended workflow definitions | 29 |

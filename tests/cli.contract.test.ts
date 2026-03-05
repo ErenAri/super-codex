@@ -30,6 +30,65 @@ describe("cli contract", () => {
     expect(payload.errors.length).toBe(0);
   });
 
+  it("policy validate --json returns valid policy payload", async () => {
+    const codexHome = await createCodexHome();
+    const result = await runCapturedCli(["policy", "validate", "--json", "--codex-home", codexHome]);
+
+    expect(result.code).toBe(0);
+    const payload = JSON.parse(result.stdout);
+    expect(payload.valid).toBe(true);
+    expect(typeof payload.score).toBe("number");
+    expect(Array.isArray(payload.checks)).toBe(true);
+  });
+
+  it("lock refresh + lock status + verify --strict pass on clean state", async () => {
+    const codexHome = await createCodexHome();
+    const lockPath = path.join(path.dirname(codexHome), ".supercodex.lock.json");
+
+    const refreshed = await runCapturedCli([
+      "lock",
+      "refresh",
+      "--path",
+      lockPath,
+      "--json",
+      "--codex-home",
+      codexHome
+    ]);
+    expect(refreshed.code).toBe(0);
+    const refreshPayload = JSON.parse(refreshed.stdout);
+    expect(refreshPayload.updated).toBe(true);
+    expect(typeof refreshPayload.path).toBe("string");
+
+    const status = await runCapturedCli([
+      "lock",
+      "status",
+      "--path",
+      lockPath,
+      "--strict",
+      "--json",
+      "--codex-home",
+      codexHome
+    ]);
+    expect(status.code).toBe(0);
+    const statusPayload = JSON.parse(status.stdout);
+    expect(statusPayload.ok).toBe(true);
+    expect(statusPayload.in_sync).toBe(true);
+
+    const verify = await runCapturedCli([
+      "verify",
+      "--lock-path",
+      lockPath,
+      "--strict",
+      "--json",
+      "--codex-home",
+      codexHome
+    ]);
+    expect(verify.code).toBe(0);
+    const verifyPayload = JSON.parse(verify.stdout);
+    expect(verifyPayload.ok).toBe(true);
+    expect(Array.isArray(verifyPayload.checks)).toBe(true);
+  });
+
   it("validate --strict fails on alias warnings from overlays", async () => {
     const codexHome = await createCodexHome();
     await writeRegistryOverlay(
@@ -107,6 +166,25 @@ describe("cli contract", () => {
     expect(payload.workflow).toBe("plan");
     expect(typeof payload.mode).toBe("string");
     expect(typeof payload.persona).toBe("string");
+  });
+
+  it("run plan supports --dry-run and --explain payload fields", async () => {
+    const codexHome = await createCodexHome();
+    const result = await runCapturedCli([
+      "run",
+      "plan",
+      "--dry-run",
+      "--explain",
+      "--json",
+      "--codex-home",
+      codexHome
+    ]);
+
+    expect(result.code).toBe(0);
+    const payload = JSON.parse(result.stdout);
+    expect(payload.dryRun).toBe(true);
+    expect(Array.isArray(payload.explanation)).toBe(true);
+    expect(payload.explanation.length).toBeGreaterThan(0);
   });
 
   it("supports /sc:* explicit alias syntax", async () => {
@@ -280,6 +358,25 @@ describe("cli contract", () => {
     expect(payload.some((item: { alias: { name: string } }) => item.alias.name === "security")).toBe(true);
   });
 
+  it("guide recommends a primary command with terminal and prompt forms", async () => {
+    const codexHome = await createCodexHome();
+    const result = await runCapturedCli([
+      "guide",
+      "security review for auth flow",
+      "--json",
+      "--codex-home",
+      codexHome
+    ]);
+
+    expect(result.code).toBe(0);
+    const payload = JSON.parse(result.stdout);
+    expect(payload.intent).toContain("security");
+    expect(payload.primary).toBeTruthy();
+    expect(typeof payload.primary.alias).toBe("string");
+    expect(payload.primary.terminalCommand).toContain("supercodex");
+    expect(payload.primary.promptCommand).toContain("/prompts:supercodex-");
+  });
+
   it("fails fast when alias points to unknown command target", async () => {
     const codexHome = await createCodexHome();
     await writeRegistryOverlay(
@@ -395,6 +492,58 @@ describe("cli contract", () => {
     expect(enabledPayload.enabled).toBe(true);
   });
 
+  it("session save/load/reflect works end-to-end", async () => {
+    const codexHome = await createCodexHome();
+
+    const save = await runCapturedCli([
+      "session",
+      "save",
+      "Implemented cache invalidation",
+      "--decision",
+      "Use tag-based invalidation",
+      "--next",
+      "Add eviction metrics",
+      "--mode",
+      "deep",
+      "--persona",
+      "architect",
+      "--json",
+      "--codex-home",
+      codexHome
+    ]);
+    expect(save.code).toBe(0);
+    const savePayload = JSON.parse(save.stdout);
+    expect(savePayload.saved).toBe(true);
+    expect(savePayload.record.summary).toContain("cache invalidation");
+
+    const load = await runCapturedCli([
+      "session",
+      "load",
+      "--recent",
+      "5",
+      "--json",
+      "--codex-home",
+      codexHome
+    ]);
+    expect(load.code).toBe(0);
+    const loadPayload = JSON.parse(load.stdout);
+    expect(loadPayload.totalRecords).toBeGreaterThanOrEqual(1);
+    expect(loadPayload.records[0].summary).toContain("cache invalidation");
+
+    const reflect = await runCapturedCli([
+      "session",
+      "reflect",
+      "--json",
+      "--codex-home",
+      codexHome
+    ]);
+    expect(reflect.code).toBe(0);
+    const reflectPayload = JSON.parse(reflect.stdout);
+    expect(reflectPayload.reflection).toBeTruthy();
+    expect(reflectPayload.reflection.decisions).toContain("Use tag-based invalidation");
+    expect(reflectPayload.reflection.pending_next_steps).toContain("Add eviction metrics");
+  });
+
   it("run plan supports every built-in mode", async () => {
     const codexHome = await createCodexHome();
     for (const modeName of Object.keys(BUILTIN_MODES)) {
@@ -403,6 +552,15 @@ describe("cli contract", () => {
       const payload = JSON.parse(result.stdout);
       expect(payload.mode).toBe(modeName);
     }
+  });
+
+  it("mode show --full prints mode content when a content file exists", async () => {
+    const codexHome = await createCodexHome();
+    const result = await runCapturedCli(["mode", "show", "deep", "--full", "--codex-home", codexHome]);
+
+    expect(result.code).toBe(0);
+    expect(result.stdout).toContain("# Deep Mode Overlay");
+    expect(result.stdout).not.toContain("Content file not found");
   });
 });
 

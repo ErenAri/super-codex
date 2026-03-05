@@ -92,6 +92,38 @@ Inspect warnings during install, then use `--force` only when you want SuperCode
 supercodex install --force
 ```
 
+## `supercodex verify --strict` fails on lockfile mismatch
+
+Refresh lock state and re-run verification:
+
+```bash
+supercodex lock refresh
+supercodex verify --strict
+```
+
+If CI fails, ensure `.supercodex.lock.json` is committed with the same command/prompt/docs state.
+
+## `session save` says memory is disabled
+
+Enable memory in config:
+
+```toml
+[supercodex.memory]
+enabled = true
+```
+
+Then retry:
+
+```bash
+supercodex session save "checkpoint summary"
+```
+
+Inspect current memory settings:
+
+```bash
+supercodex status
+```
+
 ## MCP server added but fails test
 
 Run MCP diagnostics:
