@@ -20,7 +20,7 @@ Built on the [SuperClaude Framework](https://github.com/SuperClaude-Org/SuperCla
 - Skill definitions: 1
 <!-- supercodex:metadata:end -->
 
-## Why SuperCodex âœ¨
+## Why SuperCodex :sparkles:
 
 - Safe-by-default config changes with automatic backups.
 - Scoped config ownership (`[supercodex]` plus optional managed `agents` and `mcp_servers` entries).
@@ -34,7 +34,7 @@ Built on the [SuperClaude Framework](https://github.com/SuperClaude-Org/SuperCla
 - Flag-based dispatch (`--brainstorm`, `--think`, `--ultrathink`, `--c7`, `--seq`).
 - Cross-platform support (Windows, macOS, Linux).
 
-## 2-Minute Quickstart âš¡
+## 2-Minute Quickstart :zap:
 
 ```bash
 npm install -g supercodex
@@ -51,7 +51,7 @@ After install:
 - Interactive prompt wrappers: `~/.codex/prompts/supercodex-*.md`
 - Config merge target: `~/.codex/config.toml`
 
-## When To Use / Not Use ğŸ›ï¸
+## When To Use / Not Use :control_knobs:
 
 Use SuperCodex when you need:
 - repeatable AI workflow command quality in teams
@@ -62,7 +62,7 @@ Skip SuperCodex when you need:
 - a minimal one-command wrapper only
 - no prompt scaffolding, no policy checks, and no lockfile consistency gates
 
-## 30-Second Value Demo ğŸš€
+## 30-Second Value Demo :rocket:
 
 ```bash
 supercodex guide "review auth security"
@@ -75,7 +75,7 @@ Expected outcome:
 - You can preview workflow decisions before acting.
 - You can enforce consistency in CI with one gate.
 
-## Alias Invocation: Which Syntax Works Where ğŸ§­
+## Alias Invocation: Which Syntax Works Where :compass:
 
 | Context | Use this syntax | Example |
 | --- | --- | --- |
@@ -89,7 +89,7 @@ Notes:
 - Codex interactive custom commands are exposed under `/prompts:*`.
 - `/supercodex:*` and `/sc:*` are SuperCodex CLI alias parsers, not native Codex interactive namespaces.
 
-## Install, List, Uninstall ğŸ› ï¸
+## Install, List, Uninstall :hammer_and_wrench:
 
 ```bash
 supercodex install [--force] [--codex-home <path>]
@@ -98,7 +98,7 @@ supercodex status [--json] [--codex-home <path>]
 supercodex uninstall [--codex-home <path>]
 ```
 
-## Command Workflows ğŸ§ 
+## Command Workflows :brain:
 
 SuperCodex ships command workflows with rich behavioral prompts:
 
@@ -120,7 +120,7 @@ supercodex /supercodex:research "evaluate caching strategies"
 supercodex brainstorm "API redesign options"
 ```
 
-## Guided Command Selection ğŸ¯
+## Guided Command Selection :dart:
 
 Use `guide` when you know intent but are unsure which command syntax/path to run:
 
@@ -132,7 +132,7 @@ supercodex guide "improve CI reliability" --json
 
 `guide` returns the best alias plus terminal/slash/prompt command forms and recommended next commands.
 
-## Agents ğŸ¤–
+## Agents :robot:
 
 Specialist agent definitions with triggers, capabilities, and handoff criteria:
 
@@ -143,7 +143,7 @@ supercodex agent show security-engineer
 
 Available agents: `pm`, `deep-research`, `system-architect`, `security-engineer`, `frontend-architect`, `backend-architect`, `performance-engineer`, `devops-engineer`, `data-engineer`, `qa-engineer`, `tech-writer`, `incident-responder`, `ml-engineer`, `mobile-architect`, `database-architect`, `accessibility-engineer`
 
-## Modes ğŸ§©
+## Modes :jigsaw:
 
 ```bash
 supercodex mode list
@@ -167,7 +167,7 @@ supercodex mode unset
 | `business-panel` | high | Multi-expert business analysis |
 | `introspection` | high | Self-analysis with bias detection |
 
-## Flags ğŸš©
+## Flags :triangular_flag_on_post:
 
 Shorthand flags that activate modes, reasoning depth, or MCP servers:
 
@@ -184,7 +184,7 @@ supercodex flag show brainstorm
 | `--c7` | mcp | Enable Context7 MCP server |
 | `--seq` | mcp | Enable Sequential MCP server |
 
-## Skills ğŸ§°
+## Skills :toolbox:
 
 ```bash
 supercodex skill list
@@ -197,7 +197,7 @@ Current skills:
 
 - **confidence-check**: Pre-implementation confidence assessment (>=90% threshold)
 
-## Personas ğŸ­
+## Personas :performing_arts:
 
 ```bash
 supercodex persona list
@@ -208,7 +208,7 @@ supercodex persona unset
 
 Built-in personas: `architect`, `reviewer`, `refactorer`, `debugger`, `shipper`, `educator`
 
-## Shell Bridge (Optional) ğŸš
+## Shell Bridge (Optional) :shell:
 
 Install a lightweight shell function named `sc` for shorthand alias use:
 
@@ -224,7 +224,7 @@ sc research "scope and constraints"
 sc /supercodex:brainstorming "alternatives"
 ```
 
-## Session Memory ğŸ“
+## Session Memory :memo:
 
 Persist lightweight session checkpoints across runs:
 
@@ -239,7 +239,7 @@ Memory defaults to local JSONL storage:
 - path: `~/.codex/supercodex/memory/sessions.jsonl`
 - max entries: `5000` (configurable via `[supercodex.memory]`)
 
-## Safety Model ğŸ”’
+## Safety Model :lock:
 
 SuperCodex never blindly overwrites `config.toml`.
 
@@ -253,7 +253,7 @@ SuperCodex never blindly overwrites `config.toml`.
   - record desired value under `[supercodex.overrides]`
 - Use `--force` to apply desired values into conflicting locations
 
-## Prompt Pack ğŸ“¦
+## Prompt Pack :package:
 
 Installed under `~/.codex/prompts/supercodex/`:
 
@@ -271,7 +271,7 @@ Interactive wrappers installed under `~/.codex/prompts/`:
 - `supercodex-brainstorming.md` -> `/prompts:supercodex-brainstorming`
 - wrappers for all built-in aliases
 
-## Core Command Groups ğŸ“š
+## Core Command Groups :books:
 
 ```bash
 supercodex validate [--strict] [--json]
@@ -296,7 +296,7 @@ supercodex mcp add|list|install|remove|test|doctor|guided|catalog
 
 For detailed examples, see [docs/COMMANDS.md](docs/COMMANDS.md).
 
-## MCP Quick Examples ğŸ”Œ
+## MCP Quick Examples :electric_plug:
 
 Catalog install:
 
@@ -318,7 +318,7 @@ Manual HTTP server:
 supercodex mcp add internal-api --http http://localhost:3333/mcp --env API_TOKEN=secret
 ```
 
-## Config Snippet âš™ï¸
+## Config Snippet :gear:
 
 ```toml
 [supercodex]
@@ -355,7 +355,7 @@ path = ".supercodex.lock.json"
 enforce_in_ci = true
 ```
 
-## Docs ğŸ“–
+## Docs :book:
 
 - [Quickstart Guide](docs/QUICKSTART.md)
 - [Command Reference](docs/COMMANDS.md)
@@ -369,7 +369,7 @@ enforce_in_ci = true
 - [ADR 0001: SuperClaude Compatibility Target](docs/adr/0001-superclaude-compatibility-target.md)
 - [Troubleshooting](docs/TROUBLESHOOTING.md)
 
-## Publishing and Channels 📣
+## Publishing and Channels :mega:
 
 Stable publish:
 
@@ -385,7 +385,7 @@ npm publish --access public --tag next
 
 Full guide: [docs/RELEASE_CHANNELS.md](docs/RELEASE_CHANNELS.md)
 
-## Benchmarking ğŸ“ˆ
+## Benchmarking :chart_with_upwards_trend:
 
 Run evaluation harness and scorecards:
 
