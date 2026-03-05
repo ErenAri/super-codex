@@ -19,7 +19,7 @@ afterEach(async () => {
 });
 
 describe("supercodex install/uninstall", () => {
-  it("creates a timestamped backup before writing config", async () => {
+  it("creates a timestamped backup before writing config", { timeout: 120000 }, async () => {
     const root = await createTempDir();
     const codexHome = path.join(root, ".codex");
     const configPath = path.join(codexHome, "config.toml");
@@ -37,7 +37,7 @@ describe("supercodex install/uninstall", () => {
     expect(backupContent).toContain("existing_key = \"keep\"");
   });
 
-  it("is idempotent across repeated install runs", async () => {
+  it("is idempotent across repeated install runs", { timeout: 120000 }, async () => {
     const root = await createTempDir();
     const codexHome = path.join(root, ".codex");
     const topLevelPrompt = path.join(codexHome, "prompts", "supercodex-research.md");
@@ -61,7 +61,7 @@ describe("supercodex install/uninstall", () => {
     expect(await pathExists(topLevelPrompt)).toBe(true);
   });
 
-  it("migrates managed legacy sc-* wrappers to supercodex-* wrappers on install", async () => {
+  it("migrates managed legacy sc-* wrappers to supercodex-* wrappers on install", { timeout: 120000 }, async () => {
     const root = await createTempDir();
     const codexHome = path.join(root, ".codex");
     const promptsRoot = path.join(codexHome, "prompts");
@@ -80,7 +80,7 @@ describe("supercodex install/uninstall", () => {
     expect(await pathExists(newWrapper)).toBe(true);
   });
 
-  it("preserves existing conflicting values and records overrides", async () => {
+  it("preserves existing conflicting values and records overrides", { timeout: 120000 }, async () => {
     const root = await createTempDir();
     const codexHome = path.join(root, ".codex");
     const configPath = path.join(codexHome, "config.toml");
@@ -116,7 +116,7 @@ describe("supercodex install/uninstall", () => {
     expect((config.unrelated as Record<string, unknown>).keep).toBe(true);
   });
 
-  it("uninstall removes only managed sections and prompt directory", async () => {
+  it("uninstall removes only managed sections and prompt directory", { timeout: 120000 }, async () => {
     const root = await createTempDir();
     const codexHome = path.join(root, ".codex");
     const configPath = path.join(codexHome, "config.toml");

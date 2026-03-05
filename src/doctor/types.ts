@@ -32,9 +32,18 @@ export interface McpHealthReport {
   servers: McpHealthServer[];
 }
 
+export interface DoctorSummary {
+  errors: number;
+  warnings: number;
+  info: number;
+  fixable: number;
+}
+
 export interface DoctorReport {
   ok: boolean;
   issues: DoctorIssue[];
+  summary?: DoctorSummary;
+  recommended_actions?: string[];
   mcp_health?: McpHealthReport;
 }
 

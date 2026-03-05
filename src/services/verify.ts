@@ -1,5 +1,5 @@
 import { loadRegistry, validateRegistry } from "../registry";
-import { validateSupercodexCommandSet } from "./command-validation";
+import { evaluateCommandPromptQuality, validateSupercodexCommandSet } from "./command-validation";
 import { checkLockStatus, type LockOptions } from "./lockfile";
 import { evaluatePolicy } from "./policy";
 
@@ -57,6 +57,26 @@ export async function runVerification(options: VerifyOptions = {}): Promise<Veri
     details: [
       ...registryErrors.map((issue) => `[error] ${issue.message} (${issue.path})`),
       ...registryWarnings.map((issue) => `[warn] ${issue.message} (${issue.path})`)
+    ]
+  });
+
+  const commandQuality = evaluateCommandPromptQuality();
+  const commandQualityStatus: VerifyCheckStatus = !commandQuality.valid
+    ? "fail"
+    : commandQuality.warn_count > 0
+      ? "warn"
+      : "pass";
+  checks.push({
+    id: "command_quality",
+    title: "Command prompt quality",
+    status: commandQualityStatus,
+    details: [
+      `score=${commandQuality.score}`,
+      `errors=${commandQuality.error_count}`,
+      `warnings=${commandQuality.warn_count}`,
+      ...commandQuality.issues.slice(0, 12).map(
+        (issue) => `[${issue.level}] ${issue.commandId}: ${issue.message} (${issue.file})`
+      )
     ]
   });
 

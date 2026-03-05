@@ -1,4 +1,4 @@
-export type OutputStyle = "plain" | "decorated";
+﻿export type OutputStyle = "plain" | "decorated";
 
 export type IconKind =
   | "ok"
@@ -17,14 +17,14 @@ export interface StyleOptions {
 }
 
 const DECORATED_ICONS: Record<IconKind, string> = {
-  ok: "✅",
-  warn: "⚠️",
-  error: "❌",
-  info: "ℹ️",
-  step: "•",
-  next: "➡️",
-  tip: "💡",
-  section: "🧭"
+  ok: "\u2705",
+  warn: "\u26A0\uFE0F",
+  error: "\u274C",
+  info: "\u2139\uFE0F",
+  step: "\u2022",
+  next: "\u27A1\uFE0F",
+  tip: "\u{1F4A1}",
+  section: "\u{1F9ED}"
 };
 
 const PLAIN_ICONS: Record<IconKind, string> = {

@@ -30,6 +30,8 @@ export function registerStartCommand(program: Command): void {
           const statusKind = result.status === "ok" ? "ok" : result.status === "warn" ? "warn" : "error";
           console.log(line("section", "Start check", style));
           console.log(line(statusKind, `Status: ${result.status}`, style));
+          console.log(line("info", `Readiness score: ${result.readiness_score}/100`, style));
+          console.log(line("next", `Recommended action: ${result.recommended_action}`, style));
           if (result.repaired) {
             console.log(line("ok", "Applied install/repair actions.", style));
           }

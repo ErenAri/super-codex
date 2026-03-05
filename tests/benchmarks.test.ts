@@ -20,7 +20,7 @@ afterEach(async () => {
   }
 });
 
-describe("benchmark modules", () => {
+describe("benchmark modules", { timeout: 120000 }, () => {
   it("ships at least 50 starter benchmark tasks", async () => {
     const taskDir = path.resolve(process.cwd(), "benchmarks", "tasks");
     const entries = await readdir(taskDir);

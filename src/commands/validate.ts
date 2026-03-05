@@ -1,7 +1,7 @@
 import type { Command } from "commander";
 
 import { loadRegistry, validateRegistry } from "../registry";
-import { validateSupercodexCommandSet } from "../services/command-validation";
+import { evaluateCommandPromptQuality, validateSupercodexCommandSet } from "../services/command-validation";
 import { runCommand } from "./utils";
 
 export function registerValidateCommand(program: Command): void {
@@ -22,6 +22,9 @@ export function registerValidateCommand(program: Command): void {
         const commandSetValidation = validateSupercodexCommandSet(
           Object.keys(registryResult.registry.commands)
         );
+        const commandQuality = evaluateCommandPromptQuality();
+        const qualityErrors = commandQuality.issues.filter((issue) => issue.level === "error");
+        const qualityWarnings = commandQuality.issues.filter((issue) => issue.level === "warn");
         const hasErrors = issues.some((issue) => issue.level === "error");
         const hasWarnings = issues.some((issue) => issue.level === "warn");
 
@@ -29,7 +32,8 @@ export function registerValidateCommand(program: Command): void {
           valid:
             !hasErrors &&
             commandSetValidation.valid &&
-            (!strict || !hasWarnings),
+            qualityErrors.length === 0 &&
+            (!strict || (!hasWarnings && qualityWarnings.length === 0)),
           command_count: Object.keys(registryResult.registry.commands).length,
           strict,
           issues: issues.map((issue) => ({
@@ -37,7 +41,23 @@ export function registerValidateCommand(program: Command): void {
             path: issue.path,
             message: issue.message
           })),
-          errors: commandSetValidation.errors
+          errors: [
+            ...commandSetValidation.errors,
+            ...qualityErrors.map((issue) => `[${issue.commandId}] ${issue.message}`)
+          ],
+          command_quality: {
+            valid: commandQuality.valid,
+            score: commandQuality.score,
+            error_count: commandQuality.error_count,
+            warn_count: commandQuality.warn_count,
+            issues: commandQuality.issues.map((issue) => ({
+              level: issue.level,
+              command: issue.commandId,
+              file: issue.file,
+              code: issue.code,
+              message: issue.message
+            }))
+          }
         };
 
         if (Boolean(options.json)) {
@@ -46,8 +66,15 @@ export function registerValidateCommand(program: Command): void {
           console.log(`Registry valid: ${payload.valid ? "yes" : "no"}`);
           console.log(`Strict mode: ${strict ? "on" : "off"}`);
           console.log(`Command count: ${payload.command_count}`);
+          console.log(
+            `Command quality: score=${payload.command_quality.score} ` +
+              `(errors=${payload.command_quality.error_count}, warnings=${payload.command_quality.warn_count})`
+          );
           for (const error of commandSetValidation.errors) {
             console.log(`- [error] ${error}`);
+          }
+          for (const issue of payload.command_quality.issues) {
+            console.log(`- [${issue.level}] ${issue.command}: ${issue.message} (${issue.file})`);
           }
           for (const issue of payload.issues) {
             console.log(`- [${issue.level}] ${issue.message} (${issue.path})`);

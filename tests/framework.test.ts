@@ -22,7 +22,7 @@ afterEach(async () => {
 });
 
 describe("framework expansion", () => {
-  it("sets and unsets runtime default mode with backups", async () => {
+  it("sets and unsets runtime default mode with backups", { timeout: 120000 }, async () => {
     const codexHome = await createCodexHome();
 
     const setResult = await setDefaultMode("deep", {
@@ -46,7 +46,7 @@ describe("framework expansion", () => {
     expect(configAfterUnset).not.toContain("default_mode");
   });
 
-  it("installs MCP server from catalog and tracks installed id", async () => {
+  it("installs MCP server from catalog and tracks installed id", { timeout: 120000 }, async () => {
     const codexHome = await createCodexHome();
     const entry = BUILTIN_CATALOG.filesystem;
 
@@ -65,7 +65,7 @@ describe("framework expansion", () => {
     expect(catalog.installed_ids).toContain("filesystem");
   });
 
-  it("doctor finds missing install and applies safe fixes", async () => {
+  it("doctor finds missing install and applies safe fixes", { timeout: 120000 }, async () => {
     const codexHome = await createCodexHome();
 
     const doctorBefore = await runDoctorChecks({

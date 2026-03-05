@@ -7,11 +7,24 @@ export function formatDoctorReport(report: DoctorReport, style: OutputStyle = "p
       ? `\nMCP health: healthy=${report.mcp_health.summary.healthy}, ` +
         `degraded=${report.mcp_health.summary.degraded}, failing=${report.mcp_health.summary.failing}`
       : "";
-    return `${line("ok", "Doctor: no issues found.", style)}${mcpSummary}`;
+    const actions = report.recommended_actions?.length
+      ? `\n${line("next", `Next: ${report.recommended_actions.join(" | ")}`, style)}`
+      : "";
+    return `${line("ok", "Doctor: no issues found.", style)}${mcpSummary}${actions}`;
   }
 
   const lines: string[] = [];
   lines.push(line(report.ok ? "ok" : "warn", `Doctor: ${report.ok ? "ok" : "issues detected"}`, style));
+  if (report.summary) {
+    lines.push(
+      line(
+        "info",
+        `Summary: errors=${report.summary.errors}, warnings=${report.summary.warnings}, ` +
+          `info=${report.summary.info}, fixable=${report.summary.fixable}`,
+        style
+      )
+    );
+  }
   for (const issue of report.issues) {
     const pathPart = issue.path ? ` (${issue.path})` : "";
     const fixablePart = issue.fixable ? " [fixable]" : "";
@@ -27,6 +40,12 @@ export function formatDoctorReport(report: DoctorReport, style: OutputStyle = "p
         style
       )
     );
+  }
+  if (report.recommended_actions && report.recommended_actions.length > 0) {
+    lines.push(line("next", "Recommended actions:", style));
+    for (const action of report.recommended_actions) {
+      lines.push(line("next", action, style));
+    }
   }
   return lines.join("\n");
 }

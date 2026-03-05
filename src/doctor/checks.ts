@@ -137,12 +137,10 @@ export async function runDoctorChecks(options: DoctorOptions = {}): Promise<Doct
   const mcpChecks = await runMcpChecks(config, Boolean(options.mcpConnectivity));
   issues.push(...mcpChecks.issues);
 
+  const report = finalizeDoctorReport(issues, buildMcpHealthReport(mcpChecks.health));
+
   return {
-    report: {
-      ok: !issues.some((entry) => entry.level === "error"),
-      issues,
-      mcp_health: buildMcpHealthReport(mcpChecks.health)
-    },
+    report,
     context: {
       config,
       configPath: codexPaths.configPath,
@@ -156,11 +154,7 @@ export async function runMcpDoctorChecks(
   includeConnectivity: boolean
 ): Promise<DoctorReport> {
   const mcpChecks = await runMcpChecks(config, includeConnectivity);
-  return {
-    ok: !mcpChecks.issues.some((entry) => entry.level === "error"),
-    issues: mcpChecks.issues,
-    mcp_health: buildMcpHealthReport(mcpChecks.health)
-  };
+  return finalizeDoctorReport(mcpChecks.issues, buildMcpHealthReport(mcpChecks.health));
 }
 
 async function runMcpChecks(config: TomlTable, includeConnectivity: boolean): Promise<McpChecksResult> {
@@ -357,6 +351,79 @@ function dedupeStrings(values: string[]): string[] {
   return Array.from(
     new Set(values.map((value) => value.trim()).filter((value) => value.length > 0))
   );
+}
+
+function finalizeDoctorReport(issues: DoctorIssue[], mcpHealth: McpHealthReport): DoctorReport {
+  return {
+    ok: !issues.some((entry) => entry.level === "error"),
+    issues,
+    summary: buildDoctorSummary(issues),
+    recommended_actions: buildRecommendedActions(issues),
+    mcp_health: mcpHealth
+  };
+}
+
+function buildDoctorSummary(issues: DoctorIssue[]) {
+  let errors = 0;
+  let warnings = 0;
+  let info = 0;
+  let fixable = 0;
+
+  for (const issue of issues) {
+    if (issue.level === "error") {
+      errors += 1;
+    } else if (issue.level === "warn") {
+      warnings += 1;
+    } else {
+      info += 1;
+    }
+
+    if (issue.fixable) {
+      fixable += 1;
+    }
+  }
+
+  return {
+    errors,
+    warnings,
+    info,
+    fixable
+  };
+}
+
+function buildRecommendedActions(issues: DoctorIssue[]): string[] {
+  if (issues.length === 0) {
+    return ["supercodex verify --strict"];
+  }
+
+  const actions: string[] = [];
+  const hasErrors = issues.some((issue) => issue.level === "error");
+  const hasWarnings = issues.some((issue) => issue.level === "warn");
+  const hasFixable = issues.some((issue) => issue.fixable);
+  const hasInstallIssues = issues.some(
+    (issue) =>
+      issue.id === "config.missing" ||
+      issue.id === "supercodex.missing" ||
+      issue.id.startsWith("prompts.")
+  );
+  const hasMcpIssues = issues.some((issue) => issue.id.startsWith("mcp."));
+
+  if (hasFixable) {
+    actions.push("supercodex doctor --fix");
+  }
+  if (hasInstallIssues) {
+    actions.push("supercodex start --yes");
+  }
+  if (hasMcpIssues) {
+    actions.push("supercodex mcp doctor --connectivity");
+  }
+  if (hasErrors) {
+    actions.push("supercodex validate --strict");
+  } else if (hasWarnings) {
+    actions.push("supercodex verify --strict");
+  }
+
+  return dedupeStrings(actions);
 }
 
 function issue(

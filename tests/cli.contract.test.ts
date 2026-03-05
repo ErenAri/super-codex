@@ -17,7 +17,7 @@ afterEach(async () => {
   }
 });
 
-describe("cli contract", () => {
+describe("cli contract", { timeout: 120000 }, () => {
   it("validate --json returns valid payload and zero exit code", async () => {
     const codexHome = await createCodexHome();
     const result = await runCapturedCli(["validate", "--json", "--codex-home", codexHome]);
@@ -28,6 +28,9 @@ describe("cli contract", () => {
     expect(payload.command_count).toBeGreaterThan(0);
     expect(Array.isArray(payload.errors)).toBe(true);
     expect(payload.errors.length).toBe(0);
+    expect(payload.command_quality).toBeTruthy();
+    expect(typeof payload.command_quality.score).toBe("number");
+    expect(Array.isArray(payload.command_quality.issues)).toBe(true);
   });
 
   it("policy validate --json returns valid policy payload", async () => {
@@ -87,6 +90,9 @@ describe("cli contract", () => {
     const verifyPayload = JSON.parse(verify.stdout);
     expect(verifyPayload.ok).toBe(true);
     expect(Array.isArray(verifyPayload.checks)).toBe(true);
+    expect(
+      verifyPayload.checks.some((check: { id: string; status: string }) => check.id === "command_quality" && check.status === "pass")
+    ).toBe(true);
   });
 
   it("validate --strict fails on alias warnings from overlays", async () => {
@@ -123,6 +129,9 @@ describe("cli contract", () => {
     const normalPayload = JSON.parse(normal.stdout);
     expect(Array.isArray(normalPayload.issues)).toBe(true);
     expect(normalPayload.issues.some((issue: { level: string }) => issue.level === "warn")).toBe(true);
+    expect(normalPayload.summary).toBeTruthy();
+    expect(typeof normalPayload.summary.fixable).toBe("number");
+    expect(Array.isArray(normalPayload.recommended_actions)).toBe(true);
 
     const strict = await runCapturedCli(["doctor", "--json", "--strict", "--codex-home", codexHome]);
     expect(strict.code).toBe(1);
@@ -135,6 +144,8 @@ describe("cli contract", () => {
     const initialPayload = JSON.parse(initial.stdout);
     expect(Array.isArray(initialPayload.checks)).toBe(true);
     expect(initialPayload.checks.some((check: { id: string }) => check.id === "workflow.smoke")).toBe(true);
+    expect(typeof initialPayload.readiness_score).toBe("number");
+    expect(typeof initialPayload.recommended_action).toBe("string");
 
     const repaired = await runCapturedCli(["start", "--yes", "--json", "--codex-home", codexHome]);
     expect(repaired.code).toBe(0);

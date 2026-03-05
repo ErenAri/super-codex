@@ -14,6 +14,8 @@ export interface StartCheckResult {
 
 export interface StartFlowResult {
   status: StartCheckStatus;
+  readiness_score: number;
+  recommended_action: string;
   checks: StartCheckResult[];
   next_commands: string[];
   repaired: boolean;
@@ -87,8 +89,10 @@ export async function runStartFlow(options: StartFlowOptions = {}): Promise<Star
   const overall = deriveOverallStatus(checks);
   return {
     status: overall,
+    readiness_score: computeReadinessScore(checks),
+    recommended_action: resolveRecommendedAction(overall, checks),
     checks,
-    next_commands: buildNextCommands(overall),
+    next_commands: buildNextCommands(overall, checks),
     repaired
   };
 }
@@ -141,8 +145,25 @@ function deriveOverallStatus(checks: StartCheckResult[]): StartCheckStatus {
   return "ok";
 }
 
-function buildNextCommands(status: StartCheckStatus): string[] {
-  const defaults = [
+function buildNextCommands(status: StartCheckStatus, checks: StartCheckResult[]): string[] {
+  const checkById = new Map(checks.map((check) => [check.id, check]));
+  const commands: string[] = [];
+
+  const installRelated = [
+    "supercodex.section",
+    "prompt.pack",
+    "interactive.wrappers"
+  ].some((id) => checkById.get(id)?.status !== "ok");
+
+  if (installRelated) {
+    commands.push("supercodex start --yes", "supercodex install");
+  }
+
+  if (checkById.get("workflow.smoke")?.status === "error") {
+    commands.push("supercodex validate --strict", "supercodex doctor --strict");
+  }
+
+  commands.push(
     "supercodex guide <intent>",
     "supercodex /supercodex:research <topic>",
     "supercodex /supercodex:analyze <target>",
@@ -153,15 +174,48 @@ function buildNextCommands(status: StartCheckStatus): string[] {
     "supercodex session save <summary>",
     "supercodex mcp guided --goal docs --yes",
     "supercodex doctor --strict"
-  ];
+  );
 
   if (status === "ok") {
-    return defaults;
+    return dedupe(commands);
   }
 
-  return [
-    "supercodex install",
-    "supercodex start --yes",
-    ...defaults
-  ];
+  return dedupe(commands);
+}
+
+function resolveRecommendedAction(status: StartCheckStatus, checks: StartCheckResult[]): string {
+  const checkById = new Map(checks.map((check) => [check.id, check]));
+  if (checkById.get("workflow.smoke")?.status === "error") {
+    return "supercodex validate --strict";
+  }
+  const installRelated = [
+    "supercodex.section",
+    "prompt.pack",
+    "interactive.wrappers"
+  ].some((id) => checkById.get(id)?.status !== "ok");
+  if (installRelated) {
+    return "supercodex start --yes";
+  }
+  if (status === "warn") {
+    return "supercodex doctor --strict";
+  }
+  return "supercodex guide <intent>";
+}
+
+function computeReadinessScore(checks: StartCheckResult[]): number {
+  let score = 100;
+  for (const check of checks) {
+    if (check.status === "error") {
+      score -= 35;
+      continue;
+    }
+    if (check.status === "warn") {
+      score -= 12;
+    }
+  }
+  return Math.max(0, Math.min(100, score));
+}
+
+function dedupe(values: string[]): string[] {
+  return Array.from(new Set(values));
 }
