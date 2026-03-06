@@ -360,7 +360,9 @@ enforce_in_ci = true
 
 ## Docs :book:
 
+- [Project Index (File Map)](PROJECT_INDEX.md)
 - [Quickstart Guide](docs/QUICKSTART.md)
+- [Upgrade Guide](docs/UPGRADE.md)
 - [Command Reference](docs/COMMANDS.md)
 - [Command Chooser](docs/COMMAND_CHOOSER.md)
 - [Session Memory Guide](docs/SESSION_MEMORY.md)

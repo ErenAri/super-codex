@@ -54,3 +54,4 @@ supercodex mcp doctor --connectivity
 ```
 
 If slash syntax is confusing, see `docs/TROUBLESHOOTING.md`.
+For project navigation in new sessions, see `PROJECT_INDEX.md`.
