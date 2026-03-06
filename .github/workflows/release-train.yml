@@ -11,7 +11,7 @@ on:
           - canary
           - stable
       version:
-        description: "Release version without leading v (example: 2.0.0-beta.2 or 2.0.0)"
+        description: "Release version without leading v (example: 2.1.0-beta.1 or 2.0.0)"
         required: true
         type: string
       release_date:
@@ -104,7 +104,7 @@ jobs:
 
           if [[ "$lane" == "canary" ]]; then
             if [[ "$version" != *-* ]]; then
-              echo "Canary lane requires pre-release version (example: 2.0.0-beta.2)." >&2
+              echo "Canary lane requires pre-release version (example: 2.1.0-beta.1)." >&2
               exit 1
             fi
             npm_channel="next"

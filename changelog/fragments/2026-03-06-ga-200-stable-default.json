@@ -1,0 +1,13 @@
+{
+  "id": "GA-200",
+  "type": "docs",
+  "summary": "Promoted v2 as the stable default release with SemVer compatibility policy documentation.",
+  "details": "Updated release/channel docs and README to prioritize stable installs while keeping `next` for future prerelease work.",
+  "commands": [
+    "npm install -g supercodex",
+    "npm run release:publish:verify -- --version 2.0.0 --dist-tag latest"
+  ],
+  "issues": [
+    "GA-200"
+  ]
+}

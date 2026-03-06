@@ -399,7 +399,7 @@ enforce_in_ci = true
 - [Migration Guide (SuperClaude -> SuperCodex)](docs/MIGRATION_FROM_SUPERCLAUDE.md)
 - [Session Memory Guide](docs/SESSION_MEMORY.md)
 - [Release Channels](docs/RELEASE_CHANNELS.md)
-- [Release Notes (Draft v2.0.0-beta.1)](docs/releases/v2.0.0-beta.1.md)
+- [Release Notes (v2.0.0)](docs/releases/v2.0.0.md)
 - [Growth Playbook](docs/GROWTH_PLAYBOOK.md)
 - [Growth Dashboard](docs/GROWTH_DASHBOARD.md)
 - [Telemetry and Privacy](docs/TELEMETRY.md)
@@ -407,6 +407,7 @@ enforce_in_ci = true
 - [Framework Metadata (Generated)](docs/METADATA.md)
 - [Prompt Quality Checklist](docs/PROMPT_QUALITY_CHECKLIST.md)
 - [ADR 0001: SuperClaude Compatibility Target](docs/adr/0001-superclaude-compatibility-target.md)
+- [Compatibility and SemVer Policy](docs/COMPATIBILITY_POLICY.md)
 - [Troubleshooting](docs/TROUBLESHOOTING.md)
 
 ## Publishing and Channels :mega:
@@ -417,7 +418,7 @@ Stable publish:
 npm publish --access public --tag latest
 ```
 
-Pre-release publish:
+Pre-release publish (for future `2.1.0-beta.*` work):
 
 ```bash
 npm publish --access public --tag next
@@ -428,8 +429,8 @@ Full guide: [docs/RELEASE_CHANNELS.md](docs/RELEASE_CHANNELS.md)
 Release-note generation from structured fragments:
 
 ```bash
-npm run release:notes -- --version 2.0.0-beta.2
-npm run release:notes:check -- --version 2.0.0-beta.2
+npm run release:notes -- --version 2.0.0
+npm run release:notes:check -- --version 2.0.0
 ```
 
 ## Benchmarking :chart_with_upwards_trend:

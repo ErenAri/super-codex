@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
     inputs:
       dist_tag:
-        description: "npm dist-tag override (latest|next|beta)"
+        description: "npm dist-tag override (latest|next)"
         required: false
         default: ""
 

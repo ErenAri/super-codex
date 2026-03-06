@@ -23,9 +23,9 @@ This guide covers safe upgrades between SuperCodex versions.
    - `supercodex lock refresh`
    - `supercodex verify --strict`
 
-## From 1.x to V2-Oriented Builds
+## From 1.x to 2.x Stable
 
-V2-focused releases add stricter command contracts and safety policy behavior.
+SuperCodex `2.x` adds stricter command contracts and safety policy behavior.
 
 1. Review new quick-action contract fields in JSON output:
    - `best_next_command`
@@ -41,6 +41,8 @@ V2-focused releases add stricter command contracts and safety policy behavior.
 4. If you use repo-local presets, list and re-apply with lock output:
    - `supercodex init --list-presets`
    - `supercodex init --preset <id> --refresh-lock`
+
+Contract details: [`docs/COMPATIBILITY_POLICY.md`](./COMPATIBILITY_POLICY.md)
 
 ## Troubleshooting Upgrade Issues
 

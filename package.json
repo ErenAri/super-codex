@@ -1,6 +1,6 @@
 {
   "name": "supercodex",
-  "version": "2.0.0-beta.3",
+  "version": "2.0.0",
   "description": "Workflow and prompt framework for Codex CLI with aliases, modes, MCP integration, and safe config automation.",
   "bin": {
     "supercodex": "dist/cli.js"

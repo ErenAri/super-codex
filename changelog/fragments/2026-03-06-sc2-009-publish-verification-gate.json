@@ -4,7 +4,7 @@
   "summary": "Added post-publish npm verification for expected version and dist-tag.",
   "details": "Publish workflow now polls npm registry and fails fast when published tag/version do not match release intent.",
   "commands": [
-    "npm run release:publish:verify -- --version 2.0.0-beta.2 --dist-tag next"
+    "npm run release:publish:verify -- --version <version> --dist-tag <latest|next>"
   ],
   "issues": [
     "SC2-009"
