@@ -1,7 +1,11 @@
+import { loadConfig } from "../config";
+import { pathExists } from "../fs-utils";
+import { getCodexPaths } from "../paths";
 import { loadRegistry, validateRegistry } from "../registry";
 import { evaluateCommandPromptQuality, validateSupercodexCommandSet } from "./command-validation";
 import { checkLockStatus, type LockOptions } from "./lockfile";
 import { evaluatePolicy } from "./policy";
+import { evaluateSafetyGates } from "./safety-gates";
 
 export type VerifyCheckStatus = "pass" | "warn" | "fail";
 
@@ -14,6 +18,7 @@ export interface VerifyCheck {
 
 export interface VerifyOptions extends LockOptions {
   strict?: boolean;
+  safetyGates?: boolean;
 }
 
 export interface VerifyReport {
@@ -111,6 +116,26 @@ export async function runVerification(options: VerifyOptions = {}): Promise<Veri
     status: lockCheckStatus,
     details: lockStatus.differences
   });
+
+  if (options.safetyGates) {
+    const codexPaths = getCodexPaths(options.codexHome);
+    const configExists = await pathExists(codexPaths.configPath);
+    const config = configExists ? await loadConfig(codexPaths.configPath) : {};
+    const safetyChecks = evaluateSafetyGates({ config });
+    const hasSafetyFail = safetyChecks.some((check) => check.status === "fail");
+    const hasSafetyWarn = safetyChecks.some((check) => check.status === "warn");
+    checks.push({
+      id: "safety_gates",
+      title: "Runtime safety gates",
+      status: hasSafetyFail ? "fail" : hasSafetyWarn ? "warn" : "pass",
+      details: safetyChecks.flatMap((check) => {
+        if (check.status === "pass") {
+          return [];
+        }
+        return [`[${check.status}] ${check.id}: ${check.details.join(" ")}`];
+      })
+    });
+  }
 
   const hasFailure = checks.some((check) => check.status === "fail");
   const hasWarning = checks.some((check) => check.status === "warn");

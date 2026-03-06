@@ -275,8 +275,10 @@ Interactive wrappers installed under `~/.codex/prompts/`:
 
 ```bash
 supercodex validate [--strict] [--json]
-supercodex verify [--strict] [--json]
+supercodex verify [--strict] [--json] [--safety-gates]
 supercodex quality prompts [--strict] [--json]
+supercodex profile list|show [--json]
+supercodex kernel export [--json]
 supercodex policy validate [--strict] [--json]
 supercodex lock refresh|status [--json]
 supercodex doctor [--fix] [--strict] [--json] [--plain] [--mcp-connectivity]

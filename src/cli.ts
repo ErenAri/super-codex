@@ -10,11 +10,13 @@ import {
   registerDoctorCommands,
   registerFlagCommands,
   registerGuideCommands,
+  registerKernelCommands,
   registerLockCommands,
   registerMcpCommands,
   registerModeCommands,
   registerPersonaCommands,
   registerPolicyCommands,
+  registerProfileCommands,
   registerQualityCommands,
   registerRunCommands,
   registerSessionCommands,
@@ -39,11 +41,13 @@ export function createProgram(): Command {
   registerVerifyCommand(program);
   registerDoctorCommands(program);
   registerPolicyCommands(program);
+  registerProfileCommands(program);
   registerQualityCommands(program);
   registerLockCommands(program);
   registerCatalogCommands(program);
   registerAliasCommands(program);
   registerGuideCommands(program);
+  registerKernelCommands(program);
   registerModeCommands(program);
   registerPersonaCommands(program);
   registerMcpCommands(program);

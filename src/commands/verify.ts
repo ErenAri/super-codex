@@ -11,13 +11,15 @@ export function registerVerifyCommand(program: Command): void {
     .option("--lock-path <path>", "Override lock file path")
     .option("--json", "Output JSON")
     .option("--strict", "Fail on warnings too")
+    .option("--safety-gates", "Include runtime safety gate checks (keys, sandbox, approvals, replay)")
     .action((options) =>
       runCommand(async () => {
         const report = await runVerification({
           codexHome: options.codexHome as string | undefined,
           projectRoot: process.cwd(),
           pathOverride: options.lockPath as string | undefined,
-          strict: Boolean(options.strict)
+          strict: Boolean(options.strict),
+          safetyGates: Boolean(options.safetyGates)
         });
 
         if (Boolean(options.json)) {

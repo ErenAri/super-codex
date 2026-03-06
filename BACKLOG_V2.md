@@ -20,6 +20,17 @@ This backlog is scoped for a v2 cycle focused on command quality, first-run UX, 
 - `M7 (Weeks 7-9)`: Team workflows, templates, and release automation upgrades.
 - `M8 (Weeks 10-12)`: Growth loop, telemetry insights, and v2 release gate.
 
+## Strategic Pillars (Requested V2 Scope)
+
+1. **Framework kernel primitives**
+2. **Doctor/verify safety gates**
+3. **Minimal parity workflow loop (core 10)**
+4. **Core agents first (6)**
+5. **Policy-first modes (4)**
+6. **Framework-grade distribution/docs**
+7. **Scalable test harness**
+8. **Universal MCP strategy**
+
 ## Issues
 
 ### SC2-001: Command golden output fixtures and regression tests
@@ -142,12 +153,93 @@ This backlog is scoped for a v2 cycle focused on command quality, first-run UX, 
   - Helper utilities are shared across test suites.
   - No regression in test runtime >20%.
 
+### SC2-013: Framework kernel registry contracts
+- Priority: `P0`
+- Milestone: `M5`
+- Owner: `Core`
+- Scope: Formalize kernel primitives: command registry, agent registry, mode policy engine, session state contract, and tool/MCP capability layer.
+- Acceptance criteria:
+  - Machine-readable schemas are defined and versioned.
+  - Registries include output contracts and permission metadata.
+  - Kernel snapshot command/API is available for diagnostics and tooling.
+
+### SC2-014: Doctor/verify trust-gate expansion
+- Priority: `P0`
+- Milestone: `M6`
+- Owner: `Doctor`
+- Scope: Add trust checks for API keys, MCP connectivity, sandbox/approval policy, and deterministic replay readiness.
+- Acceptance criteria:
+  - `doctor` surfaces all gate statuses in one report.
+  - `verify --safety-gates` can enforce gates in CI.
+  - Failures include explicit remediation guidance.
+
+### SC2-015: Core 10 workflow profile
+- Priority: `P0`
+- Milestone: `M5`
+- Owner: `UX`
+- Scope: Define and expose a minimal parity workflow profile of 10 loop commands before advanced expansion.
+- Acceptance criteria:
+  - `profile show core` exposes all 10 loop steps.
+  - Start/guide flows can recommend the core loop first.
+  - Advanced command surface remains available for power users.
+
+### SC2-016: Core 6 agent profile
+- Priority: `P0`
+- Milestone: `M6`
+- Owner: `Core`
+- Scope: Center onboarding around 6 job-to-be-done agents (planner, implementer, reviewer, test fixer, security auditor, docs writer).
+- Acceptance criteria:
+  - Core agent profile is documented and queryable.
+  - Agent list supports filtering by profile.
+  - Guidance defaults to core profile for new users.
+
+### SC2-017: Core 4 mode policy bundles
+- Priority: `P0`
+- Milestone: `M6`
+- Owner: `Core`
+- Scope: Publish and enforce 4 primary policy bundles: fast, safe, deep, research.
+- Acceptance criteria:
+  - Each mode has explicit policy intents and guardrails.
+  - Safe mode enforces stricter write/test review behavior.
+  - Guide/start defaults map intents to these 4 first.
+
+### SC2-018: Framework-grade onboarding docs and file map
+- Priority: `P1`
+- Milestone: `M7`
+- Owner: `Docs`
+- Scope: Add `PROJECT_INDEX.md`, upgrade guide, and starter template docs for quick session onboarding.
+- Acceptance criteria:
+  - New sessions can navigate project structure from one index file.
+  - Versioned upgrade notes are published each release.
+  - Templates repo/docs are linked from README.
+
+### SC2-019: Snapshot/golden harness hardening
+- Priority: `P0`
+- Milestone: `M7`
+- Owner: `Infra`
+- Scope: Expand golden outputs, prompt snapshots, and sandbox integration tests for release confidence.
+- Acceptance criteria:
+  - Golden and snapshot suites run in CI on every PR.
+  - Temporary git/sandbox integration tests cover write safety paths.
+  - Verify gate is mandatory for release workflows.
+
+### SC2-020: Universal MCP connector strategy
+- Priority: `P1`
+- Milestone: `M8`
+- Owner: `MCP`
+- Scope: Keep MCP client-agnostic and ship official connectors for git, code search, issues, and docs retrieval.
+- Acceptance criteria:
+  - Connector interface is stable and documented.
+  - At least 4 official connectors are available with health diagnostics.
+  - Capability discovery works consistently across transports.
+
 ## Immediate Execution Order (Sprint 1)
 
-1. `SC2-001` command golden fixtures.
-2. `SC2-004` start wizard.
-3. `SC2-005` doctor explain/fix previews.
-4. `SC2-012` Windows filesystem reliability hardening.
+1. `SC2-013` framework kernel contracts.
+2. `SC2-014` doctor/verify trust gates.
+3. `SC2-015` core 10 workflow profile.
+4. `SC2-001` command golden fixtures.
+5. `SC2-012` Windows filesystem reliability hardening.
 
 ## Definition of Done (Global)
 

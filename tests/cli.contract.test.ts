@@ -49,6 +49,34 @@ describe("cli contract", { timeout: 120000 }, () => {
     expect(Array.isArray(payload.issues)).toBe(true);
   });
 
+  it("profile show core --json returns minimal parity profile", async () => {
+    const codexHome = await createCodexHome();
+    const result = await runCapturedCli(["profile", "show", "core", "--json", "--codex-home", codexHome]);
+
+    expect(result.code).toBe(0);
+    const payload = JSON.parse(result.stdout);
+    expect(payload.id).toBe("core");
+    expect(Array.isArray(payload.workflow_loop)).toBe(true);
+    expect(payload.workflow_loop).toHaveLength(10);
+    expect(Array.isArray(payload.core_agents)).toBe(true);
+    expect(payload.core_agents).toHaveLength(6);
+    expect(Array.isArray(payload.core_modes)).toBe(true);
+    expect(payload.core_modes).toHaveLength(4);
+  });
+
+  it("kernel export --json returns primitive registries", async () => {
+    const codexHome = await createCodexHome();
+    const result = await runCapturedCli(["kernel", "export", "--json", "--codex-home", codexHome]);
+
+    expect(result.code).toBe(0);
+    const payload = JSON.parse(result.stdout);
+    expect(payload.version).toBeTruthy();
+    expect(Array.isArray(payload.command_registry)).toBe(true);
+    expect(Array.isArray(payload.agent_registry)).toBe(true);
+    expect(Array.isArray(payload.mode_engine)).toBe(true);
+    expect(Array.isArray(payload.tool_layer)).toBe(true);
+  });
+
   it("policy validate --json returns valid policy payload", async () => {
     const codexHome = await createCodexHome();
     const result = await runCapturedCli(["policy", "validate", "--json", "--codex-home", codexHome]);
@@ -108,6 +136,21 @@ describe("cli contract", { timeout: 120000 }, () => {
     expect(Array.isArray(verifyPayload.checks)).toBe(true);
     expect(
       verifyPayload.checks.some((check: { id: string; status: string }) => check.id === "command_quality" && check.status === "pass")
+    ).toBe(true);
+
+    const safety = await runCapturedCli([
+      "verify",
+      "--lock-path",
+      lockPath,
+      "--json",
+      "--safety-gates",
+      "--codex-home",
+      codexHome
+    ]);
+    expect(safety.code).toBe(0);
+    const safetyPayload = JSON.parse(safety.stdout);
+    expect(
+      safetyPayload.checks.some((check: { id: string }) => check.id === "safety_gates")
     ).toBe(true);
   });
 

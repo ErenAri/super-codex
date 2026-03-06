@@ -10,6 +10,7 @@ import {
   validateRegistry
 } from "../registry";
 import { getRuntimeDefaults } from "../runtime";
+import { evaluateSafetyGates } from "../services/safety-gates";
 import type { DoctorIssue, DoctorReport, McpHealthReport, McpHealthServer } from "./types";
 
 export interface DoctorOptions {
@@ -132,6 +133,24 @@ export async function runDoctorChecks(options: DoctorOptions = {}): Promise<Doct
         )
       );
     }
+  }
+
+  const safetyChecks = evaluateSafetyGates({
+    config
+  });
+  for (const check of safetyChecks) {
+    if (check.status === "pass") {
+      continue;
+    }
+    issues.push(
+      issue(
+        `safety.${check.id}`,
+        check.status === "fail" ? "error" : "warn",
+        `${check.title}: ${check.details.join(" ")}`,
+        false,
+        `supercodex.safety.${check.id}`
+      )
+    );
   }
 
   const mcpChecks = await runMcpChecks(config, Boolean(options.mcpConnectivity));

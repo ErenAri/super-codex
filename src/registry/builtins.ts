@@ -130,6 +130,10 @@ export const BUILTIN_COMMANDS: Record<string, CommandDefinition> = {
   verify: command("verify", "Verify registry, policy, and lock consistency"),
   doctor: command("doctor", "Run diagnostics and optional fixes"),
   guide: command("guide", "Recommend the best command/alias for an intent"),
+  "profile.list": command("profile.list", "List framework profiles"),
+  "profile.show": command("profile.show", "Show framework profile details"),
+  "quality.prompts": command("quality.prompts", "Evaluate command prompt quality"),
+  "kernel.export": command("kernel.export", "Export kernel primitive snapshot"),
 
   // Catalog commands
   "catalog.list": command("catalog.list", "List MCP catalog entries"),
