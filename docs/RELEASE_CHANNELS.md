@@ -37,7 +37,7 @@ Move a version to another tag:
 
 ```bash
 npm dist-tag add supercodex@2.0.0 latest
-npm dist-tag add supercodex@2.0.0-beta.2 next
+npm dist-tag add supercodex@2.0.0-beta.3 next
 ```
 
 Inspect tags:
@@ -57,7 +57,7 @@ Workflow: `.github/workflows/release-train.yml`
 
 - Weekly canary readiness runs every Monday (build + test + strict verify + generated canary notes artifact).
 - Manual dispatch supports two lanes:
-  - `canary` (requires prerelease version such as `2.0.0-beta.2`)
+  - `canary` (requires prerelease version such as `2.0.0-beta.3`)
   - `stable` (requires stable version such as `2.0.0`)
 - Dispatch preflight gates:
   - `npm run build`
@@ -84,19 +84,19 @@ Release notes are generated from JSON fragments under `changelog/fragments`.
 Generate notes:
 
 ```bash
-npm run release:notes -- --version 2.0.0-beta.2
+npm run release:notes -- --version 2.0.0-beta.3
 ```
 
 Check notes are current:
 
 ```bash
-npm run release:notes:check -- --version 2.0.0-beta.2
+npm run release:notes:check -- --version 2.0.0-beta.3
 ```
 
 Verify published package version and dist-tag:
 
 ```bash
-npm run release:publish:verify -- --version 2.0.0-beta.2 --dist-tag next
+npm run release:publish:verify -- --version 2.0.0-beta.3 --dist-tag next
 ```
 
 Fragment format reference: `changelog/fragments/README.md`
