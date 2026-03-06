@@ -41,6 +41,8 @@ jobs:
         run: npm run build
       - name: Verify command/prompt/docs consistency
         run: npm run verify:consistency
+      - name: Golden output regression suite
+        run: npm run test:golden
       - name: Test
         run: npm test
 

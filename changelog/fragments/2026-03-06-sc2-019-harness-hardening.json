@@ -1,0 +1,13 @@
+{
+  "id": "SC2-019",
+  "type": "chore",
+  "summary": "Hardened snapshot/golden confidence with temp-git write-safety integration tests and explicit CI golden gate.",
+  "details": "Added sandboxed git workspace tests for safe-mode write blocking and scoped init changes, and run golden regression suite explicitly in PR CI.",
+  "commands": [
+    "npm run test:golden",
+    "npm test"
+  ],
+  "issues": [
+    "SC2-019"
+  ]
+}
