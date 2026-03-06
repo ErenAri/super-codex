@@ -60,11 +60,26 @@ export function registerModeCommands(program: Command): void {
           console.log(JSON.stringify(definition, null, 2));
         } else {
           console.log(`${definition.name} - ${definition.description}`);
+          if (definition.policy_profile) {
+            console.log(`Policy profile: ${definition.policy_profile}`);
+          }
+          if (definition.risk_tolerance) {
+            console.log(`Risk tolerance: ${definition.risk_tolerance}`);
+          }
+          if (definition.allowed_actions && definition.allowed_actions.length > 0) {
+            console.log(`Allowed actions: ${definition.allowed_actions.join(", ")}`);
+          }
           if (definition.prompt_overlay) {
             console.log(`Prompt overlay: ${definition.prompt_overlay}`);
           }
           if (definition.reasoning_budget) {
             console.log(`Reasoning budget: ${definition.reasoning_budget}`);
+          }
+          if (definition.behavioral_rules && definition.behavioral_rules.length > 0) {
+            console.log("Behavioral rules:");
+            for (const rule of definition.behavioral_rules) {
+              console.log(`- ${rule}`);
+            }
           }
 
           if (Boolean(options.full) && definition.content_file) {

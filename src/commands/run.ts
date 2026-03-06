@@ -73,7 +73,11 @@ function registerWorkflowCommand(parent: Command, workflowName: string, descript
             registry.registry,
             commandId,
             resolution.mode,
-            resolution.persona
+            resolution.persona,
+            {
+              dryRun,
+              explain
+            }
           );
           if (!compat.ok) {
             throw new Error(compat.errors.join(" "));

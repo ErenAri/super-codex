@@ -15,6 +15,9 @@ export interface ModeDefinition {
   prompt_overlay?: string;
   temperature?: number;
   reasoning_budget?: "low" | "medium" | "high";
+  policy_profile?: "core" | "extended";
+  risk_tolerance?: "low" | "medium" | "high";
+  allowed_actions?: string[];
   content_file?: string;
   behavioral_rules?: string[];
 }

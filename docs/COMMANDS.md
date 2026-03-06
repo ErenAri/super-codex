@@ -110,6 +110,14 @@ supercodex run build --mode fast --persona shipper
 supercodex run research --mode deep --persona architect --json
 ```
 
+Safe mode write guardrails:
+
+```bash
+supercodex run implement --mode safe --dry-run --explain --json
+```
+
+In `safe` mode, write-capable workflows require `--dry-run` and `--explain`.
+
 ### Via aliases
 
 ```bash

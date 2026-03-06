@@ -14,6 +14,12 @@ export const BUILTIN_MODES: Record<string, ModeDefinition> = {
     description: "General-purpose mode for normal coding tasks.",
     prompt_overlay: "supercodex/plan.md",
     reasoning_budget: "medium",
+    policy_profile: "extended",
+    risk_tolerance: "medium",
+    allowed_actions: ["read", "analyze", "write"],
+    behavioral_rules: [
+      "Balance speed and rigor for day-to-day implementation tasks."
+    ],
     content_file: "balanced.md"
   },
   deep: {
@@ -21,6 +27,13 @@ export const BUILTIN_MODES: Record<string, ModeDefinition> = {
     description: "High-rigor mode for architecture and risky changes.",
     prompt_overlay: "supercodex/review.md",
     reasoning_budget: "high",
+    policy_profile: "core",
+    risk_tolerance: "medium",
+    allowed_actions: ["read", "analyze", "test", "review", "write"],
+    behavioral_rules: [
+      "Require explicit tradeoff analysis before code edits.",
+      "Prioritize correctness, regression risk checks, and test impact analysis."
+    ],
     temperature: 0.2,
     content_file: "deep.md"
   },
@@ -29,6 +42,13 @@ export const BUILTIN_MODES: Record<string, ModeDefinition> = {
     description: "Delivery-focused mode for straightforward tasks.",
     prompt_overlay: "supercodex/refactor.md",
     reasoning_budget: "low",
+    policy_profile: "core",
+    risk_tolerance: "high",
+    allowed_actions: ["read", "write", "execute"],
+    behavioral_rules: [
+      "Minimize ceremony and optimize for quick iteration.",
+      "Prefer short feedback loops with focused changes."
+    ],
     temperature: 0.4,
     content_file: "fast.md"
   },
@@ -37,6 +57,13 @@ export const BUILTIN_MODES: Record<string, ModeDefinition> = {
     description: "Conservative mode emphasizing tests and rollback paths.",
     prompt_overlay: "supercodex/review.md",
     reasoning_budget: "high",
+    policy_profile: "core",
+    risk_tolerance: "low",
+    allowed_actions: ["read", "analyze", "test", "review"],
+    behavioral_rules: [
+      "Write-capable workflows must run with --dry-run and --explain in safe mode.",
+      "Require test and rollback considerations before applying risky changes."
+    ],
     temperature: 0.1,
     content_file: "safe.md"
   },
@@ -50,6 +77,12 @@ export const BUILTIN_MODES: Record<string, ModeDefinition> = {
     name: "deep-research",
     description: "Multi-source research mode with evidence management.",
     reasoning_budget: "high",
+    policy_profile: "core",
+    risk_tolerance: "medium",
+    allowed_actions: ["read", "analyze", "research", "synthesize"],
+    behavioral_rules: [
+      "Cite evidence quality and note uncertainty explicitly."
+    ],
     temperature: 0.2,
     content_file: "deep-research.md"
   },
@@ -57,30 +90,45 @@ export const BUILTIN_MODES: Record<string, ModeDefinition> = {
     name: "task-management",
     description: "Structured task decomposition and tracking mode.",
     reasoning_budget: "medium",
+    policy_profile: "extended",
+    risk_tolerance: "medium",
+    allowed_actions: ["read", "analyze", "plan"],
     content_file: "task-management.md"
   },
   orchestration: {
     name: "orchestration",
     description: "Multi-tool coordination mode for complex operations.",
     reasoning_budget: "medium",
+    policy_profile: "extended",
+    risk_tolerance: "medium",
+    allowed_actions: ["read", "analyze", "write", "execute"],
     content_file: "orchestration.md"
   },
   "token-efficiency": {
     name: "token-efficiency",
     description: "Optimized for 30-50% token reduction while maintaining quality.",
     reasoning_budget: "low",
+    policy_profile: "extended",
+    risk_tolerance: "medium",
+    allowed_actions: ["read", "analyze", "write"],
     content_file: "token-efficiency.md"
   },
   "business-panel": {
     name: "business-panel",
     description: "Multi-expert business analysis panel mode.",
     reasoning_budget: "high",
+    policy_profile: "extended",
+    risk_tolerance: "medium",
+    allowed_actions: ["read", "analyze", "synthesize"],
     content_file: "business-panel.md"
   },
   introspection: {
     name: "introspection",
     description: "Self-analysis mode with transparent reasoning and bias detection.",
     reasoning_budget: "high",
+    policy_profile: "extended",
+    risk_tolerance: "low",
+    allowed_actions: ["read", "analyze"],
     content_file: "introspection.md"
   }
 };

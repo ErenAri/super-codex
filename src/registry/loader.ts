@@ -158,6 +158,37 @@ export function validateRegistry(registry: RegistryData): RegistryValidationIssu
         message: "Mode description is required."
       });
     }
+
+    if (name === "fast" || name === "safe" || name === "deep" || name === "deep-research") {
+      if (mode.policy_profile !== "core") {
+        issues.push({
+          level: "warn",
+          path: `modes.${name}.policy_profile`,
+          message: "Core mode should declare policy_profile=\"core\"."
+        });
+      }
+      if (!mode.risk_tolerance) {
+        issues.push({
+          level: "warn",
+          path: `modes.${name}.risk_tolerance`,
+          message: "Core mode should declare risk_tolerance."
+        });
+      }
+      if (!mode.allowed_actions || mode.allowed_actions.length === 0) {
+        issues.push({
+          level: "warn",
+          path: `modes.${name}.allowed_actions`,
+          message: "Core mode should declare allowed_actions."
+        });
+      }
+      if (!mode.behavioral_rules || mode.behavioral_rules.length === 0) {
+        issues.push({
+          level: "warn",
+          path: `modes.${name}.behavioral_rules`,
+          message: "Core mode should include at least one behavioral rule."
+        });
+      }
+    }
   }
 
   for (const [name, persona] of Object.entries(registry.personas)) {
@@ -674,6 +705,26 @@ function normalizeMode(name: string, raw: unknown): ModeDefinition | null {
   const reasoningBudget = asString(raw.reasoning_budget);
   if (reasoningBudget === "low" || reasoningBudget === "medium" || reasoningBudget === "high") {
     mode.reasoning_budget = reasoningBudget;
+  }
+
+  const policyProfile = asString(raw.policy_profile);
+  if (policyProfile === "core" || policyProfile === "extended") {
+    mode.policy_profile = policyProfile;
+  }
+
+  const riskTolerance = asString(raw.risk_tolerance);
+  if (riskTolerance === "low" || riskTolerance === "medium" || riskTolerance === "high") {
+    mode.risk_tolerance = riskTolerance;
+  }
+
+  const allowedActions = asStringArray(raw.allowed_actions);
+  if (allowedActions.length > 0) {
+    mode.allowed_actions = allowedActions;
+  }
+
+  const behavioralRules = asStringArray(raw.behavioral_rules);
+  if (behavioralRules.length > 0) {
+    mode.behavioral_rules = behavioralRules;
   }
 
   return mode;

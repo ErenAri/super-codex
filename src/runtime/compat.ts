@@ -6,11 +6,17 @@ export interface CompatibilityResult {
   details: string[];
 }
 
+export interface CompatibilityPolicyOptions {
+  dryRun?: boolean;
+  explain?: boolean;
+}
+
 export function checkCompatibility(
   registry: RegistryData,
   commandId: string,
   mode: string,
-  persona: string
+  persona: string,
+  policyOptions: CompatibilityPolicyOptions = {}
 ): CompatibilityResult {
   const definition = registry.commands[commandId];
   if (!definition) {
@@ -47,5 +53,31 @@ export function checkCompatibility(
     details.push(`Persona "${persona}" is allowed for "${commandId}".`);
   }
 
+  if (mode === "safe" && isSafeModeWriteCommand(commandId)) {
+    if (!policyOptions.dryRun) {
+      errors.push(
+        `Safe mode requires --dry-run for write-capable workflow "${commandId}".`
+      );
+    } else {
+      details.push(`Safe mode dry-run gate passed for "${commandId}".`);
+    }
+
+    if (!policyOptions.explain) {
+      errors.push(
+        `Safe mode requires --explain for write-capable workflow "${commandId}".`
+      );
+    } else {
+      details.push(`Safe mode explain gate passed for "${commandId}".`);
+    }
+  }
+
   return { ok: errors.length === 0, errors, details };
+}
+
+function isSafeModeWriteCommand(commandId: string): boolean {
+  return commandId === "run.build" ||
+    commandId === "run.implement" ||
+    commandId === "run.refactor" ||
+    commandId === "run.cleanup" ||
+    commandId === "run.improve";
 }

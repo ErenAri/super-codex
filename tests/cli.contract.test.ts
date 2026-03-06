@@ -96,6 +96,7 @@ describe("cli contract", { timeout: 120000 }, () => {
       "fast",
       "safe"
     ]);
+    expect(payload.every((entry: { policy_profile?: string }) => entry.policy_profile === "core")).toBe(true);
   });
 
   it("kernel export --json returns primitive registries", async () => {
@@ -532,6 +533,39 @@ describe("cli contract", { timeout: 120000 }, () => {
     expect(payload.core_profile.id).toBe("core");
     expect(Array.isArray(payload.core_profile.next_commands)).toBe(true);
     expect(payload.core_profile.next_commands).toContain("supercodex spec");
+  });
+
+  it("run implement in safe mode enforces --dry-run and --explain policy gates", async () => {
+    const codexHome = await createCodexHome();
+    const blocked = await runCapturedCli([
+      "run",
+      "implement",
+      "--mode",
+      "safe",
+      "--json",
+      "--codex-home",
+      codexHome
+    ]);
+
+    expect(blocked.code).toBe(1);
+    expect(blocked.stderr).toContain("Safe mode requires --dry-run");
+    expect(blocked.stderr).toContain("Safe mode requires --explain");
+
+    const allowed = await runCapturedCli([
+      "run",
+      "implement",
+      "--mode",
+      "safe",
+      "--dry-run",
+      "--explain",
+      "--json",
+      "--codex-home",
+      codexHome
+    ]);
+    expect(allowed.code).toBe(0);
+    const payload = JSON.parse(allowed.stdout);
+    expect(payload.mode).toBe("safe");
+    expect(payload.dryRun).toBe(true);
   });
 
   it("fails fast when alias points to unknown command target", async () => {
