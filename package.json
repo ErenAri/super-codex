@@ -23,8 +23,11 @@
     "metadata:sync": "tsx scripts/sync-metadata.ts --write",
     "metadata:check": "tsx scripts/sync-metadata.ts --check",
     "bench": "tsx benchmarks/harness.ts --config benchmarks/run-config.json",
+    "bench:smoke": "tsx benchmarks/harness.ts --config benchmarks/run-config.smoke.json",
     "bench:score": "tsx benchmarks/scorecard.ts",
+    "bench:smoke:score": "tsx benchmarks/scorecard.ts --results-dir benchmarks/results",
     "bench:check": "tsx benchmarks/scorecard.ts --enforce-thresholds",
+    "bench:smoke:check": "tsx benchmarks/scorecard.ts --enforce-thresholds --thresholds benchmarks/thresholds.smoke.json",
     "bench:tune-thresholds": "tsx benchmarks/tune-thresholds.ts",
     "bench:tune-thresholds:last5": "tsx benchmarks/tune-thresholds.ts --last=5",
     "bench:tune-thresholds:last5:write": "tsx benchmarks/tune-thresholds.ts --last=5 --write"

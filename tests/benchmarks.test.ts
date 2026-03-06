@@ -48,6 +48,21 @@ describe("benchmark modules", { timeout: 120000 }, () => {
     expect(invalid.errors.join(" ")).toContain("Unsupported mode");
   });
 
+  it("ships valid smoke run config and smoke thresholds", async () => {
+    const smokeConfigPath = path.resolve(process.cwd(), "benchmarks", "run-config.smoke.json");
+    const smokeThresholdPath = path.resolve(process.cwd(), "benchmarks", "thresholds.smoke.json");
+
+    const smokeConfig = JSON.parse(await readFile(smokeConfigPath, "utf8")) as unknown;
+    const smokeThresholds = JSON.parse(await readFile(smokeThresholdPath, "utf8")) as unknown;
+
+    const configValidation = validateRunConfig(smokeConfig);
+    expect(configValidation.valid).toBe(true);
+    expect(configValidation.config?.task_glob).toBe("benchmarks/tasks/*-001.json");
+
+    const thresholdValidation = validateThresholds(smokeThresholds);
+    expect(thresholdValidation.valid).toBe(true);
+  });
+
   it("validates task schema with mode commands and verify fields", () => {
     const valid = validateTask({
       id: "sample-task",

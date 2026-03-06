@@ -51,6 +51,15 @@ npm dist-tag ls supercodex
 - `latest`: one stable release every 2-4 weeks
 - `next`: 1-2 pre-releases per week for risky/new command changes
 
+## PR Benchmark Smoke Gate
+
+- Add the `benchmark-smoke` label to a pull request to run the smoke benchmark gate in CI.
+- Or trigger CI manually via `workflow_dispatch` with `run_benchmark_smoke=true`.
+- Smoke gate commands:
+  - `npm run bench:smoke`
+  - `npm run bench:smoke:score`
+  - `npm run bench:smoke:check`
+
 ## Release Checklist
 
 1. `npm ci`

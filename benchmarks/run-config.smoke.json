@@ -1,0 +1,8 @@
+{
+  "seed": "m5-pr-smoke",
+  "max_parallel": 1,
+  "modes": ["codex_native", "supercodex"],
+  "task_glob": "benchmarks/tasks/*-001.json",
+  "output_dir": "benchmarks/results",
+  "fail_fast": false
+}

@@ -2,12 +2,23 @@ name: CI
 
 on:
   pull_request:
+    types:
+      - opened
+      - synchronize
+      - reopened
+      - labeled
   push:
     branches:
       - main
   schedule:
     - cron: "0 3 * * *"
   workflow_dispatch:
+    inputs:
+      run_benchmark_smoke:
+        description: "Run benchmark smoke gate"
+        required: false
+        default: false
+        type: boolean
 
 jobs:
   test:
@@ -35,6 +46,7 @@ jobs:
 
   benchmark:
     name: Benchmark (${{ matrix.os }} / Node ${{ matrix.node }})
+    if: github.event_name != 'pull_request'
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
@@ -60,6 +72,51 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: benchmark-results-${{ matrix.os }}-node${{ matrix.node }}
+          path: |
+            benchmarks/results/latest.md
+            benchmarks/results/latest-run.json
+            benchmarks/results/latest-scorecard.json
+            benchmarks/results/*/results.json
+            benchmarks/results/*/scorecard.json
+
+  benchmark_smoke:
+    name: Benchmark Smoke (PR On-Demand)
+    if: >-
+      (github.event_name == 'workflow_dispatch' && github.event.inputs.run_benchmark_smoke == 'true') ||
+      (github.event_name == 'pull_request' && contains(github.event.pull_request.labels.*.name, 'benchmark-smoke'))
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - name: Install dependencies
+        run: npm ci
+      - name: Build
+        run: npm run build
+      - name: Run benchmark smoke harness
+        run: npm run bench:smoke
+      - name: Compute benchmark smoke score
+        run: npm run bench:smoke:score
+      - name: Enforce benchmark smoke thresholds
+        run: npm run bench:smoke:check
+      - name: Benchmark smoke failure guidance
+        if: failure()
+        run: |
+          echo "## Benchmark Smoke Gate Failed" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "Run the same checks locally:" >> "$GITHUB_STEP_SUMMARY"
+          echo "- npm run bench:smoke" >> "$GITHUB_STEP_SUMMARY"
+          echo "- npm run bench:smoke:score" >> "$GITHUB_STEP_SUMMARY"
+          echo "- npm run bench:smoke:check" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "Inspect artifacts: benchmarks/results/latest.md and latest-scorecard.json" >> "$GITHUB_STEP_SUMMARY"
+      - name: Upload benchmark smoke artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: benchmark-smoke-results
           path: |
             benchmarks/results/latest.md
             benchmarks/results/latest-run.json
