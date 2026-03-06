@@ -367,6 +367,7 @@ enforce_in_ci = true
 - [Command Chooser](docs/COMMAND_CHOOSER.md)
 - [Session Memory Guide](docs/SESSION_MEMORY.md)
 - [Release Channels](docs/RELEASE_CHANNELS.md)
+- [Release Notes (Draft v2.0.0-beta.1)](docs/releases/v2.0.0-beta.1.md)
 - [Growth Playbook](docs/GROWTH_PLAYBOOK.md)
 - [Growth Dashboard](docs/GROWTH_DASHBOARD.md)
 - [V2 Backlog](BACKLOG_V2.md)
