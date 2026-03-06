@@ -378,6 +378,8 @@ enforce_in_ci = true
 - [Command Reference](docs/COMMANDS.md)
 - [Project Templates](docs/PROJECT_TEMPLATES.md)
 - [Command Chooser](docs/COMMAND_CHOOSER.md)
+- [SuperClaude Parity and Deltas](docs/SUPERCLAUDE_PARITY.md)
+- [Migration Guide (SuperClaude -> SuperCodex)](docs/MIGRATION_FROM_SUPERCLAUDE.md)
 - [Session Memory Guide](docs/SESSION_MEMORY.md)
 - [Release Channels](docs/RELEASE_CHANNELS.md)
 - [Release Notes (Draft v2.0.0-beta.1)](docs/releases/v2.0.0-beta.1.md)

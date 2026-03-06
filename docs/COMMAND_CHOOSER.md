@@ -36,3 +36,4 @@ supercodex guide "design service boundaries"
 | Codex interactive chat | `/prompts:supercodex-<workflow>` | `/prompts:supercodex-research token strategy` |
 
 If command syntax still feels unclear, run `supercodex guide "<intent>" --context chat`.
+For framework-level comparison and migration mapping, see [`SUPERCLAUDE_PARITY.md`](SUPERCLAUDE_PARITY.md) and [`MIGRATION_FROM_SUPERCLAUDE.md`](MIGRATION_FROM_SUPERCLAUDE.md).

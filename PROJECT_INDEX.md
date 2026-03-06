@@ -52,5 +52,7 @@ This file is a fast map for new sessions and contributors to locate core impleme
 - [`docs/PROJECT_TEMPLATES.md`](docs/PROJECT_TEMPLATES.md): project template presets, command packs, and policy defaults.
 - [`docs/UPGRADE.md`](docs/UPGRADE.md): version upgrade checklist.
 - [`docs/RELEASE_CHANNELS.md`](docs/RELEASE_CHANNELS.md): release channel strategy.
+- [`docs/SUPERCLAUDE_PARITY.md`](docs/SUPERCLAUDE_PARITY.md): feature parity matrix and behavior deltas.
+- [`docs/MIGRATION_FROM_SUPERCLAUDE.md`](docs/MIGRATION_FROM_SUPERCLAUDE.md): practical migration path and syntax mapping.
 - [`docs/GROWTH_DASHBOARD.md`](docs/GROWTH_DASHBOARD.md): weekly funnel and experiment dashboard.
 - [`BACKLOG_V2.md`](BACKLOG_V2.md): active V2 delivery plan.

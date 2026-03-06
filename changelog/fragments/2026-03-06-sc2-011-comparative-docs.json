@@ -1,0 +1,13 @@
+{
+  "id": "SC2-011",
+  "type": "docs",
+  "summary": "Added SuperClaude parity matrix and migration guide docs for SuperCodex adoption.",
+  "details": "Includes command syntax guidance for /prompts:* versus CLI alias forms and concrete migration examples.",
+  "commands": [
+    "supercodex guide \"security review\" --context chat",
+    "supercodex /supercodex:research \"map migration risks\""
+  ],
+  "issues": [
+    "SC2-011"
+  ]
+}
