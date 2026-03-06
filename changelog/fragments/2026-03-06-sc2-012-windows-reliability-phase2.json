@@ -1,0 +1,13 @@
+{
+  "id": "SC2-012",
+  "type": "fix",
+  "summary": "Hardened Windows-sensitive prompt cleanup paths with shared filesystem retry/backoff logic.",
+  "details": "Prompt uninstall and wrapper cleanup now retry transient EBUSY/ENOTEMPTY/EPERM style failures before failing.",
+  "commands": [
+    "supercodex uninstall",
+    "supercodex install"
+  ],
+  "issues": [
+    "SC2-012"
+  ]
+}

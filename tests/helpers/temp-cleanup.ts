@@ -1,18 +1,9 @@
-import { rm } from "node:fs/promises";
+import { removePathWithRetry } from "../../src/fs-retry";
 
 interface CleanupOptions {
   attempts?: number;
   baseDelayMs?: number;
 }
-
-const TRANSIENT_CODES = new Set([
-  "EBUSY",
-  "ENOTEMPTY",
-  "EPERM",
-  "EACCES",
-  "EMFILE",
-  "ENFILE"
-]);
 
 export async function cleanupTrackedTempDirs(
   tmpDirs: string[],
@@ -28,43 +19,16 @@ export async function cleanupTrackedTempDirs(
 }
 
 async function removeWithRetry(targetPath: string, options: CleanupOptions): Promise<void> {
-  const attempts = normalizeAttempts(options.attempts);
-  const baseDelayMs = normalizeDelay(options.baseDelayMs);
-
-  for (let attempt = 1; attempt <= attempts; attempt += 1) {
-    try {
-      await rm(targetPath, { recursive: true, force: true });
-      return;
-    } catch (error) {
-      if (!isTransientFsError(error) || attempt >= attempts) {
-        return;
+  try {
+    await removePathWithRetry(targetPath, {
+      attempts: options.attempts,
+      baseDelayMs: options.baseDelayMs,
+      rmOptions: {
+        recursive: true,
+        force: true
       }
-      await sleep(baseDelayMs * attempt);
-    }
+    });
+  } catch {
+    // Cleanup helper should never fail tests on teardown.
   }
-}
-
-function normalizeAttempts(value: number | undefined): number {
-  if (!Number.isFinite(value) || !value || value < 1) {
-    return 6;
-  }
-  return Math.max(1, Math.trunc(value));
-}
-
-function normalizeDelay(value: number | undefined): number {
-  if (!Number.isFinite(value) || !value || value < 1) {
-    return 30;
-  }
-  return Math.max(1, Math.trunc(value));
-}
-
-function isTransientFsError(error: unknown): boolean {
-  const code = error && typeof error === "object" && "code" in error
-    ? String((error as { code?: unknown }).code ?? "")
-    : "";
-  return TRANSIENT_CODES.has(code);
-}
-
-function sleep(ms: number): Promise<void> {
-  return new Promise((resolve) => setTimeout(resolve, ms));
 }

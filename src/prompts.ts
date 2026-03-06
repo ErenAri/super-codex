@@ -1,7 +1,8 @@
 import path from "node:path";
-import { mkdir, readFile, readdir, rm, writeFile } from "node:fs/promises";
+import { mkdir, readFile, readdir, writeFile } from "node:fs/promises";
 
 import { contentFileExists, loadContentFile, listContentFiles, type ContentCategory } from "./content-loader";
+import { removePathWithRetry } from "./fs-retry";
 import { pathExists } from "./fs-utils";
 import { BUILTIN_ALIASES } from "./registry/aliases";
 import type { AliasDefinition } from "./registry/types";
@@ -171,7 +172,11 @@ export async function installInteractivePromptCommands(promptsDir: string): Prom
       continue;
     }
 
-    await rm(legacyPath, { force: true });
+    await removePathWithRetry(legacyPath, {
+      rmOptions: {
+        force: true
+      }
+    });
     changed = true;
   }
 
@@ -183,7 +188,12 @@ export async function removePromptPack(promptPackDir: string): Promise<boolean> 
     return false;
   }
 
-  await rm(promptPackDir, { recursive: true, force: true });
+  await removePathWithRetry(promptPackDir, {
+    rmOptions: {
+      recursive: true,
+      force: true
+    }
+  });
   return true;
 }
 
@@ -205,7 +215,11 @@ export async function removeInteractivePromptCommands(promptsDir: string): Promi
       continue;
     }
 
-    await rm(targetPath, { force: true });
+    await removePathWithRetry(targetPath, {
+      rmOptions: {
+        force: true
+      }
+    });
     changed = true;
   }
 
