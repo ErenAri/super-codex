@@ -253,6 +253,14 @@ SuperCodex never blindly overwrites `config.toml`.
   - record desired value under `[supercodex.overrides]`
 - Use `--force` to apply desired values into conflicting locations
 
+Telemetry is opt-in by default:
+
+```bash
+supercodex growth telemetry enable
+supercodex growth telemetry status --json
+supercodex growth export --output growth/telemetry-events.json --json
+```
+
 ## Prompt Pack :package:
 
 Installed under `~/.codex/prompts/supercodex/`:
@@ -279,7 +287,8 @@ supercodex verify [--strict] [--json] [--safety-gates]
 supercodex quality prompts [--strict] [--json]
 supercodex profile list|show [--json]
 supercodex kernel export [--json]
-supercodex growth funnel|events|experiments|dashboard [--json]
+supercodex growth funnel|events|export|experiments|dashboard [--json]
+supercodex growth telemetry status|enable|disable [--json]
 supercodex policy validate [--strict] [--json]
 supercodex lock refresh|status [--json]
 supercodex doctor [--fix] [--strict] [--json] [--plain] [--mcp-connectivity]
@@ -359,6 +368,10 @@ flags = "supercodex/framework/FLAGS.md"
 source = "local"
 installed_ids = ["filesystem"]
 
+[supercodex.metrics]
+enabled = false
+path = "~/.codex/supercodex/metrics.jsonl"
+
 [supercodex.memory]
 enabled = true
 path = "~/.codex/supercodex/memory/sessions.jsonl"
@@ -389,6 +402,7 @@ enforce_in_ci = true
 - [Release Notes (Draft v2.0.0-beta.1)](docs/releases/v2.0.0-beta.1.md)
 - [Growth Playbook](docs/GROWTH_PLAYBOOK.md)
 - [Growth Dashboard](docs/GROWTH_DASHBOARD.md)
+- [Telemetry and Privacy](docs/TELEMETRY.md)
 - [V2 Backlog](BACKLOG_V2.md)
 - [Framework Metadata (Generated)](docs/METADATA.md)
 - [Prompt Quality Checklist](docs/PROMPT_QUALITY_CHECKLIST.md)

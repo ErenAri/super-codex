@@ -2,12 +2,16 @@ import path from "node:path";
 import { mkdir, writeFile } from "node:fs/promises";
 import type { Command } from "commander";
 
+import { loadConfig } from "../config";
+import { isPlainObject } from "../fs-utils";
+import { setTelemetrySettings } from "../operations";
+import { getCodexPaths } from "../paths";
 import {
   buildGrowthFunnelReport,
   loadGrowthExperiments,
   renderGrowthDashboardMarkdown
 } from "../services/growth";
-import { readMetricEvents } from "../services/metrics";
+import { loadMetricsSettings, readMetricEvents } from "../services/metrics";
 import { runCommand } from "./utils";
 
 export function registerGrowthCommands(program: Command): void {
@@ -75,6 +79,129 @@ export function registerGrowthCommands(program: Command): void {
         for (const event of events) {
           console.log(`- ${event.at} ${event.event} actor=${event.actor_id}`);
         }
+      })
+    );
+
+  growth
+    .command("export")
+    .description("Export growth/telemetry events to a local JSON file for inspection")
+    .option("--codex-home <path>", "Override Codex home directory")
+    .option("--from <YYYY-MM-DD>", "Filter by start date")
+    .option("--to <YYYY-MM-DD>", "Filter by end date")
+    .option("--limit <number>", "Limit returned events", "500")
+    .option("--output <path>", "Output file path", "growth/telemetry-events.json")
+    .option("--json", "Output JSON summary")
+    .action((options) =>
+      runCommand(async () => {
+        const limit = parsePositiveIntOption(options.limit, "--limit");
+        const events = await readMetricEvents({
+          codexHome: options.codexHome as string | undefined,
+          from: options.from as string | undefined,
+          to: options.to as string | undefined,
+          limit
+        });
+
+        const outputPath = path.resolve(process.cwd(), options.output as string);
+        await mkdir(path.dirname(outputPath), { recursive: true });
+        const payload = {
+          schema_version: 1,
+          generated_at: new Date().toISOString(),
+          from: (options.from as string | undefined) ?? null,
+          to: (options.to as string | undefined) ?? null,
+          limit: limit ?? null,
+          total_events: events.length,
+          events
+        };
+        await writeFile(outputPath, `${JSON.stringify(payload, null, 2)}\n`, "utf8");
+
+        if (Boolean(options.json)) {
+          console.log(JSON.stringify({
+            output: outputPath,
+            total_events: events.length
+          }, null, 2));
+          return;
+        }
+
+        console.log(`Telemetry export written: ${outputPath}`);
+        console.log(`Events exported: ${events.length}`);
+      })
+    );
+
+  const telemetry = growth.command("telemetry").description("Manage telemetry opt-in settings");
+
+  telemetry
+    .command("status")
+    .description("Show telemetry opt-in status and local metrics path")
+    .option("--codex-home <path>", "Override Codex home directory")
+    .option("--json", "Output JSON")
+    .action((options) =>
+      runCommand(async () => {
+        const status = await resolveTelemetryStatus(options.codexHome as string | undefined);
+        if (Boolean(options.json)) {
+          console.log(JSON.stringify(status, null, 2));
+          return;
+        }
+
+        console.log(`Telemetry enabled: ${status.enabled ? "yes" : "no"}`);
+        console.log(`Metrics path: ${status.path}`);
+        console.log(`Config explicit: ${status.config_explicit ? "yes" : "no"}`);
+        if (!status.enabled) {
+          console.log("Enable with: supercodex growth telemetry enable");
+        }
+      })
+    );
+
+  telemetry
+    .command("enable")
+    .description("Enable telemetry collection (explicit opt-in)")
+    .option("--codex-home <path>", "Override Codex home directory")
+    .option("--path <path>", "Metrics output path override")
+    .option("--json", "Output JSON")
+    .action((options) =>
+      runCommand(async () => {
+        const result = await setTelemetrySettings(true, {
+          codexHome: options.codexHome as string | undefined,
+          path: options.path as string | undefined
+        });
+        if (Boolean(options.json)) {
+          console.log(JSON.stringify({
+            enabled: result.enabled,
+            changed: result.changed,
+            path: result.path,
+            config_path: result.paths.configPath,
+            backup: result.backup.backupDir
+          }, null, 2));
+          return;
+        }
+
+        console.log(`Backup: ${result.backup.backupDir}`);
+        console.log(`Telemetry ${result.changed ? "enabled" : "already enabled"} at ${result.path}`);
+      })
+    );
+
+  telemetry
+    .command("disable")
+    .description("Disable telemetry collection")
+    .option("--codex-home <path>", "Override Codex home directory")
+    .option("--json", "Output JSON")
+    .action((options) =>
+      runCommand(async () => {
+        const result = await setTelemetrySettings(false, {
+          codexHome: options.codexHome as string | undefined
+        });
+        if (Boolean(options.json)) {
+          console.log(JSON.stringify({
+            enabled: result.enabled,
+            changed: result.changed,
+            path: result.path,
+            config_path: result.paths.configPath,
+            backup: result.backup.backupDir
+          }, null, 2));
+          return;
+        }
+
+        console.log(`Backup: ${result.backup.backupDir}`);
+        console.log(`Telemetry ${result.changed ? "disabled" : "already disabled"} at ${result.path}`);
       })
     );
 
@@ -157,6 +284,26 @@ export function registerGrowthCommands(program: Command): void {
         }
       })
     );
+}
+
+async function resolveTelemetryStatus(codexHome?: string): Promise<{
+  enabled: boolean;
+  path: string;
+  config_explicit: boolean;
+}> {
+  const settings = await loadMetricsSettings(codexHome);
+  const paths = getCodexPaths(codexHome);
+  const config = await loadConfig(paths.configPath);
+  const supercodex = isPlainObject(config.supercodex) ? config.supercodex : null;
+  const metrics = supercodex && isPlainObject((supercodex as Record<string, unknown>).metrics)
+    ? (supercodex as Record<string, unknown>).metrics as Record<string, unknown>
+    : null;
+
+  return {
+    enabled: settings.enabled,
+    path: settings.outputPath,
+    config_explicit: typeof metrics?.enabled === "boolean"
+  };
 }
 
 function parsePositiveIntOption(value: unknown, optionName: string): number | undefined {

@@ -56,4 +56,5 @@ This file is a fast map for new sessions and contributors to locate core impleme
 - [`docs/SUPERCLAUDE_PARITY.md`](docs/SUPERCLAUDE_PARITY.md): feature parity matrix and behavior deltas.
 - [`docs/MIGRATION_FROM_SUPERCLAUDE.md`](docs/MIGRATION_FROM_SUPERCLAUDE.md): practical migration path and syntax mapping.
 - [`docs/GROWTH_DASHBOARD.md`](docs/GROWTH_DASHBOARD.md): weekly funnel and experiment dashboard.
+- [`docs/TELEMETRY.md`](docs/TELEMETRY.md): telemetry opt-in controls, schema, and local export flow.
 - [`BACKLOG_V2.md`](BACKLOG_V2.md): active V2 delivery plan.

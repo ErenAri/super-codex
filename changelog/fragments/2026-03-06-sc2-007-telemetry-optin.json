@@ -1,0 +1,15 @@
+{
+  "id": "SC2-007",
+  "type": "feat",
+  "summary": "Made telemetry anonymous opt-in by default with explicit enable/disable controls.",
+  "details": "Added telemetry status/enable/disable commands and a local JSON export flow for event inspection.",
+  "commands": [
+    "supercodex growth telemetry status --json",
+    "supercodex growth telemetry enable --json",
+    "supercodex growth export --output growth/telemetry-events.json --json",
+    "supercodex growth telemetry disable --json"
+  ],
+  "issues": [
+    "SC2-007"
+  ]
+}

@@ -193,10 +193,14 @@ Defaults:
 Track install -> start -> first command -> week-1 retention and inspect experiment status:
 
 ```bash
+supercodex growth telemetry status --json
+supercodex growth telemetry enable --json
 supercodex growth funnel --json
 supercodex growth events --limit 50 --json
+supercodex growth export --output growth/telemetry-events.json --json
 supercodex growth experiments --json
 supercodex growth dashboard --output docs/GROWTH_DASHBOARD.md --json
+supercodex growth telemetry disable --json
 ```
 
 Use `growth dashboard` in weekly reporting workflows to keep `docs/GROWTH_DASHBOARD.md` current.

@@ -142,7 +142,7 @@ export function resolveMetricsSettings(config: TomlTable, codexHome: string): Me
   const supercodex = isPlainObject(config.supercodex) ? (config.supercodex as TomlTable) : null;
   const metrics = supercodex && isPlainObject(supercodex.metrics) ? (supercodex.metrics as TomlTable) : null;
 
-  const enabled = typeof metrics?.enabled === "boolean" ? metrics.enabled : true;
+  const enabled = typeof metrics?.enabled === "boolean" ? metrics.enabled : false;
   const configuredPath = typeof metrics?.path === "string" ? metrics.path.trim() : "";
   const outputPath = configuredPath.length > 0
     ? path.resolve(expandHomePath(configuredPath))

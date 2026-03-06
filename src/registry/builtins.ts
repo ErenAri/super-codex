@@ -185,6 +185,10 @@ export const BUILTIN_COMMANDS: Record<string, CommandDefinition> = {
   "kernel.export": command("kernel.export", "Export kernel primitive snapshot"),
   "growth.funnel": command("growth.funnel", "Report install->start->first-command->week1 funnel"),
   "growth.events": command("growth.events", "Inspect recorded growth events"),
+  "growth.export": command("growth.export", "Export growth/telemetry events to local JSON"),
+  "growth.telemetry.status": command("growth.telemetry.status", "Show telemetry opt-in status"),
+  "growth.telemetry.enable": command("growth.telemetry.enable", "Enable telemetry collection"),
+  "growth.telemetry.disable": command("growth.telemetry.disable", "Disable telemetry collection"),
   "growth.experiments": command("growth.experiments", "Show conversion experiment status"),
   "growth.dashboard": command("growth.dashboard", "Generate growth dashboard markdown"),
 

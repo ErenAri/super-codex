@@ -21,6 +21,9 @@ This playbook is focused on increasing npm installs for `supercodex`.
 
 Monday:
 - Review `docs/GROWTH_DASHBOARD.md` metrics.
+- Confirm telemetry opt-in is enabled for the environment producing metrics:
+  - `supercodex growth telemetry status --json`
+  - `supercodex growth telemetry enable --json` (if disabled)
 - Refresh dashboard from latest local/exported metrics:
   - `supercodex growth dashboard --output docs/GROWTH_DASHBOARD.md --json`
 - Pick one funnel bottleneck (search, conversion, retention).

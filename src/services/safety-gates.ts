@@ -131,7 +131,7 @@ function evaluateApprovalPolicyCheck(env: NodeJS.ProcessEnv): SafetyGateCheck {
 function evaluateDeterministicLoggingCheck(config: TomlTable): SafetyGateCheck {
   const supercodex = isPlainObject(config.supercodex) ? (config.supercodex as TomlTable) : {};
   const metrics = isPlainObject(supercodex.metrics) ? (supercodex.metrics as TomlTable) : {};
-  const enabled = metrics.enabled !== false;
+  const enabled = metrics.enabled === true;
   const metricsPath = typeof metrics.path === "string" ? metrics.path.trim() : "";
 
   if (!enabled || metricsPath.length === 0) {

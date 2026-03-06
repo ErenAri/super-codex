@@ -389,6 +389,31 @@ describe("cli contract", { timeout: 120000 }, () => {
     const codexHome = await createCodexHome();
     const projectRoot = path.dirname(codexHome);
     const dashboardPath = path.join(projectRoot, "growth-dashboard.md");
+    const telemetryExportPath = path.join(projectRoot, "telemetry-events.json");
+
+    const telemetryStatusInitial = await runCapturedCli([
+      "growth",
+      "telemetry",
+      "status",
+      "--json",
+      "--codex-home",
+      codexHome
+    ]);
+    expect(telemetryStatusInitial.code).toBe(0);
+    const telemetryStatusInitialPayload = JSON.parse(telemetryStatusInitial.stdout);
+    expect(telemetryStatusInitialPayload.enabled).toBe(false);
+
+    const telemetryEnable = await runCapturedCli([
+      "growth",
+      "telemetry",
+      "enable",
+      "--json",
+      "--codex-home",
+      codexHome
+    ]);
+    expect(telemetryEnable.code).toBe(0);
+    const telemetryEnablePayload = JSON.parse(telemetryEnable.stdout);
+    expect(telemetryEnablePayload.enabled).toBe(true);
 
     const installed = await runCapturedCli(["install", "--plain", "--codex-home", codexHome]);
     expect(installed.code).toBe(0);
@@ -421,6 +446,20 @@ describe("cli contract", { timeout: 120000 }, () => {
     expect(Array.isArray(eventPayload)).toBe(true);
     expect(eventPayload.some((entry: { event: string }) => entry.event === "start_invoked")).toBe(true);
 
+    const telemetryExport = await runCapturedCli([
+      "growth",
+      "export",
+      "--json",
+      "--codex-home",
+      codexHome,
+      "--output",
+      telemetryExportPath
+    ]);
+    expect(telemetryExport.code).toBe(0);
+    const telemetryExportPayload = JSON.parse(telemetryExport.stdout);
+    expect(telemetryExportPayload.output).toBe(telemetryExportPath);
+    expect(await pathExists(telemetryExportPath)).toBe(true);
+
     const experiments = await runCapturedCli(["growth", "experiments", "--json"]);
     expect(experiments.code).toBe(0);
     const experimentPayload = JSON.parse(experiments.stdout);
@@ -442,6 +481,18 @@ describe("cli contract", { timeout: 120000 }, () => {
     expect(await pathExists(dashboardPath)).toBe(true);
     const dashboardContent = await readFile(dashboardPath, "utf8");
     expect(dashboardContent).toContain("# Growth Dashboard");
+
+    const telemetryDisable = await runCapturedCli([
+      "growth",
+      "telemetry",
+      "disable",
+      "--json",
+      "--codex-home",
+      codexHome
+    ]);
+    expect(telemetryDisable.code).toBe(0);
+    const telemetryDisablePayload = JSON.parse(telemetryDisable.stdout);
+    expect(telemetryDisablePayload.enabled).toBe(false);
   });
 
   it("catalog show --json returns entry payload", async () => {

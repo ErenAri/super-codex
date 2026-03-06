@@ -159,6 +159,14 @@ export interface CatalogSyncResult {
   changed: boolean;
 }
 
+export interface SetTelemetrySettingsResult {
+  paths: ReturnType<typeof getCodexPaths>;
+  backup: BackupResult;
+  changed: boolean;
+  enabled: boolean;
+  path: string;
+}
+
 export interface ValidateResult {
   valid: boolean;
   errors: string[];
@@ -556,6 +564,47 @@ export async function syncCatalogMetadata(options: OperationOptions = {}): Promi
     paths,
     backup,
     changed: merged.changed
+  };
+}
+
+export async function setTelemetrySettings(
+  enabled: boolean,
+  options: OperationOptions & { path?: string } = {}
+): Promise<SetTelemetrySettingsResult> {
+  const paths = getCodexPaths(options.codexHome);
+  await mkdir(paths.home, { recursive: true });
+
+  const backup = await createTimestampedBackup(paths.configPath, paths.home, options.now ?? new Date());
+  const config = await loadConfig(paths.configPath);
+  const supercodex = ensureSupercodexTable(config);
+  const metrics = ensureChildTable(supercodex, "metrics");
+
+  const configuredPath = typeof options.path === "string" && options.path.trim().length > 0
+    ? options.path.trim()
+    : (typeof metrics.path === "string" && metrics.path.trim().length > 0
+      ? metrics.path.trim()
+      : "~/.codex/supercodex/metrics.jsonl");
+
+  let changed = false;
+  if (metrics.enabled !== enabled) {
+    metrics.enabled = enabled;
+    changed = true;
+  }
+  if (metrics.path !== configuredPath) {
+    metrics.path = configuredPath;
+    changed = true;
+  }
+
+  if (changed) {
+    await writeConfig(paths.configPath, config);
+  }
+
+  return {
+    paths,
+    backup,
+    changed,
+    enabled,
+    path: configuredPath
   };
 }
 

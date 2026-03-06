@@ -133,7 +133,7 @@ export function createInstallSpec(promptPackDir: string, version = SUPERCODEX_VE
         installed_ids: []
       },
       metrics: {
-        enabled: true,
+        enabled: false,
         path: "~/.codex/supercodex/metrics.jsonl"
       },
       memory: {
