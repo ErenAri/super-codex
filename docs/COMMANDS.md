@@ -72,6 +72,7 @@ supercodex guide "debug flaky tests" --json
 - recommended alias
 - terminal/slash/prompt command forms
 - next suggested commands
+- core profile onboarding hints (`recommended_agents`, `recommended_modes`)
 - shared quick action contract fields: `best_next_command`, ordered `next_commands`, and labeled `quick_actions`
 
 ## Shared Quick Action Contract

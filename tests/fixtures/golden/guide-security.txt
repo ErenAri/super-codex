@@ -23,6 +23,10 @@
 -> supercodex review
 -> supercodex refactor
 -> supercodex document
+-> Core agents now:
+-> security-engineer: supercodex agent show security-engineer
+-> pm: supercodex agent show pm
+-> backend-architect: supercodex agent show backend-architect
 [info] Alternatives:
 [info] /supercodex:review -> run.review (score: 36)
 [info] /supercodex:perf -> run.review (score: 30)

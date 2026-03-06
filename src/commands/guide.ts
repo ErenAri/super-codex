@@ -1,7 +1,12 @@
 import type { Command } from "commander";
 
 import { line, kv, bullet, resolveOutputStyle } from "./presenter";
-import { getCoreProfileNextCommands, getCoreProfileStepByAlias } from "../profiles";
+import {
+  CORE_PROFILE,
+  getCoreProfileAgentRecommendations,
+  getCoreProfileNextCommands,
+  getCoreProfileStepByAlias
+} from "../profiles";
 import { runCommand } from "./utils";
 import { listAliases, loadRegistry, recommendAliases } from "../registry";
 import { buildQuickActionContract } from "../services/quick-actions";
@@ -69,6 +74,7 @@ export function registerGuideCommands(program: Command): void {
           .map((suggestion) => suggestion.terminalCommand);
         const coreStep = getCoreProfileStepByAlias(primary.alias);
         const coreNextCommands = getCoreProfileNextCommands(10);
+        const recommendedAgents = getCoreProfileAgentRecommendations(String(intent), 3);
         const bestNow = resolvedContext === "chat" ? primary.promptCommand : primary.terminalCommand;
         const quickActionContract = buildQuickActionContract(
           [
@@ -97,7 +103,9 @@ export function registerGuideCommands(program: Command): void {
             id: "core",
             matched_step: coreStep ? coreStep.step_id : null,
             matched_objective: coreStep ? coreStep.objective : null,
-            next_commands: coreNextCommands
+            next_commands: coreNextCommands,
+            recommended_agents: recommendedAgents,
+            recommended_modes: CORE_PROFILE.core_modes
           },
           alternatives: suggestions.slice(1),
           next_commands: quickActionContract.next_commands,
@@ -143,6 +151,10 @@ export function registerGuideCommands(program: Command): void {
         console.log(line("next", "Core loop commands:", style));
         for (const command of coreNextCommands.slice(0, 6)) {
           console.log(bullet(command, style, "next"));
+        }
+        console.log(line("next", "Core agents now:", style));
+        for (const agent of recommendedAgents) {
+          console.log(bullet(`${agent.agent_id}: ${agent.command}`, style, "next"));
         }
 
         if (suggestions.length > 1) {

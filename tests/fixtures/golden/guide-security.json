@@ -31,6 +31,32 @@
       "supercodex document",
       "supercodex save",
       "supercodex doctor"
+    ],
+    "recommended_agents": [
+      {
+        "agent_id": "security-engineer",
+        "command": "supercodex agent show security-engineer",
+        "reason": "Intent maps to security, auth, or threat-review work.",
+        "score": 20
+      },
+      {
+        "agent_id": "pm",
+        "command": "supercodex agent show pm",
+        "reason": "Core onboarding default agent.",
+        "score": 6
+      },
+      {
+        "agent_id": "backend-architect",
+        "command": "supercodex agent show backend-architect",
+        "reason": "Core onboarding default agent.",
+        "score": 5
+      }
+    ],
+    "recommended_modes": [
+      "fast",
+      "safe",
+      "deep",
+      "deep-research"
     ]
   },
   "alternatives": [

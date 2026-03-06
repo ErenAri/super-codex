@@ -1,6 +1,11 @@
 import { getSupercodexStatus, installSupercodex } from "../operations";
 import { pathExists } from "../fs-utils";
-import { getCoreProfileNextCommands } from "../profiles";
+import {
+  CORE_PROFILE,
+  CORE_PROFILE_ID,
+  getCoreProfileAgentRecommendations,
+  getCoreProfileNextCommands
+} from "../profiles";
 import { loadRegistry } from "../registry";
 import { resolveWorkflow } from "../runtime";
 import { tryRecordMetricEvent } from "./metrics";
@@ -26,6 +31,11 @@ export interface StartFlowResult {
     context: "terminal" | "chat";
     terminal_command: string;
     prompt_command: string;
+  };
+  core_profile: {
+    id: string;
+    recommended_agents: ReturnType<typeof getCoreProfileAgentRecommendations>;
+    recommended_modes: string[];
   };
   repaired: boolean;
 }
@@ -118,6 +128,7 @@ export async function runStartFlow(options: StartFlowOptions = {}): Promise<Star
       bestCommand: bestNextCommand
     }
   );
+  const recommendedAgents = getCoreProfileAgentRecommendations(undefined, 3);
   return {
     status: overall,
     readiness_score: computeReadinessScore(checks),
@@ -130,6 +141,11 @@ export async function runStartFlow(options: StartFlowOptions = {}): Promise<Star
       context: quickStartContext,
       terminal_command: "supercodex spec <goal>",
       prompt_command: "/prompts:supercodex-research <topic>"
+    },
+    core_profile: {
+      id: CORE_PROFILE_ID,
+      recommended_agents: recommendedAgents,
+      recommended_modes: CORE_PROFILE.core_modes
     },
     repaired
   };

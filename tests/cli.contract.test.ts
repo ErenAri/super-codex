@@ -271,6 +271,11 @@ describe("cli contract", { timeout: 120000 }, () => {
     expect(Array.isArray(initialPayload.quick_actions)).toBe(true);
     expect(initialPayload.next_commands).toContain("supercodex profile show core");
     expect(initialPayload.next_commands).toContain("supercodex spec");
+    expect(initialPayload.core_profile).toBeTruthy();
+    expect(initialPayload.core_profile.id).toBe("core");
+    expect(Array.isArray(initialPayload.core_profile.recommended_agents)).toBe(true);
+    expect(initialPayload.core_profile.recommended_agents.length).toBeGreaterThan(0);
+    expect(Array.isArray(initialPayload.core_profile.recommended_modes)).toBe(true);
     expect(initialPayload.wizard).toBeTruthy();
     expect(initialPayload.wizard.enabled).toBe(false);
     expect(initialPayload.wizard.interactive).toBe(false);
@@ -532,6 +537,10 @@ describe("cli contract", { timeout: 120000 }, () => {
     expect(payload.core_profile).toBeTruthy();
     expect(payload.core_profile.id).toBe("core");
     expect(Array.isArray(payload.core_profile.next_commands)).toBe(true);
+    expect(Array.isArray(payload.core_profile.recommended_agents)).toBe(true);
+    expect(payload.core_profile.recommended_agents.length).toBeGreaterThan(0);
+    expect(payload.core_profile.recommended_agents[0].agent_id).toBe("security-engineer");
+    expect(Array.isArray(payload.core_profile.recommended_modes)).toBe(true);
     expect(payload.core_profile.next_commands).toContain("supercodex spec");
   });
 

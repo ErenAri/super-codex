@@ -5,6 +5,13 @@ export interface WorkflowLoopStep {
   suggested_aliases: string[];
 }
 
+export interface CoreAgentRecommendation {
+  agent_id: string;
+  command: string;
+  reason: string;
+  score: number;
+}
+
 export interface FrameworkProfile {
   id: string;
   title: string;
@@ -144,4 +151,111 @@ export function getCoreProfileNextCommands(limit = 10): string[] {
   });
 
   return commands.slice(0, Math.max(1, Math.trunc(limit)));
+}
+
+export function getCoreProfileAgentRecommendations(
+  intent: string | undefined,
+  limit = 3
+): CoreAgentRecommendation[] {
+  const normalizedIntent = (intent ?? "").trim().toLowerCase();
+  const coreAgents = CORE_PROFILE.core_agents;
+
+  const recommendations = coreAgents.map((agentId, index) => {
+    const scored = scoreCoreAgent(agentId, normalizedIntent);
+    const fallbackScore = coreAgents.length - index;
+    return {
+      agent_id: agentId,
+      command: `supercodex agent show ${agentId}`,
+      reason: scored.reason,
+      score: scored.score > 0 ? scored.score : fallbackScore
+    };
+  });
+
+  recommendations.sort((left, right) => {
+    if (right.score !== left.score) {
+      return right.score - left.score;
+    }
+    return left.agent_id.localeCompare(right.agent_id);
+  });
+
+  return recommendations.slice(0, Math.max(1, Math.trunc(limit)));
+}
+
+function scoreCoreAgent(agentId: string, intent: string): { score: number; reason: string } {
+  if (!intent) {
+    return {
+      score: 0,
+      reason: "Core onboarding default agent."
+    };
+  }
+
+  const matches = (keywords: string[]): number => keywords.reduce(
+    (total, keyword) => (intent.includes(keyword) ? total + 1 : total),
+    0
+  );
+
+  if (agentId === "security-engineer") {
+    const score = matches(["security", "auth", "threat", "vulnerability", "audit", "owasp"]);
+    if (score > 0) {
+      return {
+        score: score * 10,
+        reason: "Intent maps to security, auth, or threat-review work."
+      };
+    }
+  }
+
+  if (agentId === "qa-engineer") {
+    const score = matches(["test", "qa", "coverage", "regression", "flaky", "reliability"]);
+    if (score > 0) {
+      return {
+        score: score * 10,
+        reason: "Intent maps to testing, coverage, or reliability validation."
+      };
+    }
+  }
+
+  if (agentId === "tech-writer") {
+    const score = matches(["doc", "readme", "documentation", "guide", "changelog", "release notes"]);
+    if (score > 0) {
+      return {
+        score: score * 10,
+        reason: "Intent maps to docs, guides, or release communication."
+      };
+    }
+  }
+
+  if (agentId === "system-architect") {
+    const score = matches(["architecture", "system", "design", "scalability", "distributed", "tradeoff"]);
+    if (score > 0) {
+      return {
+        score: score * 10,
+        reason: "Intent maps to architecture and system design decisions."
+      };
+    }
+  }
+
+  if (agentId === "backend-architect") {
+    const score = matches(["backend", "api", "service", "database", "migration", "schema"]);
+    if (score > 0) {
+      return {
+        score: score * 10,
+        reason: "Intent maps to API/backend/service implementation concerns."
+      };
+    }
+  }
+
+  if (agentId === "pm") {
+    const score = matches(["plan", "scope", "roadmap", "priority", "milestone", "estimate"]);
+    if (score > 0) {
+      return {
+        score: score * 10,
+        reason: "Intent maps to planning, scoping, or execution prioritization."
+      };
+    }
+  }
+
+  return {
+    score: 0,
+    reason: "Core onboarding default agent."
+  };
 }

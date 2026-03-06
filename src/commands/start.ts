@@ -77,6 +77,16 @@ export function registerStartCommand(program: Command): void {
           console.log(line("next", "Quick start commands:", style));
           console.log(bullet(result.quick_start.terminal_command, style, "next"));
           console.log(bullet(result.quick_start.prompt_command, style, "next"));
+          console.log(line("next", "Core agents for onboarding:", style));
+          for (const agent of result.core_profile.recommended_agents) {
+            console.log(
+              bullet(
+                `${agent.agent_id}: ${agent.command} (${agent.reason})`,
+                style,
+                "next"
+              )
+            );
+          }
         }
 
         if (result.status === "error") {
