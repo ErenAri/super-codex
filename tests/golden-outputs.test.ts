@@ -206,8 +206,12 @@ async function assertGoldenFixture(name: string, actual: string): Promise<void> 
     return;
   }
 
-  const expected = await readFile(fixturePath, "utf8");
+  const expected = normalizeFixtureText(await readFile(fixturePath, "utf8"));
   expect(actual).toBe(expected.trimEnd());
+}
+
+function normalizeFixtureText(value: string): string {
+  return value.replace(/\r\n/g, "\n");
 }
 
 function snapshotEnv(values: Record<string, string>): Record<string, string | undefined> {
