@@ -1,0 +1,32 @@
+{
+  "experiments": [
+    {
+      "id": "exp-quickstart-cta",
+      "title": "Quickstart CTA above fold",
+      "status": "won",
+      "hypothesis": "Putting a copy-paste install + start block above fold increases install-to-start conversion.",
+      "primary_metric": "install_to_start_rate",
+      "start_date": "2026-02-03",
+      "end_date": "2026-02-17",
+      "result_summary": "Install-to-start conversion improved from 41% to 57%."
+    },
+    {
+      "id": "exp-start-wizard-copy",
+      "title": "Wizard copy simplification",
+      "status": "completed",
+      "hypothesis": "Reducing onboarding text in start wizard reduces first-command drop-off.",
+      "primary_metric": "start_to_first_command_rate",
+      "start_date": "2026-02-18",
+      "end_date": "2026-03-01",
+      "result_summary": "Neutral impact; keep previous copy."
+    },
+    {
+      "id": "exp-project-preset-prompt",
+      "title": "Preset guidance in quickstart",
+      "status": "running",
+      "hypothesis": "Recommending project presets in quickstart improves week-1 retention.",
+      "primary_metric": "week1_retention_rate",
+      "start_date": "2026-03-02"
+    }
+  ]
+}

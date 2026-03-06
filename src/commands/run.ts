@@ -3,6 +3,7 @@ import type { Command } from "commander";
 import { contentFileExists, listContentFiles, loadContentFile } from "../content-loader";
 import { loadRegistry } from "../registry";
 import { checkCompatibility, resolveWorkflow, isBaseWorkflow } from "../runtime";
+import { tryRecordMetricEvent } from "../services/metrics";
 import { extractPurposeSummary } from "../workflow-summary";
 import { collectRepeatedOption, runCommand } from "./utils";
 
@@ -84,6 +85,16 @@ function registerWorkflowCommand(parent: Command, workflowName: string, descript
           }
           compatibilityDetails = compat.details;
         }
+
+        await tryRecordMetricEvent("command_run_success", {
+          codexHome: options.codexHome as string | undefined,
+          payload: {
+            workflow: workflowName,
+            mode: resolution.mode,
+            persona: resolution.persona,
+            dry_run: dryRun
+          }
+        });
 
         if (Boolean(options.json)) {
           const payload = {

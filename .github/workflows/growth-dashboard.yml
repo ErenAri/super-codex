@@ -1,0 +1,48 @@
+name: Growth Dashboard
+
+on:
+  schedule:
+    - cron: "0 10 * * 1"
+  workflow_dispatch:
+    inputs:
+      window_days:
+        description: "Rolling window size for funnel report"
+        required: false
+        default: "28"
+      codex_home:
+        description: "Optional codex home path to read metrics from"
+        required: false
+        default: ""
+
+jobs:
+  dashboard:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - name: Install dependencies
+        run: npm ci
+      - name: Build
+        run: npm run build
+      - name: Generate growth dashboard
+        shell: bash
+        run: |
+          args=(growth dashboard --json --output growth-dashboard.generated.md --window-days "${{ github.event.inputs.window_days || '28' }}")
+          if [ -n "${{ github.event.inputs.codex_home }}" ]; then
+            args+=(--codex-home "${{ github.event.inputs.codex_home }}")
+          fi
+          node dist/cli.js "${args[@]}" > growth-dashboard-summary.json
+      - name: Publish dashboard summary
+        shell: bash
+        run: |
+          node -e "const fs=require('fs');const data=JSON.parse(fs.readFileSync('growth-dashboard-summary.json','utf8'));const f=data.funnel;const e=data.experiments;const lines=[];lines.push('## Growth Dashboard Snapshot');lines.push('');lines.push(`Window: ${f.window.from} -> ${f.window.to} (${f.window.days} days)`);lines.push(`Install actors: ${f.actors.install}`);lines.push(`Start actors: ${f.actors.start}`);lines.push(`First-command actors: ${f.actors.first_command}`);lines.push(`Week-1 retained: ${f.actors.week1_retained}/${f.actors.week1_eligible_starts}`);lines.push(`Experiments: total=${e.total}, running=${e.running}, completed=${e.completed}, winners=${e.winners}`);fs.appendFileSync(process.env.GITHUB_STEP_SUMMARY, lines.join('\n') + '\n');"
+      - name: Upload growth artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: growth-dashboard
+          path: |
+            growth-dashboard.generated.md
+            growth-dashboard-summary.json

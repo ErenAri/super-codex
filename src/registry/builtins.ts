@@ -182,6 +182,10 @@ export const BUILTIN_COMMANDS: Record<string, CommandDefinition> = {
   "profile.show": command("profile.show", "Show framework profile details"),
   "quality.prompts": command("quality.prompts", "Evaluate command prompt quality"),
   "kernel.export": command("kernel.export", "Export kernel primitive snapshot"),
+  "growth.funnel": command("growth.funnel", "Report install->start->first-command->week1 funnel"),
+  "growth.events": command("growth.events", "Inspect recorded growth events"),
+  "growth.experiments": command("growth.experiments", "Show conversion experiment status"),
+  "growth.dashboard": command("growth.dashboard", "Generate growth dashboard markdown"),
 
   // Catalog commands
   "catalog.list": command("catalog.list", "List MCP catalog entries"),

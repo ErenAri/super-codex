@@ -14,6 +14,7 @@ import {
   listProjectTemplatePresets
 } from "../project-init";
 import { writeLock } from "../services/lockfile";
+import { tryRecordMetricEvent } from "../services/metrics";
 import { getShellBridgeStatus } from "../shell-bridge";
 import { bullet, kv, line, resolveOutputStyle } from "./presenter";
 import { runCommand, printWarnings } from "./utils";
@@ -33,6 +34,12 @@ export function registerCoreCommands(program: Command): void {
         const result = await installSupercodex({
           codexHome: options.codexHome as string | undefined,
           force: Boolean(options.force)
+        });
+        await tryRecordMetricEvent("install_cli_success", {
+          codexHome: options.codexHome as string | undefined,
+          payload: {
+            changed: result.configChanged || result.promptChanged
+          }
         });
 
         console.log(line("section", "Install summary", style));
@@ -69,6 +76,9 @@ export function registerCoreCommands(program: Command): void {
           plain: Boolean(options.plain)
         });
         const result = await uninstallSupercodex({
+          codexHome: options.codexHome as string | undefined
+        });
+        await tryRecordMetricEvent("uninstall_cli_success", {
           codexHome: options.codexHome as string | undefined
         });
 

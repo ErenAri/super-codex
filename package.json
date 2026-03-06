@@ -31,6 +31,8 @@
     "bench:tune-thresholds": "tsx benchmarks/tune-thresholds.ts",
     "bench:tune-thresholds:last5": "tsx benchmarks/tune-thresholds.ts --last=5",
     "bench:tune-thresholds:last5:write": "tsx benchmarks/tune-thresholds.ts --last=5 --write",
+    "growth:funnel": "node dist/cli.js growth funnel --json",
+    "growth:dashboard": "node dist/cli.js growth dashboard --output docs/GROWTH_DASHBOARD.md --json",
     "release:notes": "tsx scripts/generate-release-notes.ts",
     "release:notes:check": "tsx scripts/generate-release-notes.ts --check"
   },

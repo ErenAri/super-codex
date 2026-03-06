@@ -21,11 +21,15 @@ This playbook is focused on increasing npm installs for `supercodex`.
 
 Monday:
 - Review `docs/GROWTH_DASHBOARD.md` metrics.
+- Refresh dashboard from latest local/exported metrics:
+  - `supercodex growth dashboard --output docs/GROWTH_DASHBOARD.md --json`
 - Pick one funnel bottleneck (search, conversion, retention).
 
 Mid-week:
 - Ship one improvement focused on that bottleneck.
 - Publish `next` tag for testing if risk is medium/high.
+- Keep experiment tracker current:
+  - `supercodex growth experiments --json`
 
 Friday:
 - Promote to `latest` if stable.
@@ -35,4 +39,5 @@ Friday:
 
 - Increase weekly downloads by 15-25%.
 - Improve README-to-install conversion (measured by click/install proxy).
+- Run at least 3 conversion experiments in the v2 cycle and record outcomes.
 - Reduce support friction by refreshing troubleshooting docs from real issues.

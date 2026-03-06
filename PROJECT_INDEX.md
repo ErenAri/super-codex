@@ -26,6 +26,7 @@ This file is a fast map for new sessions and contributors to locate core impleme
 - [`content/personas/`](content/personas): persona overlays.
 - [`content/framework/`](content/framework): principles/rules/flags references.
 - [`changelog/fragments/`](changelog/fragments): structured release-note fragments consumed by release automation.
+- [`growth/experiments.json`](growth/experiments.json): conversion experiment registry used by growth reporting commands.
 
 ## Benchmarks and Quality Gates
 
@@ -39,6 +40,7 @@ This file is a fast map for new sessions and contributors to locate core impleme
 - [`.github/workflows/ci.yml`](.github/workflows/ci.yml): build/test/verify and benchmark workflows.
 - [`.github/workflows/publish.yml`](.github/workflows/publish.yml): npm trusted publish pipeline.
 - [`.github/workflows/release-train.yml`](.github/workflows/release-train.yml): weekly canary readiness + dispatch-driven release tagging.
+- [`.github/workflows/growth-dashboard.yml`](.github/workflows/growth-dashboard.yml): weekly growth funnel/experiment dashboard generation.
 - [`scripts/sync-metadata.ts`](scripts/sync-metadata.ts): README/docs metadata synchronization.
 - [`scripts/update-golden.ts`](scripts/update-golden.ts): golden fixture refresh runner.
 - [`scripts/generate-release-notes.ts`](scripts/generate-release-notes.ts): generate release notes from changelog fragments.
@@ -50,4 +52,5 @@ This file is a fast map for new sessions and contributors to locate core impleme
 - [`docs/PROJECT_TEMPLATES.md`](docs/PROJECT_TEMPLATES.md): project template presets, command packs, and policy defaults.
 - [`docs/UPGRADE.md`](docs/UPGRADE.md): version upgrade checklist.
 - [`docs/RELEASE_CHANNELS.md`](docs/RELEASE_CHANNELS.md): release channel strategy.
+- [`docs/GROWTH_DASHBOARD.md`](docs/GROWTH_DASHBOARD.md): weekly funnel and experiment dashboard.
 - [`BACKLOG_V2.md`](BACKLOG_V2.md): active V2 delivery plan.

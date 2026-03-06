@@ -384,6 +384,65 @@ describe("cli contract", { timeout: 120000 }, () => {
     expect(result.stderr).toContain("monorepo");
   });
 
+  it("growth commands return funnel, events, experiment, and dashboard JSON outputs", async () => {
+    const codexHome = await createCodexHome();
+    const projectRoot = path.dirname(codexHome);
+    const dashboardPath = path.join(projectRoot, "growth-dashboard.md");
+
+    const installed = await runCapturedCli(["install", "--plain", "--codex-home", codexHome]);
+    expect(installed.code).toBe(0);
+
+    const started = await runCapturedCli(["start", "--json", "--codex-home", codexHome]);
+    expect(started.code).toBe(0);
+
+    const ran = await runCapturedCli(["run", "plan", "--json", "--codex-home", codexHome]);
+    expect(ran.code).toBe(0);
+
+    const funnel = await runCapturedCli(["growth", "funnel", "--json", "--codex-home", codexHome]);
+    expect(funnel.code).toBe(0);
+    const funnelPayload = JSON.parse(funnel.stdout);
+    expect(funnelPayload.window).toBeTruthy();
+    expect(Array.isArray(funnelPayload.steps)).toBe(true);
+    expect(funnelPayload.steps).toHaveLength(4);
+    expect(typeof funnelPayload.actors.start).toBe("number");
+
+    const events = await runCapturedCli([
+      "growth",
+      "events",
+      "--json",
+      "--codex-home",
+      codexHome,
+      "--limit",
+      "10"
+    ]);
+    expect(events.code).toBe(0);
+    const eventPayload = JSON.parse(events.stdout);
+    expect(Array.isArray(eventPayload)).toBe(true);
+    expect(eventPayload.some((entry: { event: string }) => entry.event === "start_invoked")).toBe(true);
+
+    const experiments = await runCapturedCli(["growth", "experiments", "--json"]);
+    expect(experiments.code).toBe(0);
+    const experimentPayload = JSON.parse(experiments.stdout);
+    expect(typeof experimentPayload.total).toBe("number");
+    expect(experimentPayload.total).toBeGreaterThanOrEqual(3);
+
+    const dashboard = await runCapturedCli([
+      "growth",
+      "dashboard",
+      "--json",
+      "--codex-home",
+      codexHome,
+      "--output",
+      dashboardPath
+    ]);
+    expect(dashboard.code).toBe(0);
+    const dashboardPayload = JSON.parse(dashboard.stdout);
+    expect(dashboardPayload.output).toBe(dashboardPath);
+    expect(await pathExists(dashboardPath)).toBe(true);
+    const dashboardContent = await readFile(dashboardPath, "utf8");
+    expect(dashboardContent).toContain("# Growth Dashboard");
+  });
+
   it("catalog show --json returns entry payload", async () => {
     const codexHome = await createCodexHome();
     const result = await runCapturedCli(["catalog", "show", "filesystem", "--json", "--codex-home", codexHome]);

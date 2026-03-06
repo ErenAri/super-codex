@@ -188,6 +188,19 @@ Defaults:
 - path: `~/.codex/supercodex/memory/sessions.jsonl`
 - max entries: `5000` (from `[supercodex.memory.max_entries]`)
 
+## Growth Funnel and Experiments
+
+Track install -> start -> first command -> week-1 retention and inspect experiment status:
+
+```bash
+supercodex growth funnel --json
+supercodex growth events --limit 50 --json
+supercodex growth experiments --json
+supercodex growth dashboard --output docs/GROWTH_DASHBOARD.md --json
+```
+
+Use `growth dashboard` in weekly reporting workflows to keep `docs/GROWTH_DASHBOARD.md` current.
+
 ## Alias Workflows
 
 List and inspect aliases:

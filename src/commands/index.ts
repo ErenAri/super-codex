@@ -5,6 +5,7 @@ export * from "./core";
 export * from "./start";
 export * from "./doctor";
 export * from "./flag";
+export * from "./growth";
 export * from "./mcp";
 export * from "./mode";
 export * from "./lock";

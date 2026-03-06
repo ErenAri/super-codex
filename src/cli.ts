@@ -9,6 +9,7 @@ import {
   registerCoreCommands,
   registerDoctorCommands,
   registerFlagCommands,
+  registerGrowthCommands,
   registerGuideCommands,
   registerKernelCommands,
   registerLockCommands,
@@ -40,6 +41,7 @@ export function createProgram(): Command {
   registerValidateCommand(program);
   registerVerifyCommand(program);
   registerDoctorCommands(program);
+  registerGrowthCommands(program);
   registerPolicyCommands(program);
   registerProfileCommands(program);
   registerQualityCommands(program);
