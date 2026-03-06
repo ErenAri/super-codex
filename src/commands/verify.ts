@@ -29,11 +29,16 @@ export function registerVerifyCommand(program: Command): void {
           console.log(`Strict mode: ${report.strict ? "on" : "off"}`);
           console.log(`Quality score: ${report.score}`);
           console.log(`Lock path: ${report.lock_path}`);
+          console.log(`Best next command: ${report.best_next_command}`);
           for (const check of report.checks) {
             console.log(`- [${check.status}] ${check.id} - ${check.title}`);
             for (const detail of check.details) {
               console.log(`  - ${detail}`);
             }
+          }
+          console.log("Next commands:");
+          for (const action of report.quick_actions) {
+            console.log(`- ${action.label}: ${action.command}`);
           }
         }
 

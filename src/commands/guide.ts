@@ -4,6 +4,7 @@ import { line, kv, bullet, resolveOutputStyle } from "./presenter";
 import { getCoreProfileNextCommands, getCoreProfileStepByAlias } from "../profiles";
 import { runCommand } from "./utils";
 import { listAliases, loadRegistry, recommendAliases } from "../registry";
+import { buildQuickActionContract } from "../services/quick-actions";
 
 type GuideContext = "auto" | "terminal" | "chat";
 type ResolvedGuideContext = "terminal" | "chat";
@@ -68,11 +69,30 @@ export function registerGuideCommands(program: Command): void {
           .map((suggestion) => suggestion.terminalCommand);
         const coreStep = getCoreProfileStepByAlias(primary.alias);
         const coreNextCommands = getCoreProfileNextCommands(10);
+        const bestNow = resolvedContext === "chat" ? primary.promptCommand : primary.terminalCommand;
+        const quickActionContract = buildQuickActionContract(
+          [
+            {
+              id: "best_next",
+              label: "Best next command",
+              command: bestNow
+            },
+            ...nextCommands.map((command, index) => ({
+              id: `next_${index + 1}`,
+              label: index === 0 ? "Then continue with" : "Then run",
+              command
+            }))
+          ],
+          {
+            bestCommand: bestNow
+          }
+        );
 
         const payload = {
           intent: intent as string,
           context: resolvedContext,
           primary,
+          best_next_command: quickActionContract.best_next_command,
           core_profile: {
             id: "core",
             matched_step: coreStep ? coreStep.step_id : null,
@@ -80,7 +100,8 @@ export function registerGuideCommands(program: Command): void {
             next_commands: coreNextCommands
           },
           alternatives: suggestions.slice(1),
-          next_commands: nextCommands
+          next_commands: quickActionContract.next_commands,
+          quick_actions: quickActionContract.quick_actions
         };
 
         if (Boolean(options.json)) {
@@ -110,7 +131,6 @@ export function registerGuideCommands(program: Command): void {
         console.log(bullet(primary.slashCommand, style, "step"));
         console.log(bullet(primary.promptCommand, style, "step"));
 
-        const bestNow = resolvedContext === "chat" ? primary.promptCommand : primary.terminalCommand;
         console.log(line("next", `Best next command now: ${bestNow}`, style));
 
         if (nextCommands.length > 0) {

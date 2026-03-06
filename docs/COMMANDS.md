@@ -72,6 +72,30 @@ supercodex guide "debug flaky tests" --json
 - recommended alias
 - terminal/slash/prompt command forms
 - next suggested commands
+- shared quick action contract fields: `best_next_command`, ordered `next_commands`, and labeled `quick_actions`
+
+## Shared Quick Action Contract
+
+`start`, `guide`, `doctor`, and `verify` now emit a shared quick-action shape in JSON output:
+
+```json
+{
+  "best_next_command": "supercodex verify --strict",
+  "next_commands": [
+    "supercodex verify --strict",
+    "supercodex lock refresh"
+  ],
+  "quick_actions": [
+    {
+      "id": "best_next",
+      "label": "Best next command",
+      "command": "supercodex verify --strict"
+    }
+  ]
+}
+```
+
+Use this contract for CLI/GUI integrations that need deterministic “what to run next” guidance.
 
 ## Command Workflows
 

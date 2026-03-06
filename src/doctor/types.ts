@@ -1,3 +1,5 @@
+import type { QuickAction } from "../services/quick-actions";
+
 export type DoctorLevel = "info" | "warn" | "error";
 
 export interface DoctorIssue {
@@ -54,6 +56,9 @@ export interface DoctorReport {
   issues: DoctorIssue[];
   summary?: DoctorSummary;
   recommended_actions?: string[];
+  best_next_command?: string;
+  next_commands?: string[];
+  quick_actions?: QuickAction[];
   mcp_health?: McpHealthReport;
   fix_plan?: DoctorFixPlanStep[];
   fix_result?: DoctorFixResult;

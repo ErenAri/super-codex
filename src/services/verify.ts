@@ -5,6 +5,7 @@ import { loadRegistry, validateRegistry } from "../registry";
 import { evaluateCommandPromptQuality, validateSupercodexCommandSet } from "./command-validation";
 import { checkLockStatus, type LockOptions } from "./lockfile";
 import { evaluatePolicy } from "./policy";
+import { buildQuickActionContract, type QuickAction } from "./quick-actions";
 import { evaluateSafetyGates } from "./safety-gates";
 
 export type VerifyCheckStatus = "pass" | "warn" | "fail";
@@ -27,6 +28,9 @@ export interface VerifyReport {
   status: VerifyCheckStatus;
   score: number;
   lock_path: string;
+  best_next_command: string;
+  next_commands: string[];
+  quick_actions: QuickAction[];
   checks: VerifyCheck[];
 }
 
@@ -140,6 +144,7 @@ export async function runVerification(options: VerifyOptions = {}): Promise<Veri
   const hasFailure = checks.some((check) => check.status === "fail");
   const hasWarning = checks.some((check) => check.status === "warn");
   const ok = !hasFailure && (!strict || !hasWarning);
+  const quickActionContract = buildQuickActionContract(buildVerifyQuickActions(checks, strict));
 
   return {
     ok,
@@ -147,6 +152,9 @@ export async function runVerification(options: VerifyOptions = {}): Promise<Veri
     status: hasFailure ? "fail" : hasWarning ? "warn" : "pass",
     score: computeVerifyScore(checks, policy.score),
     lock_path: lockStatus.path,
+    best_next_command: quickActionContract.best_next_command,
+    next_commands: quickActionContract.next_commands,
+    quick_actions: quickActionContract.quick_actions,
     checks
   };
 }
@@ -166,4 +174,41 @@ function computeVerifyScore(checks: VerifyCheck[], policyScore: number): number 
     }
   }
   return Math.max(0, Math.min(100, score));
+}
+
+function buildVerifyQuickActions(checks: VerifyCheck[], strict: boolean): QuickAction[] {
+  const statusByCheck = new Map(checks.map((check) => [check.id, check.status]));
+  const actions: QuickAction[] = [];
+
+  const addAction = (id: string, label: string, command: string): void => {
+    actions.push({ id, label, command });
+  };
+
+  const registryStatus = statusByCheck.get("registry");
+  if (registryStatus === "fail" || (strict && registryStatus === "warn")) {
+    addAction("registry", "Fix registry integrity", "supercodex validate --strict");
+  }
+
+  const commandQualityStatus = statusByCheck.get("command_quality");
+  if (commandQualityStatus === "fail" || (strict && commandQualityStatus === "warn")) {
+    addAction("command_quality", "Fix command prompt quality", "supercodex quality prompts --strict");
+  }
+
+  const policyStatus = statusByCheck.get("policy");
+  if (policyStatus === "fail" || (strict && policyStatus === "warn")) {
+    addAction("policy", "Fix policy checks", "supercodex policy validate --strict");
+  }
+
+  const lockStatus = statusByCheck.get("lockfile");
+  if (lockStatus === "fail" || lockStatus === "warn") {
+    addAction("lockfile", "Refresh deterministic lock", "supercodex lock refresh");
+  }
+
+  const safetyStatus = statusByCheck.get("safety_gates");
+  if (safetyStatus === "fail" || (strict && safetyStatus === "warn")) {
+    addAction("safety_gates", "Inspect safety gates", "supercodex doctor --strict");
+  }
+
+  addAction("verify", "Re-run strict verification", "supercodex verify --strict");
+  return actions;
 }

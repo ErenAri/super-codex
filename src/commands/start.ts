@@ -71,8 +71,8 @@ export function registerStartCommand(program: Command): void {
             console.log(bullet(`[${check.status}] ${check.id}: ${check.details}`, style, checkKind));
           }
           console.log(line("next", "Next commands:", style));
-          for (const command of result.next_commands) {
-            console.log(bullet(command, style, "next"));
+          for (const action of result.quick_actions) {
+            console.log(bullet(`${action.label}: ${action.command}`, style, "next"));
           }
           console.log(line("next", "Quick start commands:", style));
           console.log(bullet(result.quick_start.terminal_command, style, "next"));

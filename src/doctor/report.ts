@@ -7,8 +7,8 @@ export function formatDoctorReport(report: DoctorReport, style: OutputStyle = "p
       ? `\nMCP health: healthy=${report.mcp_health.summary.healthy}, ` +
         `degraded=${report.mcp_health.summary.degraded}, failing=${report.mcp_health.summary.failing}`
       : "";
-    const actions = report.recommended_actions?.length
-      ? `\n${line("next", `Next: ${report.recommended_actions.join(" | ")}`, style)}`
+    const actions = report.next_commands?.length
+      ? `\n${line("next", `Next: ${report.next_commands.join(" | ")}`, style)}`
       : "";
     const details = `${line("ok", "Doctor: no issues found.", style)}${mcpSummary}${actions}`;
     if (report.fix_plan && report.fix_plan.length > 0) {
@@ -47,7 +47,13 @@ export function formatDoctorReport(report: DoctorReport, style: OutputStyle = "p
   }
   if (report.recommended_actions && report.recommended_actions.length > 0) {
     lines.push(line("next", "Recommended actions:", style));
-    for (const action of report.recommended_actions) {
+    if (report.best_next_command) {
+      lines.push(line("next", `Best next command: ${report.best_next_command}`, style));
+    }
+    const actions = report.quick_actions?.length
+      ? report.quick_actions.map((entry) => `${entry.label}: ${entry.command}`)
+      : report.recommended_actions;
+    for (const action of actions) {
       lines.push(line("next", action, style));
     }
   }

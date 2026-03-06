@@ -167,6 +167,9 @@ describe("cli contract", { timeout: 120000 }, () => {
     expect(verify.code).toBe(0);
     const verifyPayload = JSON.parse(verify.stdout);
     expect(verifyPayload.ok).toBe(true);
+    expect(typeof verifyPayload.best_next_command).toBe("string");
+    expect(Array.isArray(verifyPayload.next_commands)).toBe(true);
+    expect(Array.isArray(verifyPayload.quick_actions)).toBe(true);
     expect(Array.isArray(verifyPayload.checks)).toBe(true);
     expect(
       verifyPayload.checks.some((check: { id: string; status: string }) => check.id === "command_quality" && check.status === "pass")
@@ -225,6 +228,9 @@ describe("cli contract", { timeout: 120000 }, () => {
     expect(normalPayload.summary).toBeTruthy();
     expect(typeof normalPayload.summary.fixable).toBe("number");
     expect(Array.isArray(normalPayload.recommended_actions)).toBe(true);
+    expect(typeof normalPayload.best_next_command).toBe("string");
+    expect(Array.isArray(normalPayload.next_commands)).toBe(true);
+    expect(Array.isArray(normalPayload.quick_actions)).toBe(true);
 
     const strict = await runCapturedCli(["doctor", "--json", "--strict", "--codex-home", codexHome]);
     expect(strict.code).toBe(1);
@@ -261,6 +267,7 @@ describe("cli contract", { timeout: 120000 }, () => {
     expect(initialPayload.quick_start).toBeTruthy();
     expect(initialPayload.quick_start.context).toBe("terminal");
     expect(Array.isArray(initialPayload.next_commands)).toBe(true);
+    expect(Array.isArray(initialPayload.quick_actions)).toBe(true);
     expect(initialPayload.next_commands).toContain("supercodex profile show core");
     expect(initialPayload.next_commands).toContain("supercodex spec");
     expect(initialPayload.wizard).toBeTruthy();
@@ -518,6 +525,9 @@ describe("cli contract", { timeout: 120000 }, () => {
     expect(typeof payload.primary.alias).toBe("string");
     expect(payload.primary.terminalCommand).toContain("supercodex");
     expect(payload.primary.promptCommand).toContain("/prompts:supercodex-");
+    expect(typeof payload.best_next_command).toBe("string");
+    expect(Array.isArray(payload.quick_actions)).toBe(true);
+    expect(payload.quick_actions.length).toBeGreaterThan(0);
     expect(payload.core_profile).toBeTruthy();
     expect(payload.core_profile.id).toBe("core");
     expect(Array.isArray(payload.core_profile.next_commands)).toBe(true);

@@ -15,6 +15,7 @@
     "slashCommand": "supercodex /supercodex:security",
     "promptCommand": "/prompts:supercodex-review"
   },
+  "best_next_command": "supercodex security",
   "core_profile": {
     "id": "core",
     "matched_step": "security_scan",
@@ -61,7 +62,25 @@
     }
   ],
   "next_commands": [
+    "supercodex security",
     "supercodex review",
     "supercodex perf"
+  ],
+  "quick_actions": [
+    {
+      "id": "best_next",
+      "label": "Best next command",
+      "command": "supercodex security"
+    },
+    {
+      "id": "next_1",
+      "label": "Then continue with",
+      "command": "supercodex review"
+    },
+    {
+      "id": "next_2",
+      "label": "Then run",
+      "command": "supercodex perf"
+    }
   ]
 }

@@ -4,6 +4,7 @@ import { getCoreProfileNextCommands } from "../profiles";
 import { loadRegistry } from "../registry";
 import { resolveWorkflow } from "../runtime";
 import { tryRecordMetricEvent } from "./metrics";
+import { buildQuickActionContract, type QuickAction } from "./quick-actions";
 
 export type StartCheckStatus = "ok" | "warn" | "error";
 
@@ -20,6 +21,7 @@ export interface StartFlowResult {
   best_next_command: string;
   checks: StartCheckResult[];
   next_commands: string[];
+  quick_actions: QuickAction[];
   quick_start: {
     context: "terminal" | "chat";
     terminal_command: string;
@@ -97,13 +99,33 @@ export async function runStartFlow(options: StartFlowOptions = {}): Promise<Star
   const overall = deriveOverallStatus(checks);
   const quickStartContext = options.preferredContext ?? "terminal";
   const recommendedAction = resolveRecommendedAction(overall, checks);
+  const bestNextCommand = resolveBestNextCommand(overall, checks, quickStartContext);
+  const nextCommands = buildNextCommands(overall, checks);
+  const quickActionContract = buildQuickActionContract(
+    [
+      {
+        id: "best_next",
+        label: "Best next command",
+        command: bestNextCommand
+      },
+      ...nextCommands.map((command, index) => ({
+        id: `next_${index + 1}`,
+        label: index === 0 ? "Continue with" : "Then run",
+        command
+      }))
+    ],
+    {
+      bestCommand: bestNextCommand
+    }
+  );
   return {
     status: overall,
     readiness_score: computeReadinessScore(checks),
     recommended_action: recommendedAction,
-    best_next_command: resolveBestNextCommand(overall, checks, quickStartContext),
+    best_next_command: quickActionContract.best_next_command,
     checks,
-    next_commands: buildNextCommands(overall, checks),
+    next_commands: quickActionContract.next_commands,
+    quick_actions: quickActionContract.quick_actions,
     quick_start: {
       context: quickStartContext,
       terminal_command: "supercodex spec <goal>",

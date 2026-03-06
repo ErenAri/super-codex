@@ -11,6 +11,7 @@ import {
 } from "../registry";
 import { getRuntimeDefaults } from "../runtime";
 import { evaluateSafetyGates } from "../services/safety-gates";
+import { buildQuickActionContract } from "../services/quick-actions";
 import type { DoctorIssue, DoctorReport, McpHealthReport, McpHealthServer } from "./types";
 
 export interface DoctorOptions {
@@ -373,11 +374,23 @@ function dedupeStrings(values: string[]): string[] {
 }
 
 function finalizeDoctorReport(issues: DoctorIssue[], mcpHealth: McpHealthReport): DoctorReport {
+  const recommendedActions = buildRecommendedActions(issues);
+  const quickActionContract = buildQuickActionContract(
+    recommendedActions.map((command, index) => ({
+      id: `recommended_${index + 1}`,
+      label: index === 0 ? "Best next command" : "Recommended action",
+      command
+    }))
+  );
+
   return {
     ok: !issues.some((entry) => entry.level === "error"),
     issues,
     summary: buildDoctorSummary(issues),
-    recommended_actions: buildRecommendedActions(issues),
+    recommended_actions: recommendedActions,
+    best_next_command: quickActionContract.best_next_command,
+    next_commands: quickActionContract.next_commands,
+    quick_actions: quickActionContract.quick_actions,
     mcp_health: mcpHealth
   };
 }

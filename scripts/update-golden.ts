@@ -1,7 +1,8 @@
+import path from "node:path";
 import { spawnSync } from "node:child_process";
 
-const executable = process.platform === "win32" ? "npx.cmd" : "npx";
-const result = spawnSync(executable, ["vitest", "run", "tests/golden-outputs.test.ts"], {
+const vitestEntrypoint = path.join(process.cwd(), "node_modules", "vitest", "vitest.mjs");
+const result = spawnSync(process.execPath, [vitestEntrypoint, "run", "tests/golden-outputs.test.ts"], {
   stdio: "inherit",
   env: {
     ...process.env,
@@ -11,6 +12,10 @@ const result = spawnSync(executable, ["vitest", "run", "tests/golden-outputs.tes
 
 if (typeof result.status === "number") {
   process.exit(result.status);
+}
+
+if (result.error) {
+  console.error(result.error.message);
 }
 
 process.exit(1);
