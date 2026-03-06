@@ -121,6 +121,9 @@ export function resolveReleaseChannel(version: string, channel?: string): Releas
 }
 
 export function defaultReleaseNotesPath(projectRoot: string, version: string): string {
+  if (isWindowsAbsolutePath(projectRoot)) {
+    return path.win32.resolve(projectRoot, "docs", "releases", `${normalizeVersionLabel(version)}.md`);
+  }
   return path.resolve(projectRoot, "docs", "releases", `${normalizeVersionLabel(version)}.md`);
 }
 
@@ -306,4 +309,8 @@ function normalizeReleaseDate(value?: string): string {
   }
 
   return new Date().toISOString().slice(0, 10);
+}
+
+function isWindowsAbsolutePath(value: string): boolean {
+  return /^[a-zA-Z]:[\\/]/.test(value.trim());
 }
