@@ -1,0 +1,15 @@
+{
+  "id": "SC2-020",
+  "type": "feat",
+  "summary": "Added a stable MCP connector contract with official core connectors and capability discovery.",
+  "details": "Introduced connector registry metadata, connector health diagnostics, and transport-aware capability listing.",
+  "commands": [
+    "supercodex mcp connectors --official --json",
+    "supercodex mcp connectors --official --health --connectivity --json",
+    "supercodex mcp capabilities --official --transport stdio --json",
+    "supercodex mcp connector docs-retrieval --json"
+  ],
+  "issues": [
+    "SC2-020"
+  ]
+}

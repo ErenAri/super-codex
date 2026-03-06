@@ -1,9 +1,14 @@
 import type { Command } from "commander";
 
+import { loadConfig } from "../config";
+import { pathExists } from "../fs-utils";
 import {
   buildHttpServerDefinition,
   buildStdioServerDefinition,
-  parseEnvAssignments
+  getMcpServerFromConfig,
+  parseEnvAssignments,
+  testMcpServer,
+  validateMcpDefinition
 } from "../mcp";
 import {
   addMcpServer,
@@ -12,12 +17,17 @@ import {
   removeMcpServer,
   testMcpServerByName
 } from "../operations";
+import { getCodexPaths } from "../paths";
 import {
   BUILTIN_MCP_PROFILES,
   getCatalogEntry,
+  getMcpConnector,
   listCatalogEntries,
+  listMcpCapabilities,
+  listMcpConnectors,
   loadRegistry,
-  type CatalogEntry
+  type CatalogEntry,
+  type McpTransport
 } from "../registry";
 import { tryRecordMetricEvent } from "../services/metrics";
 import { registerMcpCatalogCommands } from "./catalog";
@@ -41,6 +51,17 @@ interface GuidedRecommendation {
   entry: CatalogEntry;
   score: number;
   reasons: string[];
+}
+
+interface ConnectorHealthEntry {
+  connector_id: string;
+  catalog_entry_id: string;
+  server_name: string;
+  transport: McpTransport;
+  official: boolean;
+  status: "healthy" | "degraded" | "missing";
+  capabilities: string[];
+  messages: string[];
 }
 
 export function registerMcpCommands(program: Command): void {
@@ -367,6 +388,178 @@ export function registerMcpCommands(program: Command): void {
       })
     );
 
+  mcp
+    .command("connectors")
+    .description("List MCP connector contracts (official and user-extended)")
+    .option("--official", "Only show official connectors")
+    .option("--transport <transport>", "Filter connectors by transport (stdio|http)")
+    .option("--health", "Include connector health diagnostics")
+    .option("--connectivity", "Probe connectivity for health diagnostics")
+    .option("--codex-home <path>", "Override Codex home directory")
+    .option("--plain", "Disable decorated output")
+    .option("--json", "Output JSON")
+    .action((options) =>
+      runCommand(async () => {
+        const style = resolveOutputStyle({
+          json: Boolean(options.json),
+          plain: Boolean(options.plain)
+        });
+        const codexHome = options.codexHome as string | undefined;
+        const registry = await loadRegistry({ codexHome });
+        const transport = parseTransportFilter(options.transport as string | undefined);
+        const connectors = listMcpConnectors(registry.registry, {
+          officialOnly: Boolean(options.official),
+          transport: transport ?? undefined
+        });
+        const includeHealth = Boolean(options.health);
+        const connectorHealth = includeHealth
+          ? await evaluateConnectorHealth(connectors, {
+              codexHome,
+              includeConnectivity: Boolean(options.connectivity)
+            })
+          : [];
+
+        if (Boolean(options.json)) {
+          const payload = {
+            filters: {
+              official: Boolean(options.official),
+              transport: transport ?? null
+            },
+            connectors,
+            health: includeHealth
+              ? {
+                  summary: summarizeConnectorHealth(connectorHealth),
+                  entries: connectorHealth
+                }
+              : null
+          };
+          console.log(JSON.stringify(payload, null, 2));
+          return;
+        }
+
+        if (connectors.length === 0) {
+          console.log(line("info", "No MCP connectors match the current filters.", style));
+          return;
+        }
+
+        console.log(line("section", "MCP connectors", style));
+        for (const connector of connectors) {
+          const marker = connector.official ? "official" : "custom";
+          console.log(
+            bullet(
+              `${connector.id} (${marker}, ${connector.transport}) -> ${connector.catalog_entry_id}`,
+              style,
+              "info"
+            )
+          );
+          console.log(`  ${line("info", connector.description, style)}`);
+          console.log(`  ${line("tip", `Capabilities: ${connector.capabilities.join(", ")}`, style)}`);
+          console.log(`  ${line("info", `Health checks: ${connector.health_checks.join(", ")}`, style)}`);
+        }
+
+        if (includeHealth) {
+          const summary = summarizeConnectorHealth(connectorHealth);
+          console.log(line("section", "Connector health", style));
+          console.log(kv("Healthy", String(summary.healthy), style));
+          console.log(kv("Degraded", String(summary.degraded), style));
+          console.log(kv("Missing", String(summary.missing), style));
+          for (const health of connectorHealth) {
+            const kind = health.status === "healthy" ? "ok" : health.status === "missing" ? "warn" : "error";
+            console.log(line(kind, `${health.connector_id}: ${health.status}`, style));
+            for (const message of health.messages) {
+              console.log(`  ${message}`);
+            }
+          }
+        }
+      }, {
+        json: Boolean(options.json),
+        plain: Boolean(options.plain)
+      })
+    );
+
+  mcp
+    .command("capabilities")
+    .description("Discover MCP capabilities across connectors and transports")
+    .option("--official", "Only include official connectors")
+    .option("--transport <transport>", "Filter by transport (stdio|http)")
+    .option("--codex-home <path>", "Override Codex home directory")
+    .option("--plain", "Disable decorated output")
+    .option("--json", "Output JSON")
+    .action((options) =>
+      runCommand(async () => {
+        const style = resolveOutputStyle({
+          json: Boolean(options.json),
+          plain: Boolean(options.plain)
+        });
+        const transport = parseTransportFilter(options.transport as string | undefined);
+        const registry = await loadRegistry({ codexHome: options.codexHome as string | undefined });
+        const capabilities = listMcpCapabilities(registry.registry, {
+          officialOnly: Boolean(options.official),
+          transport: transport ?? undefined
+        });
+
+        if (Boolean(options.json)) {
+          const payload = {
+            filters: {
+              official: Boolean(options.official),
+              transport: transport ?? null
+            },
+            capabilities
+          };
+          console.log(JSON.stringify(payload, null, 2));
+          return;
+        }
+
+        if (capabilities.length === 0) {
+          console.log(line("info", "No MCP capabilities found for current filters.", style));
+          return;
+        }
+
+        console.log(line("section", "MCP capability discovery", style));
+        for (const capability of capabilities) {
+          console.log(bullet(capability.capability, style, "info"));
+          for (const connector of capability.connectors) {
+            const official = connector.official ? "official" : "custom";
+            console.log(
+              `  ${connector.connector_id} -> ${connector.catalog_entry_id} (${connector.transport}, ${official})`
+            );
+          }
+        }
+      }, {
+        json: Boolean(options.json),
+        plain: Boolean(options.plain)
+      })
+    );
+
+  mcp
+    .command("connector")
+    .description("Show one MCP connector contract by id")
+    .argument("<id>", "Connector id")
+    .option("--codex-home <path>", "Override Codex home directory")
+    .option("--json", "Output JSON")
+    .action((id, options) =>
+      runCommand(async () => {
+        const registry = await loadRegistry({ codexHome: options.codexHome as string | undefined });
+        const connector = getMcpConnector(registry.registry, id as string);
+        if (!connector) {
+          throw new Error(`MCP connector "${id}" not found.`);
+        }
+
+        if (Boolean(options.json)) {
+          console.log(JSON.stringify(connector, null, 2));
+          return;
+        }
+
+        console.log(`${connector.id} (${connector.transport})`);
+        console.log(connector.description);
+        console.log(`Catalog entry: ${connector.catalog_entry_id}`);
+        console.log(`Capabilities: ${connector.capabilities.join(", ")}`);
+        console.log(`Health checks: ${connector.health_checks.join(", ")}`);
+      }, {
+        json: Boolean(options.json)
+      })
+    );
+
   registerMcpDoctorCommand(mcp);
   registerMcpCatalogCommands(mcp);
 }
@@ -505,6 +698,121 @@ function countGoalMatches(entry: CatalogEntry, goalTokens: string[]): number {
     }
   }
   return matches;
+}
+
+function parseTransportFilter(value: string | undefined): McpTransport | null {
+  const normalized = normalizeToken(value);
+  if (!normalized) {
+    return null;
+  }
+  if (normalized === "stdio" || normalized === "http") {
+    return normalized;
+  }
+  throw new Error(`Unsupported transport "${value}". Expected "stdio" or "http".`);
+}
+
+async function evaluateConnectorHealth(
+  connectors: ReturnType<typeof listMcpConnectors>,
+  options: { codexHome?: string; includeConnectivity: boolean }
+): Promise<ConnectorHealthEntry[]> {
+  const paths = getCodexPaths(options.codexHome);
+  const config = (await pathExists(paths.configPath)) ? await loadConfig(paths.configPath) : {};
+  const health: ConnectorHealthEntry[] = [];
+
+  for (const connector of connectors) {
+    const server = getMcpServerFromConfig(config, connector.catalog_entry_name);
+    if (!server) {
+      health.push({
+        connector_id: connector.id,
+        catalog_entry_id: connector.catalog_entry_id,
+        server_name: connector.catalog_entry_name,
+        transport: connector.transport,
+        official: connector.official,
+        status: "missing",
+        capabilities: connector.capabilities,
+        messages: [
+          `Expected server "${connector.catalog_entry_name}" is not configured.`,
+          `Install with: supercodex mcp install ${connector.catalog_entry_id}`
+        ]
+      });
+      continue;
+    }
+
+    const messages: string[] = [];
+    const validationMessages = validateMcpDefinition(server.definition);
+    messages.push(...validationMessages);
+
+    if (validationMessages.length > 0) {
+      health.push({
+        connector_id: connector.id,
+        catalog_entry_id: connector.catalog_entry_id,
+        server_name: connector.catalog_entry_name,
+        transport: connector.transport,
+        official: connector.official,
+        status: "degraded",
+        capabilities: connector.capabilities,
+        messages: [
+          ...messages,
+          `Fix definition at [mcp_servers.${connector.catalog_entry_name}] and re-run connector health.`
+        ]
+      });
+      continue;
+    }
+
+    if (!options.includeConnectivity) {
+      health.push({
+        connector_id: connector.id,
+        catalog_entry_id: connector.catalog_entry_id,
+        server_name: connector.catalog_entry_name,
+        transport: connector.transport,
+        official: connector.official,
+        status: "degraded",
+        capabilities: connector.capabilities,
+        messages: ["Connectivity probe skipped. Re-run with --connectivity."]
+      });
+      continue;
+    }
+
+    const connectivity = await testMcpServer(server.name, server.definition);
+    const status: ConnectorHealthEntry["status"] = connectivity.ok ? "healthy" : "degraded";
+    health.push({
+      connector_id: connector.id,
+      catalog_entry_id: connector.catalog_entry_id,
+      server_name: connector.catalog_entry_name,
+      transport: connector.transport,
+      official: connector.official,
+      status,
+      capabilities: connector.capabilities,
+      messages: connectivity.messages
+    });
+  }
+
+  return health.sort((a, b) => a.connector_id.localeCompare(b.connector_id));
+}
+
+function summarizeConnectorHealth(entries: ConnectorHealthEntry[]): {
+  healthy: number;
+  degraded: number;
+  missing: number;
+} {
+  let healthy = 0;
+  let degraded = 0;
+  let missing = 0;
+  for (const entry of entries) {
+    if (entry.status === "healthy") {
+      healthy += 1;
+    } else if (entry.status === "degraded") {
+      degraded += 1;
+    } else {
+      missing += 1;
+    }
+  }
+
+  return {
+    healthy,
+    degraded,
+    missing
+  };
 }
 
 function normalizeToken(value: string | undefined): string | undefined {

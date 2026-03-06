@@ -108,6 +108,7 @@ describe("cli contract", { timeout: 120000 }, () => {
     expect(Array.isArray(payload.agent_registry)).toBe(true);
     expect(Array.isArray(payload.mode_engine)).toBe(true);
     expect(Array.isArray(payload.tool_layer)).toBe(true);
+    expect(Array.isArray(payload.connector_registry)).toBe(true);
   });
 
   it("policy validate --json returns valid policy payload", async () => {
@@ -810,6 +811,99 @@ describe("cli contract", { timeout: 120000 }, () => {
     ]);
     expect(guidedPlain.code).toBe(0);
     expect(hasEmoji(guidedPlain.stdout)).toBe(false);
+  });
+
+  it("mcp connector contracts and capability discovery are available in json output", async () => {
+    const codexHome = await createCodexHome();
+
+    const connectorsResult = await runCapturedCli([
+      "mcp",
+      "connectors",
+      "--official",
+      "--json",
+      "--codex-home",
+      codexHome
+    ]);
+    expect(connectorsResult.code).toBe(0);
+    const connectorsPayload = JSON.parse(connectorsResult.stdout);
+    expect(Array.isArray(connectorsPayload.connectors)).toBe(true);
+    expect(connectorsPayload.connectors.length).toBeGreaterThanOrEqual(4);
+    expect(
+      connectorsPayload.connectors.some((entry: { id: string }) => entry.id === "git-operations")
+    ).toBe(true);
+    expect(
+      connectorsPayload.connectors.some((entry: { id: string }) => entry.id === "code-search")
+    ).toBe(true);
+    expect(
+      connectorsPayload.connectors.some((entry: { id: string }) => entry.id === "issue-tracker")
+    ).toBe(true);
+    expect(
+      connectorsPayload.connectors.some((entry: { id: string }) => entry.id === "docs-retrieval")
+    ).toBe(true);
+
+    const capabilitiesResult = await runCapturedCli([
+      "mcp",
+      "capabilities",
+      "--official",
+      "--transport",
+      "stdio",
+      "--json",
+      "--codex-home",
+      codexHome
+    ]);
+    expect(capabilitiesResult.code).toBe(0);
+    const capabilitiesPayload = JSON.parse(capabilitiesResult.stdout);
+    expect(Array.isArray(capabilitiesPayload.capabilities)).toBe(true);
+    expect(
+      capabilitiesPayload.capabilities.some((entry: { capability: string }) => entry.capability === "git.operations")
+    ).toBe(true);
+    expect(
+      capabilitiesPayload.capabilities.some((entry: { capability: string }) => entry.capability === "code.search")
+    ).toBe(true);
+    expect(
+      capabilitiesPayload.capabilities.some((entry: { capability: string }) => entry.capability === "issue.tracker")
+    ).toBe(true);
+    expect(
+      capabilitiesPayload.capabilities.some((entry: { capability: string }) => entry.capability === "docs.retrieval")
+    ).toBe(true);
+
+    const connectorShowResult = await runCapturedCli([
+      "mcp",
+      "connector",
+      "docs-retrieval",
+      "--json",
+      "--codex-home",
+      codexHome
+    ]);
+    expect(connectorShowResult.code).toBe(0);
+    const connectorShowPayload = JSON.parse(connectorShowResult.stdout);
+    expect(connectorShowPayload.id).toBe("docs-retrieval");
+    expect(connectorShowPayload.catalog_entry_id).toBe("fetch");
+  });
+
+  it("mcp connectors --health reports missing official connectors when not installed", async () => {
+    const codexHome = await createCodexHome();
+
+    const healthResult = await runCapturedCli([
+      "mcp",
+      "connectors",
+      "--official",
+      "--health",
+      "--json",
+      "--codex-home",
+      codexHome
+    ]);
+    expect(healthResult.code).toBe(0);
+    const payload = JSON.parse(healthResult.stdout);
+    expect(payload.health).toBeTruthy();
+    expect(payload.health.summary).toBeTruthy();
+    expect(payload.health.summary.missing).toBeGreaterThanOrEqual(4);
+    expect(Array.isArray(payload.health.entries)).toBe(true);
+    expect(
+      payload.health.entries.every((entry: { status: string }) =>
+        entry.status === "missing" || entry.status === "degraded" || entry.status === "healthy"
+      )
+    ).toBe(true);
   });
 
   it("skill enable and disable persist across registry loads", async () => {

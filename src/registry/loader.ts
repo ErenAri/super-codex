@@ -14,6 +14,7 @@ import {
   BUILTIN_CATALOG,
   BUILTIN_COMMANDS,
   BUILTIN_FLAGS,
+  BUILTIN_MCP_CONNECTORS,
   BUILTIN_MODES,
   BUILTIN_PERSONAS,
   BUILTIN_SKILLS
@@ -25,6 +26,8 @@ import type {
   CatalogEntry,
   CommandDefinition,
   FlagDefinition,
+  McpConnectorDefinition,
+  McpTransport,
   ModeDefinition,
   PersonaDefinition,
   RegistryData,
@@ -56,6 +59,7 @@ export async function loadRegistry(options: RegistryLoadOptions = {}): Promise<R
     personas: deepClone(BUILTIN_PERSONAS),
     commands: deepClone(BUILTIN_COMMANDS),
     catalog: deepClone(BUILTIN_CATALOG),
+    mcp_connectors: deepClone(BUILTIN_MCP_CONNECTORS),
     aliases: deepClone(BUILTIN_ALIASES),
     alias_packs: deepClone(BUILTIN_ALIAS_PACKS),
     agent_definitions: deepClone(BUILTIN_AGENT_DEFINITIONS),
@@ -282,6 +286,59 @@ export function validateRegistry(registry: RegistryData): RegistryValidationIssu
     }
   }
 
+  for (const [id, connector] of Object.entries(registry.mcp_connectors)) {
+    if (!connector.name || !connector.name.trim()) {
+      issues.push({
+        level: "error",
+        path: `mcp_connectors.${id}.name`,
+        message: "MCP connector name is required."
+      });
+    }
+
+    if (!connector.description || !connector.description.trim()) {
+      issues.push({
+        level: "error",
+        path: `mcp_connectors.${id}.description`,
+        message: "MCP connector description is required."
+      });
+    }
+
+    if (!Object.hasOwn(registry.catalog, connector.catalog_entry_id)) {
+      issues.push({
+        level: "error",
+        path: `mcp_connectors.${id}.catalog_entry_id`,
+        message: `Connector references unknown catalog entry "${connector.catalog_entry_id}".`
+      });
+    }
+
+    if (!Array.isArray(connector.capabilities) || connector.capabilities.length === 0) {
+      issues.push({
+        level: "warn",
+        path: `mcp_connectors.${id}.capabilities`,
+        message: "Connector should declare at least one capability."
+      });
+    }
+
+    if (!Array.isArray(connector.health_checks) || connector.health_checks.length === 0) {
+      issues.push({
+        level: "warn",
+        path: `mcp_connectors.${id}.health_checks`,
+        message: "Connector should declare at least one health check."
+      });
+      continue;
+    }
+
+    for (const healthCheck of connector.health_checks) {
+      if (healthCheck !== "definition" && healthCheck !== "connectivity") {
+        issues.push({
+          level: "warn",
+          path: `mcp_connectors.${id}.health_checks`,
+          message: `Unsupported connector health check "${healthCheck}".`
+        });
+      }
+    }
+  }
+
   for (const [aliasName, aliasDefinition] of Object.entries(registry.aliases)) {
     if (!aliasDefinition.description || !aliasDefinition.description.trim()) {
       issues.push({
@@ -498,6 +555,115 @@ export function getCatalogEntry(registry: RegistryData, id: string): CatalogEntr
   return registry.catalog[id] ?? null;
 }
 
+export interface ResolvedMcpConnector {
+  id: string;
+  name: string;
+  description: string;
+  official: boolean;
+  catalog_entry_id: string;
+  catalog_entry_name: string;
+  transport: McpTransport;
+  capabilities: string[];
+  health_checks: string[];
+}
+
+export interface ListMcpConnectorOptions {
+  officialOnly?: boolean;
+  transport?: McpTransport;
+}
+
+export interface McpCapabilityIndexEntry {
+  capability: string;
+  connectors: Array<{
+    connector_id: string;
+    catalog_entry_id: string;
+    transport: McpTransport;
+    official: boolean;
+  }>;
+}
+
+export function listMcpConnectors(
+  registry: RegistryData,
+  options: ListMcpConnectorOptions = {}
+): ResolvedMcpConnector[] {
+  const resolved: ResolvedMcpConnector[] = [];
+
+  for (const connector of Object.values(registry.mcp_connectors)) {
+    const entry = registry.catalog[connector.catalog_entry_id];
+    if (!entry) {
+      continue;
+    }
+
+    if (options.officialOnly && !connector.official) {
+      continue;
+    }
+
+    if (options.transport && entry.transport !== options.transport) {
+      continue;
+    }
+
+    resolved.push({
+      id: connector.id,
+      name: connector.name,
+      description: connector.description,
+      official: connector.official,
+      catalog_entry_id: connector.catalog_entry_id,
+      catalog_entry_name: entry.name,
+      transport: entry.transport,
+      capabilities: dedupeStrings(connector.capabilities),
+      health_checks: dedupeStrings(connector.health_checks)
+    });
+  }
+
+  return resolved.sort((a, b) => a.id.localeCompare(b.id));
+}
+
+export function getMcpConnector(registry: RegistryData, id: string): ResolvedMcpConnector | null {
+  const matches = listMcpConnectors(registry).filter((entry) => entry.id === id);
+  return matches[0] ?? null;
+}
+
+export function listMcpCapabilities(
+  registry: RegistryData,
+  options: ListMcpConnectorOptions = {}
+): McpCapabilityIndexEntry[] {
+  const connectors = listMcpConnectors(registry, options);
+  const byCapability = new Map<string, McpCapabilityIndexEntry>();
+
+  for (const connector of connectors) {
+    for (const capability of connector.capabilities) {
+      const key = capability.trim().toLowerCase();
+      if (!key) {
+        continue;
+      }
+
+      const existing = byCapability.get(key);
+      const connectorRef = {
+        connector_id: connector.id,
+        catalog_entry_id: connector.catalog_entry_id,
+        transport: connector.transport,
+        official: connector.official
+      };
+      if (existing) {
+        existing.connectors.push(connectorRef);
+        continue;
+      }
+
+      byCapability.set(key, {
+        capability: key,
+        connectors: [connectorRef]
+      });
+    }
+  }
+
+  return Array.from(byCapability.values())
+    .map((entry) => ({
+      capability: entry.capability,
+      connectors: entry.connectors.sort((a, b) => a.connector_id.localeCompare(b.connector_id))
+    }))
+    .sort((a, b) => a.capability.localeCompare(b.capability));
+}
+
 async function readOverlayFile(
   overlayPath: string,
   issues: RegistryValidationIssue[]
@@ -578,6 +744,21 @@ function applyOverlay(
         continue;
       }
       registry.catalog[id] = normalized;
+    }
+  }
+
+  if (isPlainObject(overlay.mcp_connectors)) {
+    for (const [id, raw] of Object.entries(overlay.mcp_connectors)) {
+      const normalized = normalizeMcpConnector(id, raw);
+      if (!normalized) {
+        issues.push({
+          level: "warn",
+          path: `${sourcePath}:mcp_connectors.${id}`,
+          message: "Skipped invalid MCP connector entry."
+        });
+        continue;
+      }
+      registry.mcp_connectors[id] = normalized;
     }
   }
 
@@ -848,6 +1029,37 @@ function normalizeCatalogEntry(id: string, raw: unknown): CatalogEntry | null {
   }
 
   return entry;
+}
+
+function normalizeMcpConnector(id: string, raw: unknown): McpConnectorDefinition | null {
+  if (!isPlainObject(raw)) {
+    return null;
+  }
+
+  const name = asString(raw.name);
+  const description = asString(raw.description);
+  const catalogEntryId = asString(raw.catalog_entry_id);
+  if (!name || !description || !catalogEntryId) {
+    return null;
+  }
+
+  const capabilities = dedupeStrings(asStringArray(raw.capabilities).map((entry) => entry.toLowerCase()));
+  const healthChecks = dedupeStrings(
+    asStringArray(raw.health_checks)
+      .map((entry) => entry.toLowerCase())
+      .filter((entry) => entry === "definition" || entry === "connectivity")
+  ) as Array<"definition" | "connectivity">;
+
+  const official = asBoolean(raw.official);
+  return {
+    id,
+    name,
+    description,
+    catalog_entry_id: catalogEntryId,
+    official: official ?? false,
+    capabilities,
+    health_checks: healthChecks
+  };
 }
 
 function normalizeAlias(name: string, raw: unknown): AliasDefinition | null {

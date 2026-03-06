@@ -296,6 +296,7 @@ supercodex session save|load|reflect [--json]
 supercodex run <command> [--mode <name>] [--persona <name>] [--dry-run] [--explain] [--json]
 supercodex catalog list|search|show|sync
 supercodex mcp add|list|install|remove|test|doctor|guided|catalog
+supercodex mcp connectors|connector|capabilities [--json]
 ```
 
 For detailed examples, see [docs/COMMANDS.md](docs/COMMANDS.md).
@@ -319,6 +320,8 @@ Catalog install:
 supercodex mcp install filesystem
 supercodex mcp install --profile recommended
 supercodex mcp guided --goal docs --yes
+supercodex mcp connectors --official --json
+supercodex mcp capabilities --official --transport stdio --json
 ```
 
 Manual STDIO server:
@@ -377,6 +380,7 @@ enforce_in_ci = true
 - [Upgrade Guide](docs/UPGRADE.md)
 - [Command Reference](docs/COMMANDS.md)
 - [Project Templates](docs/PROJECT_TEMPLATES.md)
+- [MCP Connectors](docs/MCP_CONNECTORS.md)
 - [Command Chooser](docs/COMMAND_CHOOSER.md)
 - [SuperClaude Parity and Deltas](docs/SUPERCLAUDE_PARITY.md)
 - [Migration Guide (SuperClaude -> SuperCodex)](docs/MIGRATION_FROM_SUPERCLAUDE.md)

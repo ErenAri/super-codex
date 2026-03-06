@@ -2,6 +2,7 @@ import {
   BUILTIN_AGENT_DEFINITIONS,
   BUILTIN_CATALOG,
   BUILTIN_COMMANDS,
+  BUILTIN_MCP_CONNECTORS,
   BUILTIN_MODES,
   BUILTIN_PERSONAS
 } from "./registry";
@@ -45,6 +46,14 @@ export interface KernelToolCapabilityPrimitive {
   capabilities: string[];
 }
 
+export interface KernelConnectorPrimitive {
+  connector_id: string;
+  catalog_entry_id: string;
+  official: boolean;
+  capabilities: string[];
+  health_checks: string[];
+}
+
 export interface FrameworkKernelSnapshot {
   version: string;
   generated_at: string;
@@ -53,6 +62,7 @@ export interface FrameworkKernelSnapshot {
   mode_engine: KernelModePolicyPrimitive[];
   session_state: KernelSessionStatePrimitive;
   tool_layer: KernelToolCapabilityPrimitive[];
+  connector_registry: KernelConnectorPrimitive[];
 }
 
 const WRITE_COMMAND_PREFIXES = [
@@ -76,7 +86,7 @@ const WRITE_COMMAND_PREFIXES = [
 
 export function buildFrameworkKernelSnapshot(now: Date = new Date()): FrameworkKernelSnapshot {
   return {
-    version: "v2-kernel-0.1",
+    version: "v2-kernel-0.2",
     generated_at: now.toISOString(),
     command_registry: Object.values(BUILTIN_COMMANDS)
       .sort((a, b) => a.id.localeCompare(b.id))
@@ -130,6 +140,15 @@ export function buildFrameworkKernelSnapshot(now: Date = new Date()): FrameworkK
         tool_id: entry.id,
         transport: entry.transport,
         capabilities: entry.recommended_for ?? entry.tags ?? []
+      })),
+    connector_registry: Object.values(BUILTIN_MCP_CONNECTORS)
+      .sort((a, b) => a.id.localeCompare(b.id))
+      .map((connector) => ({
+        connector_id: connector.id,
+        catalog_entry_id: connector.catalog_entry_id,
+        official: connector.official,
+        capabilities: connector.capabilities,
+        health_checks: connector.health_checks
       }))
   };
 }

@@ -24,6 +24,7 @@ export function registerKernelCommands(program: Command): void {
         console.log(`Commands: ${snapshot.command_registry.length}`);
         console.log(`Agents: ${snapshot.agent_registry.length}`);
         console.log(`Modes: ${snapshot.mode_engine.length}`);
+        console.log(`Connectors: ${snapshot.connector_registry.length}`);
         console.log(`Personas: ${listKernelPersonaNames().join(", ")}`);
         console.log(`Tools: ${snapshot.tool_layer.map((tool) => tool.tool_id).join(", ")}`);
       })

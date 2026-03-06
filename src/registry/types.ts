@@ -5,6 +5,7 @@ export type PersonaName = string;
 export type CommandId = string;
 export type McpTransport = "stdio" | "http";
 export type McpSetupComplexity = "low" | "medium" | "high";
+export type McpConnectorHealthCheck = "definition" | "connectivity";
 export type AliasOutputMode = "normal" | "json";
 export type AliasRiskLevel = "low" | "medium" | "high";
 export type AliasStability = "stable" | "experimental";
@@ -51,6 +52,16 @@ export interface CatalogEntry {
   setup_complexity?: McpSetupComplexity;
   requires_keys?: string[];
   recommended_for?: string[];
+}
+
+export interface McpConnectorDefinition {
+  id: string;
+  name: string;
+  description: string;
+  catalog_entry_id: string;
+  official: boolean;
+  capabilities: string[];
+  health_checks: McpConnectorHealthCheck[];
 }
 
 export interface AliasDefinition {
@@ -113,6 +124,7 @@ export interface RegistryData {
   personas: Record<string, PersonaDefinition>;
   commands: Record<string, CommandDefinition>;
   catalog: Record<string, CatalogEntry>;
+  mcp_connectors: Record<string, McpConnectorDefinition>;
   aliases: Record<string, AliasDefinition>;
   alias_packs: Record<string, AliasPackDefinition>;
   agent_definitions: Record<string, AgentDefinition>;
@@ -131,6 +143,7 @@ export interface RegistryOverlayFile {
   personas?: Record<string, TomlTable>;
   commands?: Record<string, TomlTable>;
   catalog?: Record<string, TomlTable>;
+  mcp_connectors?: Record<string, TomlTable>;
   aliases?: Record<string, TomlTable>;
   alias_packs?: Record<string, TomlTable>;
   agent_definitions?: Record<string, TomlTable>;

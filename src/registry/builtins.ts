@@ -3,6 +3,7 @@ import type {
   CatalogEntry,
   CommandDefinition,
   FlagDefinition,
+  McpConnectorDefinition,
   ModeDefinition,
   PersonaDefinition,
   SkillDefinition
@@ -225,6 +226,9 @@ export const BUILTIN_COMMANDS: Record<string, CommandDefinition> = {
   "mcp.test": command("mcp.test", "Test MCP server definition"),
   "mcp.doctor": command("mcp.doctor", "Run MCP-specific diagnostics"),
   "mcp.guided": command("mcp.guided", "Guided MCP discovery and installation flow"),
+  "mcp.connectors": command("mcp.connectors", "List MCP connector contracts"),
+  "mcp.connector": command("mcp.connector", "Show one MCP connector contract"),
+  "mcp.capabilities": command("mcp.capabilities", "Discover MCP capabilities across connectors"),
   "mcp.catalog.list": command("mcp.catalog.list", "List MCP catalog entries"),
   "mcp.catalog.search": command("mcp.catalog.search", "Search MCP catalog entries"),
   "mcp.catalog.show": command("mcp.catalog.show", "Show MCP catalog entry"),
@@ -377,6 +381,45 @@ export const BUILTIN_CATALOG: Record<string, CatalogEntry> = {
     ux_score: 68,
     setup_complexity: "medium",
     recommended_for: ["custom-integrations", "internal-tools"]
+  }
+};
+
+export const BUILTIN_MCP_CONNECTORS: Record<string, McpConnectorDefinition> = {
+  "git-operations": {
+    id: "git-operations",
+    name: "Git operations",
+    description: "Repository operations workflow via GitHub MCP bridge.",
+    catalog_entry_id: "github",
+    official: true,
+    capabilities: ["git.operations", "pull-requests"],
+    health_checks: ["definition", "connectivity"]
+  },
+  "code-search": {
+    id: "code-search",
+    name: "Code search",
+    description: "Project and repository code search over local files.",
+    catalog_entry_id: "filesystem",
+    official: true,
+    capabilities: ["code.search", "file.navigation"],
+    health_checks: ["definition", "connectivity"]
+  },
+  "issue-tracker": {
+    id: "issue-tracker",
+    name: "Issue tracker",
+    description: "Issue and ticket workflows through GitHub MCP integration.",
+    catalog_entry_id: "github",
+    official: true,
+    capabilities: ["issue.tracker", "work-item.triage"],
+    health_checks: ["definition", "connectivity"]
+  },
+  "docs-retrieval": {
+    id: "docs-retrieval",
+    name: "Docs retrieval",
+    description: "Documentation and web content retrieval over MCP fetch.",
+    catalog_entry_id: "fetch",
+    official: true,
+    capabilities: ["docs.retrieval", "web.fetch"],
+    health_checks: ["definition", "connectivity"]
   }
 };
 

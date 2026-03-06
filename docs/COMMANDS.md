@@ -357,6 +357,10 @@ supercodex mcp test filesystem
 supercodex mcp test filesystem --plain
 supercodex mcp doctor
 supercodex mcp doctor --connectivity
+supercodex mcp connectors --official --json
+supercodex mcp connectors --official --health --connectivity --json
+supercodex mcp capabilities --official --transport stdio --json
+supercodex mcp connector docs-retrieval --json
 supercodex mcp guided --goal docs --plain
 supercodex mcp remove filesystem
 ```
