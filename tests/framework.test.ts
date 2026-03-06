@@ -1,6 +1,6 @@
 import os from "node:os";
 import path from "node:path";
-import { mkdtemp, readFile, rm } from "node:fs/promises";
+import { mkdtemp, readFile } from "node:fs/promises";
 import { afterEach, describe, expect, it } from "vitest";
 
 import { loadConfig } from "../src/config";
@@ -9,16 +9,12 @@ import { pathExists } from "../src/fs-utils";
 import { installMcpFromCatalog, setDefaultMode, unsetDefaultMode } from "../src/operations";
 import { getCodexPaths } from "../src/paths";
 import { BUILTIN_CATALOG } from "../src/registry";
+import { cleanupTrackedTempDirs } from "./helpers/temp-cleanup";
 
 const tmpDirs: string[] = [];
 
 afterEach(async () => {
-  while (tmpDirs.length > 0) {
-    const dir = tmpDirs.pop();
-    if (dir) {
-      await rm(dir, { recursive: true, force: true });
-    }
-  }
+  await cleanupTrackedTempDirs(tmpDirs);
 });
 
 describe("framework expansion", () => {

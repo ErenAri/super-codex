@@ -1,9 +1,10 @@
 import os from "node:os";
 import path from "node:path";
-import { mkdtemp, mkdir, readFile, rm, writeFile } from "node:fs/promises";
+import { mkdtemp, mkdir, readFile, writeFile } from "node:fs/promises";
 import { afterEach, describe, expect, it } from "vitest";
 
 import { runCli } from "../src/cli";
+import { cleanupTrackedTempDirs } from "./helpers/temp-cleanup";
 
 const UPDATE_GOLDEN = process.env.UPDATE_GOLDEN === "1";
 const GOLDEN_DIR = path.join(process.cwd(), "tests", "fixtures", "golden");
@@ -59,12 +60,7 @@ const CASES: GoldenCase[] = [
 ];
 
 afterEach(async () => {
-  while (tmpDirs.length > 0) {
-    const dir = tmpDirs.pop();
-    if (dir) {
-      await rm(dir, { recursive: true, force: true });
-    }
-  }
+  await cleanupTrackedTempDirs(tmpDirs);
 });
 
 describe("golden command outputs", { timeout: 120000 }, () => {

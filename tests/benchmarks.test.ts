@@ -1,6 +1,6 @@
 import os from "node:os";
 import path from "node:path";
-import { mkdtemp, mkdir, readFile, readdir, rm, writeFile } from "node:fs/promises";
+import { mkdtemp, mkdir, readFile, readdir, writeFile } from "node:fs/promises";
 import { afterEach, describe, expect, it } from "vitest";
 
 import { runBenchmarkHarness } from "../benchmarks/harness";
@@ -8,16 +8,12 @@ import { computeScorecard, validateThresholds } from "../benchmarks/scorecard";
 import { tuneThresholds } from "../benchmarks/tune-thresholds";
 import type { BenchmarkRunResult } from "../benchmarks/types";
 import { validateRunConfig, validateTask } from "../benchmarks/validate";
+import { cleanupTrackedTempDirs } from "./helpers/temp-cleanup";
 
 const tmpDirs: string[] = [];
 
 afterEach(async () => {
-  while (tmpDirs.length > 0) {
-    const dir = tmpDirs.pop();
-    if (dir) {
-      await rm(dir, { recursive: true, force: true });
-    }
-  }
+  await cleanupTrackedTempDirs(tmpDirs);
 });
 
 describe("benchmark modules", { timeout: 120000 }, () => {

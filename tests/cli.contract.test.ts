@@ -1,20 +1,16 @@
 import os from "node:os";
 import path from "node:path";
-import { mkdtemp, mkdir, rm, writeFile } from "node:fs/promises";
+import { mkdtemp, mkdir, writeFile } from "node:fs/promises";
 import { afterEach, describe, expect, it } from "vitest";
 
 import { runCli } from "../src/cli";
 import { BUILTIN_MODES } from "../src/registry/builtins";
+import { cleanupTrackedTempDirs } from "./helpers/temp-cleanup";
 
 const tmpDirs: string[] = [];
 
 afterEach(async () => {
-  while (tmpDirs.length > 0) {
-    const dir = tmpDirs.pop();
-    if (dir) {
-      await rm(dir, { recursive: true, force: true });
-    }
-  }
+  await cleanupTrackedTempDirs(tmpDirs);
 });
 
 describe("cli contract", { timeout: 120000 }, () => {
