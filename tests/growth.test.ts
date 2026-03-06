@@ -5,6 +5,7 @@ import { afterEach, describe, expect, it } from "vitest";
 
 import {
   buildGrowthFunnelReport,
+  evaluateGrowthGate,
   loadGrowthExperiments,
   renderGrowthDashboardMarkdown
 } from "../src/services/growth";
@@ -85,6 +86,59 @@ describe("growth services", () => {
     expect(report.completed).toBe(1);
     expect(report.winners).toBe(1);
     expect(report.experiments[0].id).toBe("exp-a");
+  });
+
+  it("evaluates growth gate readiness from experiments file", async () => {
+    const root = await createTempDir();
+    const experimentsPath = path.join(root, "experiments.json");
+    await writeFile(
+      experimentsPath,
+      JSON.stringify({
+        experiments: [
+          {
+            id: "exp-a",
+            title: "A",
+            status: "running",
+            hypothesis: "h",
+            primary_metric: "m",
+            start_date: "2026-03-01"
+          },
+          {
+            id: "exp-b",
+            title: "B",
+            status: "completed",
+            hypothesis: "h",
+            primary_metric: "m",
+            start_date: "2026-02-01",
+            end_date: "2026-02-14",
+            result_summary: "neutral"
+          },
+          {
+            id: "exp-c",
+            title: "C",
+            status: "won",
+            hypothesis: "h",
+            primary_metric: "m",
+            start_date: "2026-02-15",
+            end_date: "2026-02-25",
+            result_summary: "positive"
+          }
+        ]
+      }, null, 2),
+      "utf8"
+    );
+
+    const report = await evaluateGrowthGate({
+      projectRoot: root,
+      experimentsFile: experimentsPath,
+      strict: true
+    });
+
+    expect(report.ok).toBe(true);
+    expect(report.experiments.total).toBe(3);
+    expect(report.experiments.winners).toBe(1);
+    expect(report.experiments.active_cycle).toBe(3);
+    expect(report.checks.every((check) => check.status === "pass")).toBe(true);
   });
 
   it("renders dashboard markdown with funnel and experiment sections", () => {

@@ -8,6 +8,7 @@ import { setTelemetrySettings } from "../operations";
 import { getCodexPaths } from "../paths";
 import {
   buildGrowthFunnelReport,
+  evaluateGrowthGate,
   loadGrowthExperiments,
   renderGrowthDashboardMarkdown
 } from "../services/growth";
@@ -78,6 +79,48 @@ export function registerGrowthCommands(program: Command): void {
         console.log(`Events: ${events.length}`);
         for (const event of events) {
           console.log(`- ${event.at} ${event.event} actor=${event.actor_id}`);
+        }
+      })
+    );
+
+  growth
+    .command("gate")
+    .description("Evaluate growth release gate readiness (experiments and winner coverage)")
+    .option("--file <path>", "Experiments file path (default: growth/experiments.json)")
+    .option("--min-experiments <number>", "Minimum experiments required", "3")
+    .option("--strict", "Treat warnings as failures")
+    .option("--json", "Output JSON")
+    .action((options) =>
+      runCommand(async () => {
+        const report = await evaluateGrowthGate({
+          projectRoot: process.cwd(),
+          experimentsFile: options.file as string | undefined,
+          minExperiments: parsePositiveIntOption(options.minExperiments, "--min-experiments"),
+          strict: Boolean(options.strict)
+        });
+
+        if (Boolean(options.json)) {
+          console.log(JSON.stringify(report, null, 2));
+        } else {
+          console.log(`Growth gate status: ${report.ok ? "pass" : "fail"}`);
+          console.log(`Strict mode: ${report.strict ? "on" : "off"}`);
+          console.log(`Score: ${report.score}`);
+          console.log(`Experiments source: ${report.experiments.source_path}`);
+          console.log(
+            `Counts: total=${report.experiments.total}, active=${report.experiments.active_cycle}, ` +
+              `running=${report.experiments.running}, completed=${report.experiments.completed}, ` +
+              `winners=${report.experiments.winners}`
+          );
+          for (const check of report.checks) {
+            console.log(`- [${check.status}] ${check.id} - ${check.title}`);
+            for (const detail of check.details) {
+              console.log(`  - ${detail}`);
+            }
+          }
+        }
+
+        if (!report.ok) {
+          process.exitCode = 1;
         }
       })
     );

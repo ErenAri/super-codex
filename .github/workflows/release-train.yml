@@ -149,6 +149,9 @@ jobs:
         run: npm test
       - name: Verify consistency (strict gate)
         run: npm run verify:consistency
+      - name: Growth gate (stable lane)
+        if: github.event.inputs.release_channel == 'stable'
+        run: node dist/cli.js growth gate --strict --json
 
   release_notes:
     if: github.event_name == 'workflow_dispatch'

@@ -67,6 +67,37 @@ export interface GrowthExperimentReport {
   experiments: GrowthExperiment[];
 }
 
+export type GrowthGateStatus = "pass" | "warn" | "fail";
+
+export interface GrowthGateCheck {
+  id: string;
+  title: string;
+  status: GrowthGateStatus;
+  details: string[];
+}
+
+export interface GrowthGateOptions {
+  projectRoot?: string;
+  experimentsFile?: string;
+  minExperiments?: number;
+  strict?: boolean;
+}
+
+export interface GrowthGateReport {
+  ok: boolean;
+  strict: boolean;
+  score: number;
+  checks: GrowthGateCheck[];
+  experiments: {
+    source_path: string;
+    total: number;
+    running: number;
+    completed: number;
+    winners: number;
+    active_cycle: number;
+  };
+}
+
 export async function buildGrowthFunnelReport(options: GrowthFunnelOptions = {}): Promise<GrowthFunnelReport> {
   const window = resolveGrowthWindow(options);
   const events = await readMetricEvents({
@@ -259,6 +290,87 @@ export async function loadGrowthExperiments(
   };
 }
 
+export async function evaluateGrowthGate(options: GrowthGateOptions = {}): Promise<GrowthGateReport> {
+  const strict = Boolean(options.strict);
+  const minExperiments = normalizeMinimum(options.minExperiments);
+  const experiments = await loadGrowthExperiments(
+    options.projectRoot ?? process.cwd(),
+    options.experimentsFile
+  );
+  const activeCycle = experiments.experiments.filter((entry) => entry.status !== "planned").length;
+
+  const checks: GrowthGateCheck[] = [];
+
+  checks.push({
+    id: "experiments.minimum",
+    title: "Minimum experiment count",
+    status: experiments.total >= minExperiments ? "pass" : "fail",
+    details: [
+      `required_minimum=${minExperiments}`,
+      `actual_total=${experiments.total}`,
+      experiments.total >= minExperiments
+        ? "Experiment count satisfies growth gate."
+        : "Add more conversion experiments before stable release."
+    ]
+  });
+
+  checks.push({
+    id: "experiments.active_cycle",
+    title: "Experiments run during v2 cycle",
+    status: activeCycle >= minExperiments ? "pass" : "warn",
+    details: [
+      `required_active=${minExperiments}`,
+      `active_cycle=${activeCycle}`,
+      activeCycle >= minExperiments
+        ? "Sufficient non-planned experiments are active/completed."
+        : "Mark additional experiments as running/completed/won/lost."
+    ]
+  });
+
+  checks.push({
+    id: "experiments.winner",
+    title: "Winning experiment merged",
+    status: experiments.winners >= 1 ? "pass" : "fail",
+    details: [
+      `winners=${experiments.winners}`,
+      experiments.winners >= 1
+        ? "At least one winning experiment is recorded."
+        : "Record and merge at least one winning experiment before release."
+    ]
+  });
+
+  const winnerWithoutSummary = experiments.experiments.filter(
+    (entry) => entry.status === "won" && !entry.result_summary
+  );
+  checks.push({
+    id: "experiments.winner_summary",
+    title: "Winning experiment documentation",
+    status: winnerWithoutSummary.length === 0 ? "pass" : "warn",
+    details: winnerWithoutSummary.length === 0
+      ? ["All winning experiments include result summaries."]
+      : winnerWithoutSummary.map((entry) => `${entry.id}: missing result_summary`)
+  });
+
+  const hasFail = checks.some((check) => check.status === "fail");
+  const hasWarn = checks.some((check) => check.status === "warn");
+  const ok = !hasFail && (!strict || !hasWarn);
+
+  return {
+    ok,
+    strict,
+    score: computeGrowthGateScore(checks),
+    checks,
+    experiments: {
+      source_path: experiments.source_path,
+      total: experiments.total,
+      running: experiments.running,
+      completed: experiments.completed,
+      winners: experiments.winners,
+      active_cycle: activeCycle
+    }
+  };
+}
+
 export function renderGrowthDashboardMarkdown(
   funnel: GrowthFunnelReport,
   experiments: GrowthExperimentReport
@@ -344,6 +456,31 @@ function resolveGrowthWindow(options: GrowthFunnelOptions): { from: string; to: 
   ) + 1);
 
   return { from, to, days };
+}
+
+function normalizeMinimum(value: number | undefined): number {
+  if (typeof value !== "number" || Number.isNaN(value) || !Number.isFinite(value)) {
+    return 3;
+  }
+  const normalized = Math.trunc(value);
+  if (normalized < 1) {
+    throw new Error("min_experiments must be >= 1.");
+  }
+  return normalized;
+}
+
+function computeGrowthGateScore(checks: GrowthGateCheck[]): number {
+  let score = 100;
+  for (const check of checks) {
+    if (check.status === "fail") {
+      score -= 25;
+      continue;
+    }
+    if (check.status === "warn") {
+      score -= 8;
+    }
+  }
+  return Math.max(0, score);
 }
 
 function normalizeWindowDays(value: number | undefined): number {

@@ -35,6 +35,8 @@ Mid-week:
   - `supercodex growth experiments --json`
 
 Friday:
+- Validate growth release gate:
+  - `supercodex growth gate --strict --json`
 - Promote to `latest` if stable.
 - Post release notes with one copy-paste usage snippet.
 

@@ -466,6 +466,13 @@ describe("cli contract", { timeout: 120000 }, () => {
     expect(typeof experimentPayload.total).toBe("number");
     expect(experimentPayload.total).toBeGreaterThanOrEqual(3);
 
+    const gate = await runCapturedCli(["growth", "gate", "--strict", "--json"]);
+    expect(gate.code).toBe(0);
+    const gatePayload = JSON.parse(gate.stdout);
+    expect(gatePayload.ok).toBe(true);
+    expect(Array.isArray(gatePayload.checks)).toBe(true);
+    expect(gatePayload.checks.some((check: { id: string }) => check.id === "experiments.winner")).toBe(true);
+
     const dashboard = await runCapturedCli([
       "growth",
       "dashboard",

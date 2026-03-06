@@ -2,15 +2,15 @@
   "schema_version": 1,
   "supercodex_version": "1.6.2",
   "hashes": {
-    "registry_commands": "95df1b0a7375c4f59f14a80ea945ab475eaeb8d732ecafa6d5b6bfced71cae92",
+    "registry_commands": "f3aef74cc0064affa0590751b5b55131feca5b02f0965675f725d3734c524682",
     "alias_map": "4c7f325478225df2d5eacbab2c3fac9872dccb393b8e016635fe9e9eec9bd425",
     "workflow_content": "f57fd286df2457dca88fe8e65eaff4d8a8f96d435c445c5c7e3e22a28eac6c8a",
     "wrapper_content": "c7e3321c6a790058c9ede253165a874ccb22327cd2636169dd167db6b9678759",
-    "metadata_doc": "825c778e1a641aafd477fd0d7ea7131a16a273b1e295369daa5531270025f147",
+    "metadata_doc": "cecc40422aa2e7f8fe89d2413f28a046e1d7a560077524f231810722c5fdd59c",
     "policy_report": "77046d73a82d23ad2b226f25ce626596366622214173eae794337cf0bb596a1d"
   },
   "counts": {
-    "commands": 95,
+    "commands": 96,
     "aliases": 50,
     "workflows": 33,
     "wrappers": 50

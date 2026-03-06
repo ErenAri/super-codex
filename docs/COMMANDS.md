@@ -200,6 +200,7 @@ supercodex growth events --limit 50 --json
 supercodex growth export --output growth/telemetry-events.json --json
 supercodex growth experiments --json
 supercodex growth dashboard --output docs/GROWTH_DASHBOARD.md --json
+supercodex growth gate --strict --json
 supercodex growth telemetry disable --json
 ```
 

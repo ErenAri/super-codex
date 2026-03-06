@@ -63,6 +63,7 @@ Workflow: `.github/workflows/release-train.yml`
   - `npm run build`
   - `npm test`
   - `npm run verify:consistency`
+  - stable lane only: `node dist/cli.js growth gate --strict --json`
 - Tag push from release-train triggers publish workflow, which publishes to:
   - `next` for prerelease tags
   - `latest` for stable tags

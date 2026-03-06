@@ -1,0 +1,12 @@
+{
+  "id": "SC2-010",
+  "type": "feat",
+  "summary": "Added growth release-gate checks with strict winner/experiment validation.",
+  "details": "Introduced `growth gate` command and wired stable release train preflight to enforce growth experiment readiness.",
+  "commands": [
+    "supercodex growth gate --strict --json"
+  ],
+  "issues": [
+    "SC2-010"
+  ]
+}
