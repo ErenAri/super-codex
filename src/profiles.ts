@@ -109,3 +109,39 @@ export function getFrameworkProfile(profileId: string): FrameworkProfile | null 
   }
   return BUILTIN_FRAMEWORK_PROFILES[normalized] ?? null;
 }
+
+export function getCoreProfileStepByAlias(aliasName: string): WorkflowLoopStep | null {
+  const normalizedAlias = aliasName.trim().toLowerCase();
+  if (!normalizedAlias) {
+    return null;
+  }
+
+  return (
+    CORE_PROFILE.workflow_loop.find((step) =>
+      step.suggested_aliases.some((alias) => alias.toLowerCase() === normalizedAlias)
+    ) ?? null
+  );
+}
+
+export function getCoreProfileStepByCommand(commandId: string): WorkflowLoopStep | null {
+  const normalized = commandId.trim().toLowerCase();
+  if (!normalized) {
+    return null;
+  }
+
+  return (
+    CORE_PROFILE.workflow_loop.find((step) => step.primary_command.toLowerCase() === normalized) ?? null
+  );
+}
+
+export function getCoreProfileNextCommands(limit = 10): string[] {
+  const commands = CORE_PROFILE.workflow_loop.map((step) => {
+    const preferredAlias = step.suggested_aliases[0];
+    if (preferredAlias) {
+      return `supercodex ${preferredAlias}`;
+    }
+    return `supercodex ${step.primary_command.replace(/\./g, " ")}`;
+  });
+
+  return commands.slice(0, Math.max(1, Math.trunc(limit)));
+}

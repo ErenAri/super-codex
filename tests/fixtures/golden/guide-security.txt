@@ -1,0 +1,28 @@
+# Guide recommendation
+[info] Intent: security review for auth flow
+[info] Context: terminal
+[info] Primary alias: /supercodex:security
+[info] Target: run.review
+[info] Why: Keyword overlap detected.
+[info] Default mode: safe
+[info] Default persona: reviewer
+[info] Core loop step: security_scan
+[info] Core objective: Perform security-focused review.
+[info] Use one of these forms:
+- supercodex security
+- supercodex /supercodex:security
+- /prompts:supercodex-review
+-> Best next command now: supercodex security
+-> Then continue with:
+-> supercodex review
+-> supercodex perf
+-> Core loop commands:
+-> supercodex spec
+-> supercodex implement
+-> supercodex test
+-> supercodex review
+-> supercodex refactor
+-> supercodex document
+[info] Alternatives:
+[info] /supercodex:review -> run.review (score: 36)
+[info] /supercodex:perf -> run.review (score: 30)

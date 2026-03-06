@@ -1,0 +1,67 @@
+{
+  "intent": "security review for auth flow",
+  "context": "terminal",
+  "primary": {
+    "alias": "security",
+    "target": "run.review",
+    "description": "Security-focused review workflow",
+    "mode": "safe",
+    "persona": "reviewer",
+    "score": 42,
+    "reasons": [
+      "Keyword overlap detected."
+    ],
+    "terminalCommand": "supercodex security",
+    "slashCommand": "supercodex /supercodex:security",
+    "promptCommand": "/prompts:supercodex-review"
+  },
+  "core_profile": {
+    "id": "core",
+    "matched_step": "security_scan",
+    "matched_objective": "Perform security-focused review.",
+    "next_commands": [
+      "supercodex spec",
+      "supercodex implement",
+      "supercodex test",
+      "supercodex review",
+      "supercodex refactor",
+      "supercodex document",
+      "supercodex security",
+      "supercodex document",
+      "supercodex save",
+      "supercodex doctor"
+    ]
+  },
+  "alternatives": [
+    {
+      "alias": "review",
+      "target": "run.review",
+      "description": "Code review workflow",
+      "score": 36,
+      "reasons": [
+        "Keyword overlap detected."
+      ],
+      "terminalCommand": "supercodex review",
+      "slashCommand": "supercodex /supercodex:review",
+      "promptCommand": "/prompts:supercodex-review"
+    },
+    {
+      "alias": "perf",
+      "target": "run.review",
+      "description": "Performance-focused review workflow",
+      "mode": "deep",
+      "persona": "reviewer",
+      "score": 30,
+      "reasons": [
+        "Keyword overlap detected."
+      ],
+      "terminalCommand": "supercodex perf",
+      "slashCommand": "supercodex /supercodex:perf",
+      "promptCommand": "/prompts:supercodex-review"
+    }
+  ],
+  "next_commands": [
+    "supercodex review",
+    "supercodex perf"
+  ]
+}

@@ -1,6 +1,7 @@
 import type { Command } from "commander";
 
 import { line, kv, bullet, resolveOutputStyle } from "./presenter";
+import { getCoreProfileNextCommands, getCoreProfileStepByAlias } from "../profiles";
 import { runCommand } from "./utils";
 import { listAliases, loadRegistry, recommendAliases } from "../registry";
 
@@ -65,11 +66,19 @@ export function registerGuideCommands(program: Command): void {
         const nextCommands = suggestions
           .slice(1, 3)
           .map((suggestion) => suggestion.terminalCommand);
+        const coreStep = getCoreProfileStepByAlias(primary.alias);
+        const coreNextCommands = getCoreProfileNextCommands(10);
 
         const payload = {
           intent: intent as string,
           context: resolvedContext,
           primary,
+          core_profile: {
+            id: "core",
+            matched_step: coreStep ? coreStep.step_id : null,
+            matched_objective: coreStep ? coreStep.objective : null,
+            next_commands: coreNextCommands
+          },
           alternatives: suggestions.slice(1),
           next_commands: nextCommands
         };
@@ -91,6 +100,10 @@ export function registerGuideCommands(program: Command): void {
         if (primary.persona) {
           console.log(kv("Default persona", primary.persona, style));
         }
+        if (coreStep) {
+          console.log(kv("Core loop step", coreStep.step_id, style));
+          console.log(kv("Core objective", coreStep.objective, style));
+        }
 
         console.log(line("info", "Use one of these forms:", style));
         console.log(bullet(primary.terminalCommand, style, "step"));
@@ -105,6 +118,11 @@ export function registerGuideCommands(program: Command): void {
           for (const command of nextCommands) {
             console.log(bullet(command, style, "next"));
           }
+        }
+
+        console.log(line("next", "Core loop commands:", style));
+        for (const command of coreNextCommands.slice(0, 6)) {
+          console.log(bullet(command, style, "next"));
         }
 
         if (suggestions.length > 1) {

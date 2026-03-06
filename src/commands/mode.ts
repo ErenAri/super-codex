@@ -1,6 +1,7 @@
 import type { Command } from "commander";
 
 import { loadContentFile, contentFileExists } from "../content-loader";
+import { getFrameworkProfile } from "../profiles";
 import { setDefaultMode, unsetDefaultMode } from "../services/runtime-settings";
 import { loadRegistry } from "../registry";
 import { runCommand } from "./utils";
@@ -12,12 +13,30 @@ export function registerModeCommands(program: Command): void {
     .command("list")
     .description("List modes")
     .option("--codex-home <path>", "Override Codex home directory")
+    .option("--profile <id>", "Filter modes by framework profile")
+    .option("--json", "Output JSON")
     .action((options) =>
       runCommand(async () => {
         const registry = await loadRegistry({ codexHome: options.codexHome as string | undefined });
-        for (const modeName of Object.keys(registry.registry.modes).sort()) {
-          const definition = registry.registry.modes[modeName];
-          console.log(`${modeName} - ${definition.description}`);
+        let modeNames = Object.keys(registry.registry.modes).sort();
+        const profileId = options.profile as string | undefined;
+        if (profileId) {
+          const profile = getFrameworkProfile(profileId);
+          if (!profile) {
+            throw new Error(`Profile "${profileId}" not found.`);
+          }
+          const allowed = new Set(profile.core_modes.map((entry) => entry.toLowerCase()));
+          modeNames = modeNames.filter((modeName) => allowed.has(modeName.toLowerCase()));
+        }
+
+        const modes = modeNames.map((modeName) => registry.registry.modes[modeName]);
+        if (Boolean(options.json)) {
+          console.log(JSON.stringify(modes, null, 2));
+          return;
+        }
+
+        for (const definition of modes) {
+          console.log(`${definition.name} - ${definition.description}`);
         }
       })
     );

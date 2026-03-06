@@ -1,0 +1,6 @@
+Workflow: research
+Prompt: <CODEX_HOME>/prompts/supercodex/commands/research.md
+Mode: balanced (builtin)
+Persona: architect (builtin)
+Reasoning budget: medium
+Mode overlay: supercodex/plan.md

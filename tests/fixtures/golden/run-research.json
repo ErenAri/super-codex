@@ -1,0 +1,14 @@
+{
+  "workflow": "research",
+  "promptPath": "<CODEX_HOME>/prompts/supercodex/commands/research.md",
+  "mode": "balanced",
+  "persona": "architect",
+  "reasoningBudget": "medium",
+  "requestedMcpServers": [],
+  "modeSource": "builtin",
+  "personaSource": "builtin",
+  "overlays": {
+    "modePrompt": "supercodex/plan.md"
+  },
+  "dryRun": false
+}

@@ -1,6 +1,7 @@
 import type { Command } from "commander";
 
 import { contentFileExists, loadContentFile } from "../content-loader";
+import { getFrameworkProfile } from "../profiles";
 import { loadRegistry } from "../registry";
 import { runCommand } from "./utils";
 
@@ -11,13 +12,23 @@ export function registerAgentCommands(program: Command): void {
     .command("list")
     .description("List agent definitions")
     .option("--codex-home <path>", "Override Codex home directory")
+    .option("--profile <id>", "Filter agents by framework profile")
     .option("--json", "Output JSON")
     .action((options) =>
       runCommand(async () => {
         const registry = await loadRegistry({ codexHome: options.codexHome as string | undefined });
-        const agents = Object.values(registry.registry.agent_definitions).sort((a, b) =>
+        let agents = Object.values(registry.registry.agent_definitions).sort((a, b) =>
           a.name.localeCompare(b.name)
         );
+        const profileId = options.profile as string | undefined;
+        if (profileId) {
+          const profile = getFrameworkProfile(profileId);
+          if (!profile) {
+            throw new Error(`Profile "${profileId}" not found.`);
+          }
+          const allowed = new Set(profile.core_agents.map((entry) => entry.toLowerCase()));
+          agents = agents.filter((entry) => allowed.has(entry.name.toLowerCase()));
+        }
 
         if (Boolean(options.json)) {
           console.log(JSON.stringify(agents, null, 2));

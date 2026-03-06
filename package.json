@@ -14,6 +14,8 @@
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "test": "vitest run",
+    "test:golden": "vitest run tests/golden-outputs.test.ts",
+    "test:golden:update": "tsx scripts/update-golden.ts",
     "dev": "tsx src/cli.ts",
     "prepublishOnly": "npm run build && npm test && npm run verify:consistency",
     "verify:consistency": "node dist/cli.js verify --strict",

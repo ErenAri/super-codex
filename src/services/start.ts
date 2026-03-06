@@ -1,5 +1,6 @@
 import { getSupercodexStatus, installSupercodex } from "../operations";
 import { pathExists } from "../fs-utils";
+import { getCoreProfileNextCommands } from "../profiles";
 import { loadRegistry } from "../registry";
 import { resolveWorkflow } from "../runtime";
 import { tryRecordMetricEvent } from "./metrics";
@@ -163,6 +164,8 @@ function buildNextCommands(status: StartCheckStatus, checks: StartCheckResult[])
     commands.push("supercodex validate --strict", "supercodex doctor --strict");
   }
 
+  commands.push("supercodex profile show core");
+  commands.push(...getCoreProfileNextCommands(10));
   commands.push(
     "supercodex guide <intent>",
     "supercodex /supercodex:research <topic>",
@@ -199,7 +202,7 @@ function resolveRecommendedAction(status: StartCheckStatus, checks: StartCheckRe
   if (status === "warn") {
     return "supercodex doctor --strict";
   }
-  return "supercodex guide <intent>";
+  return "supercodex spec <goal>";
 }
 
 function computeReadinessScore(checks: StartCheckResult[]): number {

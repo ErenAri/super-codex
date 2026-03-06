@@ -1,0 +1,6 @@
+Workflow: implement
+Prompt: <CODEX_HOME>/prompts/supercodex/commands/implement.md
+Mode: balanced (builtin)
+Persona: architect (builtin)
+Reasoning budget: medium
+Mode overlay: supercodex/plan.md

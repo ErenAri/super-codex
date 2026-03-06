@@ -64,6 +64,40 @@ describe("cli contract", { timeout: 120000 }, () => {
     expect(payload.core_modes).toHaveLength(4);
   });
 
+  it("agent list --profile core --json returns the core 6 agents", async () => {
+    const codexHome = await createCodexHome();
+    const result = await runCapturedCli(["agent", "list", "--profile", "core", "--json", "--codex-home", codexHome]);
+
+    expect(result.code).toBe(0);
+    const payload = JSON.parse(result.stdout);
+    expect(Array.isArray(payload)).toBe(true);
+    expect(payload).toHaveLength(6);
+    expect(payload.map((entry: { name: string }) => entry.name)).toEqual([
+      "backend-architect",
+      "pm",
+      "qa-engineer",
+      "security-engineer",
+      "system-architect",
+      "tech-writer"
+    ]);
+  });
+
+  it("mode list --profile core --json returns the core 4 policy modes", async () => {
+    const codexHome = await createCodexHome();
+    const result = await runCapturedCli(["mode", "list", "--profile", "core", "--json", "--codex-home", codexHome]);
+
+    expect(result.code).toBe(0);
+    const payload = JSON.parse(result.stdout);
+    expect(Array.isArray(payload)).toBe(true);
+    expect(payload).toHaveLength(4);
+    expect(payload.map((entry: { name: string }) => entry.name)).toEqual([
+      "deep",
+      "deep-research",
+      "fast",
+      "safe"
+    ]);
+  });
+
   it("kernel export --json returns primitive registries", async () => {
     const codexHome = await createCodexHome();
     const result = await runCapturedCli(["kernel", "export", "--json", "--codex-home", codexHome]);
@@ -205,6 +239,9 @@ describe("cli contract", { timeout: 120000 }, () => {
     expect(initialPayload.checks.some((check: { id: string }) => check.id === "workflow.smoke")).toBe(true);
     expect(typeof initialPayload.readiness_score).toBe("number");
     expect(typeof initialPayload.recommended_action).toBe("string");
+    expect(Array.isArray(initialPayload.next_commands)).toBe(true);
+    expect(initialPayload.next_commands).toContain("supercodex profile show core");
+    expect(initialPayload.next_commands).toContain("supercodex spec");
 
     const repaired = await runCapturedCli(["start", "--yes", "--json", "--codex-home", codexHome]);
     expect(repaired.code).toBe(0);
@@ -445,6 +482,10 @@ describe("cli contract", { timeout: 120000 }, () => {
     expect(typeof payload.primary.alias).toBe("string");
     expect(payload.primary.terminalCommand).toContain("supercodex");
     expect(payload.primary.promptCommand).toContain("/prompts:supercodex-");
+    expect(payload.core_profile).toBeTruthy();
+    expect(payload.core_profile.id).toBe("core");
+    expect(Array.isArray(payload.core_profile.next_commands)).toBe(true);
+    expect(payload.core_profile.next_commands).toContain("supercodex spec");
   });
 
   it("fails fast when alias points to unknown command target", async () => {
