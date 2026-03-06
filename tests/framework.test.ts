@@ -4,7 +4,7 @@ import { mkdtemp, readFile, rm } from "node:fs/promises";
 import { afterEach, describe, expect, it } from "vitest";
 
 import { loadConfig } from "../src/config";
-import { applyDoctorFixes, runDoctorChecks } from "../src/doctor";
+import { applyDoctorFixes, buildDoctorFixPlan, runDoctorChecks } from "../src/doctor";
 import { pathExists } from "../src/fs-utils";
 import { installMcpFromCatalog, setDefaultMode, unsetDefaultMode } from "../src/operations";
 import { getCodexPaths } from "../src/paths";
@@ -72,6 +72,11 @@ describe("framework expansion", () => {
       codexHome
     });
     expect(doctorBefore.report.issues.some((issue) => issue.id === "config.missing")).toBe(true);
+    const plan = buildDoctorFixPlan(doctorBefore.report, {
+      codexHome
+    });
+    expect(plan.some((step) => step.id === "install.patch")).toBe(true);
+    expect(plan.some((step) => typeof step.rollback_hint === "string" && step.rollback_hint.length > 0)).toBe(true);
 
     const fixResult = await applyDoctorFixes(doctorBefore.report, {
       codexHome,

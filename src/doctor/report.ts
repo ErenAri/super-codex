@@ -10,7 +10,11 @@ export function formatDoctorReport(report: DoctorReport, style: OutputStyle = "p
     const actions = report.recommended_actions?.length
       ? `\n${line("next", `Next: ${report.recommended_actions.join(" | ")}`, style)}`
       : "";
-    return `${line("ok", "Doctor: no issues found.", style)}${mcpSummary}${actions}`;
+    const details = `${line("ok", "Doctor: no issues found.", style)}${mcpSummary}${actions}`;
+    if (report.fix_plan && report.fix_plan.length > 0) {
+      return `${details}\n${formatDoctorFixPlan(report, style)}`;
+    }
+    return details;
   }
 
   const lines: string[] = [];
@@ -47,9 +51,47 @@ export function formatDoctorReport(report: DoctorReport, style: OutputStyle = "p
       lines.push(line("next", action, style));
     }
   }
+  if (report.fix_plan && report.fix_plan.length > 0) {
+    lines.push(line("info", "Fix plan:", style));
+    lines.push(...formatDoctorFixPlanLines(report.fix_plan, style));
+  }
+  if (report.fix_result) {
+    lines.push(line("info", "Fix result:", style));
+    if (report.fix_result.applied.length > 0) {
+      lines.push(line("ok", `Applied: ${report.fix_result.applied.join(", ")}`, style));
+    } else {
+      lines.push(line("info", "Applied: none", style));
+    }
+    if (report.fix_result.skipped.length > 0) {
+      lines.push(line("warn", `Skipped: ${report.fix_result.skipped.join(" | ")}`, style));
+    }
+  }
   return lines.join("\n");
 }
 
 export function formatDoctorReportJson(report: DoctorReport): string {
   return JSON.stringify(report, null, 2);
+}
+
+function formatDoctorFixPlan(report: DoctorReport, style: OutputStyle): string {
+  if (!report.fix_plan || report.fix_plan.length === 0) {
+    return "";
+  }
+  return [line("info", "Fix plan:", style), ...formatDoctorFixPlanLines(report.fix_plan, style)].join("\n");
+}
+
+function formatDoctorFixPlanLines(plan: DoctorReport["fix_plan"], style: OutputStyle): string[] {
+  if (!plan) {
+    return [];
+  }
+  const lines: string[] = [];
+  for (const step of plan) {
+    lines.push(line("next", `${step.id} - ${step.title}`, style));
+    lines.push(line("info", `  applies_to: ${step.applies_to.join(", ")}`, style));
+    lines.push(line("info", `  preview: ${step.command_preview}`, style));
+    lines.push(line("info", `  before: ${step.before}`, style));
+    lines.push(line("info", `  after: ${step.after}`, style));
+    lines.push(line("warn", `  rollback: ${step.rollback_hint}`, style));
+  }
+  return lines;
 }

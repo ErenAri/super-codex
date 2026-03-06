@@ -10,10 +10,14 @@ import { isPlainObject, pathExists } from "../fs-utils";
 import type { OperationOptions } from "../operations";
 import { getCodexPaths } from "../paths";
 import { installPromptPack } from "../prompts";
-import type { DoctorFixResult, DoctorReport } from "./types";
+import type { DoctorFixPlanStep, DoctorFixResult, DoctorReport } from "./types";
 
 export interface ApplyDoctorFixOptions extends OperationOptions {
   doctorStatus?: "ok" | "issues";
+}
+
+interface DoctorFixPlanContext {
+  codexHome?: string;
 }
 
 export async function applyDoctorFixes(
@@ -88,6 +92,76 @@ export async function applyDoctorFixes(
   }
 
   return { applied, skipped };
+}
+
+export function buildDoctorFixPlan(
+  report: DoctorReport,
+  context: DoctorFixPlanContext = {}
+): DoctorFixPlanStep[] {
+  const issueIds = new Set(report.issues.filter((issue) => issue.fixable).map((issue) => issue.id));
+  const steps: DoctorFixPlanStep[] = [];
+  const paths = getCodexPaths(context.codexHome);
+
+  const installIssues = report.issues
+    .filter((issue) => issue.id === "config.missing" || issue.id === "supercodex.missing")
+    .map((issue) => issue.id);
+  if (installIssues.length > 0) {
+    steps.push({
+      id: "install.patch",
+      title: "Create/repair managed SuperCodex config",
+      applies_to: installIssues,
+      command_preview: "supercodex doctor --fix",
+      before: "config.toml is missing or [supercodex] section is not present.",
+      after: "Config includes managed [supercodex] runtime section and prompt pack path.",
+      rollback_hint:
+        `Restore latest backup under ${paths.home}/supercodex/backups or run supercodex uninstall to remove managed entries.`
+    });
+  }
+
+  const promptIssues = report.issues.filter((issue) => issue.id.startsWith("prompts.")).map((issue) => issue.id);
+  if (promptIssues.length > 0) {
+    steps.push({
+      id: "prompts",
+      title: "Reinstall missing prompt files",
+      applies_to: promptIssues,
+      command_preview: "supercodex doctor --fix",
+      before: "One or more bundled prompts are missing from the installed prompt pack.",
+      after: "Prompt pack is synchronized with bundled command/workflow prompt files.",
+      rollback_hint: "Reinstall a previous package version, then restore prompts from your backup directory if needed."
+    });
+  }
+
+  const runtimeIssues = report.issues
+    .filter((issue) => issue.id === "runtime.default_mode.invalid" || issue.id === "runtime.default_persona.invalid")
+    .map((issue) => issue.id);
+  if (runtimeIssues.length > 0) {
+    steps.push({
+      id: "runtime.defaults",
+      title: "Clear invalid runtime defaults",
+      applies_to: runtimeIssues,
+      command_preview: "supercodex doctor --fix",
+      before: "Runtime defaults reference mode/persona entries that do not exist in registry.",
+      after: "Invalid defaults are removed so runtime falls back to builtin mode/persona.",
+      rollback_hint:
+        "Reapply desired defaults with supercodex mode set <mode> and supercodex persona set <persona>."
+    });
+  }
+
+  const coveredIssueIds = new Set(steps.flatMap((step) => step.applies_to));
+  const manualFollowup = Array.from(issueIds).filter((issueId) => !coveredIssueIds.has(issueId)).sort();
+  if (manualFollowup.length > 0) {
+    steps.push({
+      id: "manual.followup",
+      title: "Manual remediation required",
+      applies_to: manualFollowup,
+      command_preview: "supercodex doctor --strict",
+      before: "Doctor detected fixable issues without an automated fixer mapping.",
+      after: "Run strict doctor and follow listed remediation commands.",
+      rollback_hint: "No automated rollback needed because no write action is planned."
+    });
+  }
+
+  return steps;
 }
 
 function clearInvalidRuntimeDefaults(

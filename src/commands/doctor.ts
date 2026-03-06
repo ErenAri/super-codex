@@ -1,11 +1,18 @@
 import type { Command } from "commander";
 
-import { applyDoctorFixes, formatDoctorReport, formatDoctorReportJson, runDoctorChecks, runMcpDoctorChecks } from "../doctor";
+import {
+  applyDoctorFixes,
+  buildDoctorFixPlan,
+  formatDoctorReport,
+  formatDoctorReportJson,
+  runDoctorChecks,
+  runMcpDoctorChecks
+} from "../doctor";
 import { loadConfig } from "../config";
 import { updateDoctorState } from "../services/runtime-settings";
 import { getCodexPaths } from "../paths";
 import { pathExists } from "../fs-utils";
-import { resolveOutputStyle } from "./presenter";
+import { line, resolveOutputStyle } from "./presenter";
 import { runCommand } from "./utils";
 
 export function registerDoctorCommands(program: Command): void {
@@ -16,6 +23,7 @@ export function registerDoctorCommands(program: Command): void {
     .option("--json", "Output JSON")
     .option("--plain", "Disable decorated output")
     .option("--strict", "Fail on warnings too")
+    .option("--explain", "Include actionable fix plan details and rollback hints")
     .option("--fix", "Apply safe deterministic fixes")
     .option("--mcp-connectivity", "Probe MCP command/url connectivity checks")
     .action((options) =>
@@ -29,9 +37,24 @@ export function registerDoctorCommands(program: Command): void {
           projectRoot: process.cwd(),
           mcpConnectivity: Boolean(options.mcpConnectivity)
         });
+        const explain = Boolean(options.explain) || Boolean(options.fix);
+        if (explain) {
+          result.report.fix_plan = buildDoctorFixPlan(result.report, {
+            codexHome: options.codexHome as string | undefined
+          });
+        }
 
         if (Boolean(options.fix)) {
-          await applyDoctorFixes(result.report, {
+          if (!Boolean(options.json) && result.report.fix_plan && result.report.fix_plan.length > 0) {
+            console.log(line("info", "Fix preview (before apply):", style));
+            for (const step of result.report.fix_plan) {
+              console.log(line("next", `${step.id} - ${step.title}`, style));
+              console.log(line("info", `  before: ${step.before}`, style));
+              console.log(line("info", `  after: ${step.after}`, style));
+              console.log(line("warn", `  rollback: ${step.rollback_hint}`, style));
+            }
+          }
+          result.report.fix_result = await applyDoctorFixes(result.report, {
             codexHome: options.codexHome as string | undefined,
             doctorStatus: result.report.ok ? "ok" : "issues"
           });

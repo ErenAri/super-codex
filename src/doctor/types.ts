@@ -39,12 +39,24 @@ export interface DoctorSummary {
   fixable: number;
 }
 
+export interface DoctorFixPlanStep {
+  id: string;
+  title: string;
+  applies_to: string[];
+  command_preview: string;
+  before: string;
+  after: string;
+  rollback_hint: string;
+}
+
 export interface DoctorReport {
   ok: boolean;
   issues: DoctorIssue[];
   summary?: DoctorSummary;
   recommended_actions?: string[];
   mcp_health?: McpHealthReport;
+  fix_plan?: DoctorFixPlanStep[];
+  fix_result?: DoctorFixResult;
 }
 
 export interface DoctorFixResult {

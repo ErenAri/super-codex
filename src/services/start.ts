@@ -17,14 +17,21 @@ export interface StartFlowResult {
   status: StartCheckStatus;
   readiness_score: number;
   recommended_action: string;
+  best_next_command: string;
   checks: StartCheckResult[];
   next_commands: string[];
+  quick_start: {
+    context: "terminal" | "chat";
+    terminal_command: string;
+    prompt_command: string;
+  };
   repaired: boolean;
 }
 
 export interface StartFlowOptions {
   codexHome?: string;
   autoInstall?: boolean;
+  preferredContext?: "terminal" | "chat";
   projectRoot?: string;
 }
 
@@ -88,12 +95,20 @@ export async function runStartFlow(options: StartFlowOptions = {}): Promise<Star
   }
 
   const overall = deriveOverallStatus(checks);
+  const quickStartContext = options.preferredContext ?? "terminal";
+  const recommendedAction = resolveRecommendedAction(overall, checks);
   return {
     status: overall,
     readiness_score: computeReadinessScore(checks),
-    recommended_action: resolveRecommendedAction(overall, checks),
+    recommended_action: recommendedAction,
+    best_next_command: resolveBestNextCommand(overall, checks, quickStartContext),
     checks,
     next_commands: buildNextCommands(overall, checks),
+    quick_start: {
+      context: quickStartContext,
+      terminal_command: "supercodex spec <goal>",
+      prompt_command: "/prompts:supercodex-research <topic>"
+    },
     repaired
   };
 }
@@ -203,6 +218,31 @@ function resolveRecommendedAction(status: StartCheckStatus, checks: StartCheckRe
     return "supercodex doctor --strict";
   }
   return "supercodex spec <goal>";
+}
+
+function resolveBestNextCommand(
+  status: StartCheckStatus,
+  checks: StartCheckResult[],
+  context: "terminal" | "chat"
+): string {
+  const checkById = new Map(checks.map((check) => [check.id, check]));
+  if (checkById.get("workflow.smoke")?.status === "error") {
+    return "supercodex validate --strict";
+  }
+  const installRelated = [
+    "supercodex.section",
+    "prompt.pack",
+    "interactive.wrappers"
+  ].some((id) => checkById.get(id)?.status !== "ok");
+  if (installRelated) {
+    return "supercodex start --yes";
+  }
+  if (status === "warn") {
+    return "supercodex doctor --strict";
+  }
+  return context === "chat"
+    ? "/prompts:supercodex-research <topic>"
+    : "supercodex spec <goal>";
 }
 
 function computeReadinessScore(checks: StartCheckResult[]): number {

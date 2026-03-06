@@ -230,6 +230,24 @@ describe("cli contract", { timeout: 120000 }, () => {
     expect(strict.code).toBe(1);
   });
 
+  it("doctor --explain includes actionable fix plan and doctor --fix reports applied actions", async () => {
+    const codexHome = await createCodexHome();
+
+    const explained = await runCapturedCli(["doctor", "--json", "--explain", "--codex-home", codexHome]);
+    expect(explained.code).toBe(0);
+    const explainPayload = JSON.parse(explained.stdout);
+    expect(Array.isArray(explainPayload.fix_plan)).toBe(true);
+    expect(explainPayload.fix_plan.length).toBeGreaterThan(0);
+    expect(typeof explainPayload.fix_plan[0].rollback_hint).toBe("string");
+
+    const fixed = await runCapturedCli(["doctor", "--json", "--fix", "--codex-home", codexHome]);
+    expect(fixed.code).toBe(0);
+    const fixedPayload = JSON.parse(fixed.stdout);
+    expect(Array.isArray(fixedPayload.fix_plan)).toBe(true);
+    expect(fixedPayload.fix_result).toBeTruthy();
+    expect(Array.isArray(fixedPayload.fix_result.applied)).toBe(true);
+  });
+
   it("start --json reports checks and start --yes repairs first-run state", async () => {
     const codexHome = await createCodexHome();
 
@@ -239,9 +257,15 @@ describe("cli contract", { timeout: 120000 }, () => {
     expect(initialPayload.checks.some((check: { id: string }) => check.id === "workflow.smoke")).toBe(true);
     expect(typeof initialPayload.readiness_score).toBe("number");
     expect(typeof initialPayload.recommended_action).toBe("string");
+    expect(typeof initialPayload.best_next_command).toBe("string");
+    expect(initialPayload.quick_start).toBeTruthy();
+    expect(initialPayload.quick_start.context).toBe("terminal");
     expect(Array.isArray(initialPayload.next_commands)).toBe(true);
     expect(initialPayload.next_commands).toContain("supercodex profile show core");
     expect(initialPayload.next_commands).toContain("supercodex spec");
+    expect(initialPayload.wizard).toBeTruthy();
+    expect(initialPayload.wizard.enabled).toBe(false);
+    expect(initialPayload.wizard.interactive).toBe(false);
 
     const repaired = await runCapturedCli(["start", "--yes", "--json", "--codex-home", codexHome]);
     expect(repaired.code).toBe(0);
@@ -252,6 +276,18 @@ describe("cli contract", { timeout: 120000 }, () => {
     const plain = await runCapturedCli(["start", "--yes", "--plain", "--codex-home", codexHome]);
     expect(plain.code).toBe(0);
     expect(hasEmoji(plain.stdout)).toBe(false);
+  });
+
+  it("start --wizard --json falls back safely in non-interactive test context", async () => {
+    const codexHome = await createCodexHome();
+    const result = await runCapturedCli(["start", "--wizard", "--json", "--codex-home", codexHome]);
+
+    expect(result.code).toBe(0);
+    const payload = JSON.parse(result.stdout);
+    expect(payload.wizard).toBeTruthy();
+    expect(payload.wizard.enabled).toBe(true);
+    expect(payload.wizard.interactive).toBe(false);
+    expect(payload.quick_start.context).toBe("terminal");
   });
 
   it("catalog show --json returns entry payload", async () => {
