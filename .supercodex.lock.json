@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "supercodex_version": "1.6.2",
+  "supercodex_version": "2.0.0-beta.2",
   "hashes": {
     "registry_commands": "f3aef74cc0064affa0590751b5b55131feca5b02f0965675f725d3734c524682",
     "alias_map": "4c7f325478225df2d5eacbab2c3fac9872dccb393b8e016635fe9e9eec9bd425",
