@@ -24,7 +24,16 @@ This returns:
 - slash form (`supercodex /supercodex:<alias>`)
 - Codex interactive form (`/prompts:supercodex-<workflow>`)
 
-## 3) Run a Workflow
+## 3) Apply a Project Preset (Optional, Recommended for Teams)
+
+```bash
+supercodex init --list-presets
+supercodex init --preset api-service --refresh-lock
+```
+
+This creates additive project-local defaults and writes lock output for reproducible team setup.
+
+## 4) Run a Workflow
 
 Terminal:
 
@@ -38,7 +47,7 @@ Codex interactive chat:
 /prompts:supercodex-research map migration risks
 ```
 
-## 4) Save Context for Later
+## 5) Save Context for Later
 
 ```bash
 supercodex session save "mapped migration risks" --next "draft rollout plan"
@@ -46,7 +55,7 @@ supercodex session load --recent 5
 supercodex session reflect
 ```
 
-## 5) Troubleshoot Quickly
+## 6) Troubleshoot Quickly
 
 ```bash
 supercodex doctor --strict

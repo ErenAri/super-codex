@@ -38,6 +38,9 @@ V2-focused releases add stricter command contracts and safety policy behavior.
    - `npm run bench:smoke`
    - `npm run bench:smoke:score`
    - `npm run bench:smoke:check`
+4. If you use repo-local presets, list and re-apply with lock output:
+   - `supercodex init --list-presets`
+   - `supercodex init --preset <id> --refresh-lock`
 
 ## Troubleshooting Upgrade Issues
 

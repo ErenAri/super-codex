@@ -44,6 +44,7 @@ This file is a fast map for new sessions and contributors to locate core impleme
 
 - [`docs/QUICKSTART.md`](docs/QUICKSTART.md): first-run path.
 - [`docs/COMMANDS.md`](docs/COMMANDS.md): command reference and JSON contracts.
+- [`docs/PROJECT_TEMPLATES.md`](docs/PROJECT_TEMPLATES.md): project template presets, command packs, and policy defaults.
 - [`docs/UPGRADE.md`](docs/UPGRADE.md): version upgrade checklist.
 - [`docs/RELEASE_CHANNELS.md`](docs/RELEASE_CHANNELS.md): release channel strategy.
 - [`BACKLOG_V2.md`](BACKLOG_V2.md): active V2 delivery plan.

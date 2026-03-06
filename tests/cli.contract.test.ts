@@ -1,9 +1,11 @@
 import os from "node:os";
 import path from "node:path";
-import { mkdtemp, mkdir, writeFile } from "node:fs/promises";
+import { mkdtemp, mkdir, readFile, writeFile } from "node:fs/promises";
 import { afterEach, describe, expect, it } from "vitest";
 
 import { runCli } from "../src/cli";
+import { loadConfig } from "../src/config";
+import { pathExists } from "../src/fs-utils";
 import { BUILTIN_MODES } from "../src/registry/builtins";
 import { cleanupTrackedTempDirs } from "./helpers/temp-cleanup";
 
@@ -297,6 +299,89 @@ describe("cli contract", { timeout: 120000 }, () => {
     expect(payload.wizard.enabled).toBe(true);
     expect(payload.wizard.interactive).toBe(false);
     expect(payload.quick_start.context).toBe("terminal");
+  });
+
+  it("init --list-presets --json returns the project template preset catalog", async () => {
+    const codexHome = await createCodexHome();
+    const projectRoot = path.dirname(codexHome);
+    const result = await runCapturedCli(["init", "--list-presets", "--json", "--dir", projectRoot]);
+
+    expect(result.code).toBe(0);
+    const payload = JSON.parse(result.stdout);
+    expect(payload.default_preset).toBe("library");
+    expect(Array.isArray(payload.presets)).toBe(true);
+    expect(payload.presets).toHaveLength(4);
+    expect(payload.presets.map((preset: { id: string }) => preset.id)).toEqual([
+      "api-service",
+      "library",
+      "monorepo",
+      "web-app"
+    ]);
+  });
+
+  it("init --preset applies additive project defaults and optional lock refresh", async () => {
+    const codexHome = await createCodexHome();
+    const projectRoot = path.dirname(codexHome);
+    const projectCodexDir = path.join(projectRoot, ".codex");
+    const projectConfigPath = path.join(projectCodexDir, "config.toml");
+    const projectReadmePath = path.join(projectCodexDir, "README.md");
+    const lockPath = path.join(projectRoot, ".supercodex.lock.json");
+
+    await mkdir(projectCodexDir, { recursive: true });
+    await writeFile(
+      projectConfigPath,
+      [
+        "[supercodex.runtime]",
+        "default_mode = \"fast\"",
+        ""
+      ].join("\n"),
+      "utf8"
+    );
+
+    const result = await runCapturedCli([
+      "init",
+      "--dir",
+      projectRoot,
+      "--preset",
+      "api-service",
+      "--refresh-lock",
+      "--lock-path",
+      lockPath,
+      "--json"
+    ]);
+
+    expect(result.code).toBe(0);
+    const payload = JSON.parse(result.stdout);
+    expect(payload.project_root).toBe(projectRoot);
+    expect(payload.preset.id).toBe("api-service");
+    expect(payload.lock.refreshed).toBe(true);
+    expect(payload.lock.path).toBe(lockPath);
+    expect(payload.skipped_paths).toContain("supercodex.runtime.default_mode");
+    expect(await pathExists(lockPath)).toBe(true);
+
+    const config = await loadConfig(projectConfigPath);
+    const supercodex = config.supercodex as Record<string, unknown>;
+    const project = supercodex.project as Record<string, unknown>;
+    const runtime = supercodex.runtime as Record<string, unknown>;
+
+    expect(project.preset).toBe("api-service");
+    expect(Array.isArray(project.command_packs)).toBe(true);
+    expect(runtime.default_mode).toBe("fast");
+
+    const readme = await readFile(projectReadmePath, "utf8");
+    expect(readme).toContain("Preset id: `api-service`");
+    expect(readme).toContain("`quality-review`");
+  });
+
+  it("init fails with actionable message on unknown preset id", async () => {
+    const codexHome = await createCodexHome();
+    const projectRoot = path.dirname(codexHome);
+    const result = await runCapturedCli(["init", "--dir", projectRoot, "--preset", "unknown-preset"]);
+
+    expect(result.code).toBe(1);
+    expect(result.stderr).toContain("Unknown project preset");
+    expect(result.stderr).toContain("api-service");
+    expect(result.stderr).toContain("monorepo");
   });
 
   it("catalog show --json returns entry payload", async () => {

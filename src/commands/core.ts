@@ -7,7 +7,13 @@ import {
   listPromptPackStatus,
   uninstallSupercodex
 } from "../operations";
-import { initProjectTemplate } from "../project-init";
+import {
+  DEFAULT_PROJECT_TEMPLATE_PRESET,
+  getProjectTemplatePreset,
+  initProjectTemplate,
+  listProjectTemplatePresets
+} from "../project-init";
+import { writeLock } from "../services/lockfile";
 import { getShellBridgeStatus } from "../shell-bridge";
 import { bullet, kv, line, resolveOutputStyle } from "./presenter";
 import { runCommand, printWarnings } from "./utils";
@@ -246,13 +252,84 @@ export function registerCoreCommands(program: Command): void {
 
   program
     .command("init")
-    .description("Create a project-scoped .codex template in the current directory")
+    .description("Create a project-scoped .codex template preset in the current directory")
     .option("--dir <path>", "Project directory (default: cwd)")
+    .option(
+      "--preset <id>",
+      `Project preset id (api-service|web-app|library|monorepo). Default: ${DEFAULT_PROJECT_TEMPLATE_PRESET}`
+    )
+    .option("--list-presets", "List available project presets")
+    .option("--refresh-lock", "Refresh lock file after preset init for version-controlled team output")
+    .option("--lock-path <path>", "Override lock file path when used with --refresh-lock")
+    .option("--json", "Output JSON")
     .action((options) =>
       runCommand(async () => {
-        const projectRoot = options.dir ? path.resolve(options.dir as string) : process.cwd();
-        const result = await initProjectTemplate(projectRoot);
+        if (Boolean(options.listPresets)) {
+          const presets = listProjectTemplatePresets();
+          const payload = {
+            default_preset: DEFAULT_PROJECT_TEMPLATE_PRESET,
+            presets
+          };
 
+          if (Boolean(options.json)) {
+            console.log(JSON.stringify(payload, null, 2));
+            return;
+          }
+
+          console.log(`Default preset: ${DEFAULT_PROJECT_TEMPLATE_PRESET}`);
+          for (const preset of presets) {
+            console.log(`${preset.id} - ${preset.title}`);
+            console.log(`  ${preset.description}`);
+            console.log(`  command packs: ${preset.command_packs.join(", ")}`);
+            console.log(
+              `  policy defaults: mode=${preset.policy_defaults.default_mode}, ` +
+                `persona=${preset.policy_defaults.default_persona}, ` +
+                `strictness=${preset.policy_defaults.strictness}`
+            );
+          }
+          return;
+        }
+
+        const projectRoot = options.dir ? path.resolve(options.dir as string) : process.cwd();
+        const result = await initProjectTemplate(projectRoot, {
+          preset: options.preset as string | undefined
+        });
+
+        const selectedPreset = getProjectTemplatePreset(options.preset as string | undefined);
+        const lockResult = Boolean(options.refreshLock)
+          ? await writeLock({
+            projectRoot,
+            pathOverride: options.lockPath as string | undefined
+          })
+          : null;
+
+        const payload = {
+          project_root: result.projectRoot,
+          preset: result.preset,
+          config_path: result.configPath,
+          readme_path: result.readmePath,
+          config_changed: result.configChanged,
+          readme_changed: result.readmeChanged,
+          skipped_paths: result.skippedPaths,
+          lock: {
+            refreshed: lockResult !== null,
+            path: lockResult?.path ?? null
+          }
+        };
+
+        if (Boolean(options.json)) {
+          console.log(JSON.stringify(payload, null, 2));
+          return;
+        }
+
+        console.log(`Project root: ${result.projectRoot}`);
+        console.log(`Preset: ${selectedPreset.id} (${selectedPreset.title})`);
+        console.log(`Command packs: ${selectedPreset.command_packs.join(", ")}`);
+        console.log(
+          `Policy defaults: mode=${selectedPreset.policy_defaults.default_mode}, ` +
+            `persona=${selectedPreset.policy_defaults.default_persona}, ` +
+            `strictness=${selectedPreset.policy_defaults.strictness}`
+        );
         console.log(`Project config: ${result.configPath}`);
         console.log(result.configChanged ? "Project config initialized." : "Project config already compatible.");
         console.log(`Project README: ${result.readmePath}`);
@@ -260,6 +337,12 @@ export function registerCoreCommands(program: Command): void {
 
         if (result.skippedPaths.length > 0) {
           console.log(`Preserved existing values: ${result.skippedPaths.join(", ")}`);
+        }
+
+        if (lockResult) {
+          console.log(`Lock refreshed: ${lockResult.path}`);
+        } else {
+          console.log("Tip: run \"supercodex lock refresh\" and commit lock output for team reproducibility.");
         }
       })
     );

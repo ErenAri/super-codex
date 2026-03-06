@@ -96,7 +96,7 @@ supercodex guide "debug flaky tests" --json
 }
 ```
 
-Use this contract for CLI/GUI integrations that need deterministic “what to run next” guidance.
+Use this contract for CLI/GUI integrations that need deterministic "what to run next" guidance.
 
 ## Command Workflows
 
@@ -367,19 +367,25 @@ sc /supercodex:security "threat model this change"
 sc analyze "review auth module"
 ```
 
-## Project Template
+## Project Templates and Team Presets
 
-Create additive project-local files:
+Create additive project-local files from reusable presets:
 
 ```bash
-supercodex init
-supercodex init --dir ./my-project
+supercodex init --list-presets
+supercodex init --preset api-service --dir ./my-project
+supercodex init --preset monorepo --refresh-lock
+supercodex init --preset library --json
 ```
 
 Generated files:
 
 - `.codex/config.toml`
 - `.codex/README.md`
+- optional lock output when `--refresh-lock` is used (default: `.supercodex.lock.json`)
+
+For the full preset matrix (expected command packs and policy defaults), see
+[`PROJECT_TEMPLATES.md`](PROJECT_TEMPLATES.md).
 
 ## Useful Flags
 
@@ -392,3 +398,7 @@ Generated files:
 - `--context auto|terminal|chat`: output recommendation style for `guide`
 - `--dry-run`: preview workflow resolution without downstream side effects (`run` commands)
 - `--explain`: show reasoning behind workflow/mode/persona resolution (`run` commands)
+- `--preset <id>`: choose project preset for `init` (`api-service|web-app|library|monorepo`)
+- `--list-presets`: print available project presets (`init`)
+- `--refresh-lock`: refresh lock file immediately after preset init
+- `--lock-path <path>`: override lock path for `init --refresh-lock` and lock commands

@@ -283,7 +283,7 @@ supercodex policy validate [--strict] [--json]
 supercodex lock refresh|status [--json]
 supercodex doctor [--fix] [--strict] [--json] [--plain] [--mcp-connectivity]
 supercodex start [--yes] [--json] [--plain]
-supercodex init [--dir <path>]
+supercodex init [--dir <path>] [--preset <id>] [--list-presets] [--refresh-lock] [--json]
 supercodex guide <intent> [--pack <name>] [--context auto|terminal|chat] [--json]
 supercodex aliases list|show|packs|search|recommend
 supercodex mode list|show|set|unset
@@ -298,6 +298,17 @@ supercodex mcp add|list|install|remove|test|doctor|guided|catalog
 ```
 
 For detailed examples, see [docs/COMMANDS.md](docs/COMMANDS.md).
+
+## Project Templates and Team Presets :card_file_box:
+
+```bash
+supercodex init --list-presets
+supercodex init --preset api-service --dir ./my-project
+supercodex init --preset monorepo --refresh-lock
+```
+
+Preset output is additive/non-destructive and can be version-controlled with lock refresh.
+Preset matrix (command packs + policy defaults): [docs/PROJECT_TEMPLATES.md](docs/PROJECT_TEMPLATES.md)
 
 ## MCP Quick Examples :electric_plug:
 
@@ -364,6 +375,7 @@ enforce_in_ci = true
 - [Quickstart Guide](docs/QUICKSTART.md)
 - [Upgrade Guide](docs/UPGRADE.md)
 - [Command Reference](docs/COMMANDS.md)
+- [Project Templates](docs/PROJECT_TEMPLATES.md)
 - [Command Chooser](docs/COMMAND_CHOOSER.md)
 - [Session Memory Guide](docs/SESSION_MEMORY.md)
 - [Release Channels](docs/RELEASE_CHANNELS.md)
