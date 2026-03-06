@@ -1,0 +1,13 @@
+{
+  "id": "sc2-012-lock-eol",
+  "type": "fix",
+  "summary": "Normalized line endings in policy and lock hashing to keep strict verify stable across Windows and Linux.",
+  "details": "Prevents false metadata/lock drift when checkouts use CRLF on Windows runners.",
+  "commands": [
+    "npm run verify:consistency",
+    "supercodex lock refresh"
+  ],
+  "issues": [
+    "SC2-012"
+  ]
+}

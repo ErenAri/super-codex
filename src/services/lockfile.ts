@@ -282,8 +282,26 @@ function computeLockDifferences(current: SupercodexLock, expected: SupercodexLoc
 }
 
 function hashValue(value: unknown): string {
-  const serialized = typeof value === "string" ? value : JSON.stringify(value);
+  const normalized = normalizeHashInput(value);
+  const serialized = typeof normalized === "string" ? normalized : JSON.stringify(normalized);
   return createHash("sha256").update(serialized, "utf8").digest("hex");
+}
+
+function normalizeHashInput(value: unknown): unknown {
+  if (typeof value === "string") {
+    return normalizeLineEndings(value);
+  }
+  if (Array.isArray(value)) {
+    return value.map((entry) => normalizeHashInput(entry));
+  }
+  if (isPlainObject(value)) {
+    const normalized: Record<string, unknown> = {};
+    for (const [key, entry] of Object.entries(value)) {
+      normalized[key] = normalizeHashInput(entry);
+    }
+    return normalized;
+  }
+  return value;
 }
 
 async function loadSupercodexConfig(codexHome?: string): Promise<TomlTable> {
@@ -326,4 +344,8 @@ async function readOptionalUtf8(filePath: string): Promise<string> {
     return "";
   }
   return readFile(filePath, "utf8");
+}
+
+function normalizeLineEndings(value: string): string {
+  return value.replace(/\r\n?/g, "\n");
 }

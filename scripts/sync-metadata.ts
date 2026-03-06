@@ -28,10 +28,10 @@ async function main(): Promise<void> {
 
   const metadataExpected = renderMetadataDoc(snapshot);
   const metadataCurrent = await readIfExists(metadataDocPath);
+  const readmeDirty = normalizeLineEndings(readmeCurrent) !== normalizeLineEndings(readmeExpected);
+  const metadataDirty = normalizeLineEndings(metadataCurrent) !== normalizeLineEndings(metadataExpected);
 
   if (mode === "check") {
-    const readmeDirty = readmeCurrent !== readmeExpected;
-    const metadataDirty = metadataCurrent !== metadataExpected;
     if (readmeDirty || metadataDirty) {
       const changed: string[] = [];
       if (readmeDirty) changed.push("README.md");
@@ -44,11 +44,11 @@ async function main(): Promise<void> {
     return;
   }
 
-  if (readmeCurrent !== readmeExpected) {
+  if (readmeDirty) {
     await writeFile(readmePath, readmeExpected, "utf8");
     console.log("Updated README.md metadata block.");
   }
-  if (metadataCurrent !== metadataExpected) {
+  if (metadataDirty) {
     await writeFile(metadataDocPath, metadataExpected, "utf8");
     console.log("Updated docs/METADATA.md.");
   }
@@ -70,6 +70,10 @@ async function readIfExists(filePath: string): Promise<string> {
   } catch {
     return "";
   }
+}
+
+function normalizeLineEndings(value: string): string {
+  return value.replace(/\r\n?/g, "\n");
 }
 
 void main().catch((error) => {

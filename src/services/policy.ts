@@ -231,7 +231,7 @@ async function evaluateMetadataPolicy(projectRoot: string): Promise<PolicyCheck>
     });
   } else {
     const current = await readFile(metadataPath, "utf8");
-    if (current !== expectedMetadata) {
+    if (normalizeLineEndings(current) !== normalizeLineEndings(expectedMetadata)) {
       issues.push({
         level: "error",
         message: "docs/METADATA.md is out of sync. Run `npm run metadata:sync`."
@@ -243,7 +243,7 @@ async function evaluateMetadataPolicy(projectRoot: string): Promise<PolicyCheck>
   if (await pathExists(readmePath)) {
     const current = await readFile(readmePath, "utf8");
     const expected = upsertMetadataReadmeBlock(current, renderMetadataReadmeBlock(snapshot));
-    if (current !== expected) {
+    if (normalizeLineEndings(current) !== normalizeLineEndings(expected)) {
       issues.push({
         level: "warn",
         message: "README metadata snapshot block is out of sync."
@@ -322,4 +322,8 @@ function computePolicyScore(checks: PolicyCheck[]): number {
     }
   }
   return Math.max(0, score);
+}
+
+function normalizeLineEndings(value: string): string {
+  return value.replace(/\r\n?/g, "\n");
 }
