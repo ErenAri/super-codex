@@ -60,5 +60,26 @@ jobs:
             echo "value=latest" >> "$GITHUB_OUTPUT"
           fi
 
+      - name: Resolve expected package version
+        id: expected_version
+        shell: bash
+        run: |
+          if [[ "${GITHUB_REF_TYPE:-}" == "tag" ]]; then
+            version="${GITHUB_REF_NAME#v}"
+          else
+            version=$(node -p "require('./package.json').version")
+          fi
+          echo "value=$version" >> "$GITHUB_OUTPUT"
+
       - name: Publish package
         run: npm publish --access public --provenance --tag "${{ steps.dist_tag.outputs.value }}"
+
+      - name: Verify published dist-tag and version
+        run: |
+          npm run release:publish:verify -- \
+            --package supercodex \
+            --version "${{ steps.expected_version.outputs.value }}" \
+            --dist-tag "${{ steps.dist_tag.outputs.value }}" \
+            --retries 12 \
+            --interval-ms 10000 \
+            --json

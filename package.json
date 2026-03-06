@@ -36,7 +36,8 @@
     "growth:funnel": "node dist/cli.js growth funnel --json",
     "growth:dashboard": "node dist/cli.js growth dashboard --output docs/GROWTH_DASHBOARD.md --json",
     "release:notes": "tsx scripts/generate-release-notes.ts",
-    "release:notes:check": "tsx scripts/generate-release-notes.ts --check"
+    "release:notes:check": "tsx scripts/generate-release-notes.ts --check",
+    "release:publish:verify": "tsx scripts/verify-npm-publish.ts"
   },
   "keywords": [
     "codex",

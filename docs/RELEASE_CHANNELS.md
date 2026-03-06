@@ -36,8 +36,8 @@ npm publish --access public --tag next
 Move a version to another tag:
 
 ```bash
-npm dist-tag add supercodex@1.6.0 latest
-npm dist-tag add supercodex@1.6.0 next
+npm dist-tag add supercodex@2.0.0 latest
+npm dist-tag add supercodex@2.0.0-beta.2 next
 ```
 
 Inspect tags:
@@ -91,6 +91,12 @@ Check notes are current:
 
 ```bash
 npm run release:notes:check -- --version 2.0.0-beta.2
+```
+
+Verify published package version and dist-tag:
+
+```bash
+npm run release:publish:verify -- --version 2.0.0-beta.2 --dist-tag next
 ```
 
 Fragment format reference: `changelog/fragments/README.md`
