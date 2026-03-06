@@ -439,6 +439,7 @@ Run evaluation harness and scorecards:
 ```bash
 npm run bench
 npm run bench:score
+npm run bench:diff
 npm run bench:check
 npm run bench:tune-thresholds
 npm run bench:tune-thresholds:last5
@@ -450,3 +451,5 @@ Artifacts:
 - `benchmarks/results/<run_id>/results.json`
 - `benchmarks/results/<run_id>/scorecard.json`
 - `benchmarks/results/latest.md`
+- `benchmarks/results/latest-diff.json`
+- `benchmarks/results/latest-diff.md`

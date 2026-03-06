@@ -101,7 +101,11 @@ Fragment format reference: `changelog/fragments/README.md`
 - Smoke gate commands:
   - `npm run bench:smoke`
   - `npm run bench:smoke:score`
+  - `npm run bench:smoke:diff`
   - `npm run bench:smoke:check`
+- Diff artifacts produced in CI:
+  - `benchmarks/results/latest-diff.json`
+  - `benchmarks/results/latest-diff.md`
 
 ## Release Checklist
 

@@ -1,0 +1,13 @@
+{
+  "id": "SC2-003",
+  "type": "feat",
+  "summary": "Added benchmark scorecard diff generation and CI artifact upload for smoke and scheduled benchmark runs.",
+  "details": "CI now publishes latest-diff JSON/Markdown artifacts and benchmark tooling can compare current scorecards against baseline runs.",
+  "commands": [
+    "npm run bench:diff",
+    "npm run bench:smoke:diff"
+  ],
+  "issues": [
+    "SC2-003"
+  ]
+}

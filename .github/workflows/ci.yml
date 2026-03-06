@@ -69,6 +69,8 @@ jobs:
         run: npm run bench
       - name: Compute benchmark score
         run: npm run bench:score
+      - name: Compute benchmark scorecard diff
+        run: npm run bench:diff
       - name: Upload benchmark artifacts
         if: always()
         uses: actions/upload-artifact@v4
@@ -76,8 +78,10 @@ jobs:
           name: benchmark-results-${{ matrix.os }}-node${{ matrix.node }}
           path: |
             benchmarks/results/latest.md
+            benchmarks/results/latest-diff.md
             benchmarks/results/latest-run.json
             benchmarks/results/latest-scorecard.json
+            benchmarks/results/latest-diff.json
             benchmarks/results/*/results.json
             benchmarks/results/*/scorecard.json
 
@@ -101,6 +105,8 @@ jobs:
         run: npm run bench:smoke
       - name: Compute benchmark smoke score
         run: npm run bench:smoke:score
+      - name: Compute benchmark smoke scorecard diff
+        run: npm run bench:smoke:diff
       - name: Enforce benchmark smoke thresholds
         run: npm run bench:smoke:check
       - name: Benchmark smoke failure guidance
@@ -121,7 +127,9 @@ jobs:
           name: benchmark-smoke-results
           path: |
             benchmarks/results/latest.md
+            benchmarks/results/latest-diff.md
             benchmarks/results/latest-run.json
             benchmarks/results/latest-scorecard.json
+            benchmarks/results/latest-diff.json
             benchmarks/results/*/results.json
             benchmarks/results/*/scorecard.json

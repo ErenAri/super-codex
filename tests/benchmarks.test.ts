@@ -4,9 +4,10 @@ import { mkdtemp, mkdir, readFile, readdir, writeFile } from "node:fs/promises";
 import { afterEach, describe, expect, it } from "vitest";
 
 import { runBenchmarkHarness } from "../benchmarks/harness";
+import { compareScorecards, summarizeDiff } from "../benchmarks/scorecard-diff";
 import { computeScorecard, validateThresholds } from "../benchmarks/scorecard";
 import { tuneThresholds } from "../benchmarks/tune-thresholds";
-import type { BenchmarkRunResult } from "../benchmarks/types";
+import type { BenchmarkRunResult, ScorecardReport } from "../benchmarks/types";
 import { validateRunConfig, validateTask } from "../benchmarks/validate";
 import { cleanupTrackedTempDirs } from "./helpers/temp-cleanup";
 
@@ -483,6 +484,64 @@ describe("benchmark modules", { timeout: 120000 }, () => {
     expect(score.regression_rate).toBe(0.5);
     expect(score.thresholds.success_rate_delta_min).toBe(0.15);
     expect(score.thresholds_met.overall).toBe(false);
+  });
+
+  it("computes scorecard diff status from baseline report", () => {
+    const baseline: ScorecardReport = {
+      run_id: "run-100",
+      created_at: "2026-01-01T00:00:00.000Z",
+      scorecard: {
+        success_rate: { codex_native: 0.4, supercodex: 0.6 },
+        success_rate_delta: 0.2,
+        median_duration_ms: { codex_native: 1000, supercodex: 900 },
+        median_time_delta_pct: -10,
+        regression_rate: 0.1,
+        paired_tasks: 20,
+        thresholds: {
+          success_rate_delta_min: 0.15,
+          median_time_delta_pct_max: -25,
+          regression_rate_max: 0.05
+        },
+        thresholds_met: {
+          success_rate_gain_15pct: true,
+          median_time_gain_25pct: false,
+          regression_rate_max_5pct: false,
+          overall: false
+        }
+      }
+    };
+
+    const current: ScorecardReport = {
+      run_id: "run-101",
+      created_at: "2026-01-02T00:00:00.000Z",
+      scorecard: {
+        success_rate: { codex_native: 0.4, supercodex: 0.75 },
+        success_rate_delta: 0.35,
+        median_duration_ms: { codex_native: 1000, supercodex: 800 },
+        median_time_delta_pct: -20,
+        regression_rate: 0.05,
+        paired_tasks: 20,
+        thresholds: {
+          success_rate_delta_min: 0.15,
+          median_time_delta_pct_max: -25,
+          regression_rate_max: 0.05
+        },
+        thresholds_met: {
+          success_rate_gain_15pct: true,
+          median_time_gain_25pct: true,
+          regression_rate_max_5pct: true,
+          overall: true
+        }
+      }
+    };
+
+    const metrics = compareScorecards(current, baseline);
+    expect(metrics).toHaveLength(3);
+    expect(metrics.every((metric) => metric.verdict === "improved")).toBe(true);
+    const summary = summarizeDiff(metrics);
+    expect(summary.status).toBe("improved");
+    expect(summary.regressed).toBe(0);
+    expect(summary.improved).toBe(3);
   });
 });
 
