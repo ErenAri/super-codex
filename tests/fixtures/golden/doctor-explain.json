@@ -1,0 +1,590 @@
+{
+  "ok": true,
+  "issues": [
+    {
+      "id": "config.missing",
+      "level": "warn",
+      "message": "Missing config at <CODEX_HOME>/config.toml.",
+      "fixable": true
+    },
+    {
+      "id": "supercodex.missing",
+      "level": "warn",
+      "message": "Missing [supercodex] section.",
+      "fixable": true
+    },
+    {
+      "id": "prompts.agents/accessibility-engineer.md.missing",
+      "level": "warn",
+      "message": "Missing prompt file \"agents/accessibility-engineer.md\" in <CODEX_HOME>/prompts/supercodex.",
+      "fixable": true
+    },
+    {
+      "id": "prompts.agents/backend-architect.md.missing",
+      "level": "warn",
+      "message": "Missing prompt file \"agents/backend-architect.md\" in <CODEX_HOME>/prompts/supercodex.",
+      "fixable": true
+    },
+    {
+      "id": "prompts.agents/data-engineer.md.missing",
+      "level": "warn",
+      "message": "Missing prompt file \"agents/data-engineer.md\" in <CODEX_HOME>/prompts/supercodex.",
+      "fixable": true
+    },
+    {
+      "id": "prompts.agents/database-architect.md.missing",
+      "level": "warn",
+      "message": "Missing prompt file \"agents/database-architect.md\" in <CODEX_HOME>/prompts/supercodex.",
+      "fixable": true
+    },
+    {
+      "id": "prompts.agents/deep-research.md.missing",
+      "level": "warn",
+      "message": "Missing prompt file \"agents/deep-research.md\" in <CODEX_HOME>/prompts/supercodex.",
+      "fixable": true
+    },
+    {
+      "id": "prompts.agents/devops-engineer.md.missing",
+      "level": "warn",
+      "message": "Missing prompt file \"agents/devops-engineer.md\" in <CODEX_HOME>/prompts/supercodex.",
+      "fixable": true
+    },
+    {
+      "id": "prompts.agents/frontend-architect.md.missing",
+      "level": "warn",
+      "message": "Missing prompt file \"agents/frontend-architect.md\" in <CODEX_HOME>/prompts/supercodex.",
+      "fixable": true
+    },
+    {
+      "id": "prompts.agents/incident-responder.md.missing",
+      "level": "warn",
+      "message": "Missing prompt file \"agents/incident-responder.md\" in <CODEX_HOME>/prompts/supercodex.",
+      "fixable": true
+    },
+    {
+      "id": "prompts.agents/ml-engineer.md.missing",
+      "level": "warn",
+      "message": "Missing prompt file \"agents/ml-engineer.md\" in <CODEX_HOME>/prompts/supercodex.",
+      "fixable": true
+    },
+    {
+      "id": "prompts.agents/mobile-architect.md.missing",
+      "level": "warn",
+      "message": "Missing prompt file \"agents/mobile-architect.md\" in <CODEX_HOME>/prompts/supercodex.",
+      "fixable": true
+    },
+    {
+      "id": "prompts.agents/performance-engineer.md.missing",
+      "level": "warn",
+      "message": "Missing prompt file \"agents/performance-engineer.md\" in <CODEX_HOME>/prompts/supercodex.",
+      "fixable": true
+    },
+    {
+      "id": "prompts.agents/pm.md.missing",
+      "level": "warn",
+      "message": "Missing prompt file \"agents/pm.md\" in <CODEX_HOME>/prompts/supercodex.",
+      "fixable": true
+    },
+    {
+      "id": "prompts.agents/qa-engineer.md.missing",
+      "level": "warn",
+      "message": "Missing prompt file \"agents/qa-engineer.md\" in <CODEX_HOME>/prompts/supercodex.",
+      "fixable": true
+    },
+    {
+      "id": "prompts.agents/security-engineer.md.missing",
+      "level": "warn",
+      "message": "Missing prompt file \"agents/security-engineer.md\" in <CODEX_HOME>/prompts/supercodex.",
+      "fixable": true
+    },
+    {
+      "id": "prompts.agents/system-architect.md.missing",
+      "level": "warn",
+      "message": "Missing prompt file \"agents/system-architect.md\" in <CODEX_HOME>/prompts/supercodex.",
+      "fixable": true
+    },
+    {
+      "id": "prompts.agents/tech-writer.md.missing",
+      "level": "warn",
+      "message": "Missing prompt file \"agents/tech-writer.md\" in <CODEX_HOME>/prompts/supercodex.",
+      "fixable": true
+    },
+    {
+      "id": "prompts.commands/analyze.md.missing",
+      "level": "warn",
+      "message": "Missing prompt file \"commands/analyze.md\" in <CODEX_HOME>/prompts/supercodex.",
+      "fixable": true
+    },
+    {
+      "id": "prompts.commands/brainstorm.md.missing",
+      "level": "warn",
+      "message": "Missing prompt file \"commands/brainstorm.md\" in <CODEX_HOME>/prompts/supercodex.",
+      "fixable": true
+    },
+    {
+      "id": "prompts.commands/build.md.missing",
+      "level": "warn",
+      "message": "Missing prompt file \"commands/build.md\" in <CODEX_HOME>/prompts/supercodex.",
+      "fixable": true
+    },
+    {
+      "id": "prompts.commands/business-panel.md.missing",
+      "level": "warn",
+      "message": "Missing prompt file \"commands/business-panel.md\" in <CODEX_HOME>/prompts/supercodex.",
+      "fixable": true
+    },
+    {
+      "id": "prompts.commands/cleanup.md.missing",
+      "level": "warn",
+      "message": "Missing prompt file \"commands/cleanup.md\" in <CODEX_HOME>/prompts/supercodex.",
+      "fixable": true
+    },
+    {
+      "id": "prompts.commands/design.md.missing",
+      "level": "warn",
+      "message": "Missing prompt file \"commands/design.md\" in <CODEX_HOME>/prompts/supercodex.",
+      "fixable": true
+    },
+    {
+      "id": "prompts.commands/document.md.missing",
+      "level": "warn",
+      "message": "Missing prompt file \"commands/document.md\" in <CODEX_HOME>/prompts/supercodex.",
+      "fixable": true
+    },
+    {
+      "id": "prompts.commands/estimate.md.missing",
+      "level": "warn",
+      "message": "Missing prompt file \"commands/estimate.md\" in <CODEX_HOME>/prompts/supercodex.",
+      "fixable": true
+    },
+    {
+      "id": "prompts.commands/explain.md.missing",
+      "level": "warn",
+      "message": "Missing prompt file \"commands/explain.md\" in <CODEX_HOME>/prompts/supercodex.",
+      "fixable": true
+    },
+    {
+      "id": "prompts.commands/git.md.missing",
+      "level": "warn",
+      "message": "Missing prompt file \"commands/git.md\" in <CODEX_HOME>/prompts/supercodex.",
+      "fixable": true
+    },
+    {
+      "id": "prompts.commands/help.md.missing",
+      "level": "warn",
+      "message": "Missing prompt file \"commands/help.md\" in <CODEX_HOME>/prompts/supercodex.",
+      "fixable": true
+    },
+    {
+      "id": "prompts.commands/implement.md.missing",
+      "level": "warn",
+      "message": "Missing prompt file \"commands/implement.md\" in <CODEX_HOME>/prompts/supercodex.",
+      "fixable": true
+    },
+    {
+      "id": "prompts.commands/improve.md.missing",
+      "level": "warn",
+      "message": "Missing prompt file \"commands/improve.md\" in <CODEX_HOME>/prompts/supercodex.",
+      "fixable": true
+    },
+    {
+      "id": "prompts.commands/index-repo.md.missing",
+      "level": "warn",
+      "message": "Missing prompt file \"commands/index-repo.md\" in <CODEX_HOME>/prompts/supercodex.",
+      "fixable": true
+    },
+    {
+      "id": "prompts.commands/index.md.missing",
+      "level": "warn",
+      "message": "Missing prompt file \"commands/index.md\" in <CODEX_HOME>/prompts/supercodex.",
+      "fixable": true
+    },
+    {
+      "id": "prompts.commands/load.md.missing",
+      "level": "warn",
+      "message": "Missing prompt file \"commands/load.md\" in <CODEX_HOME>/prompts/supercodex.",
+      "fixable": true
+    },
+    {
+      "id": "prompts.commands/pm.md.missing",
+      "level": "warn",
+      "message": "Missing prompt file \"commands/pm.md\" in <CODEX_HOME>/prompts/supercodex.",
+      "fixable": true
+    },
+    {
+      "id": "prompts.commands/recommend.md.missing",
+      "level": "warn",
+      "message": "Missing prompt file \"commands/recommend.md\" in <CODEX_HOME>/prompts/supercodex.",
+      "fixable": true
+    },
+    {
+      "id": "prompts.commands/reflect.md.missing",
+      "level": "warn",
+      "message": "Missing prompt file \"commands/reflect.md\" in <CODEX_HOME>/prompts/supercodex.",
+      "fixable": true
+    },
+    {
+      "id": "prompts.commands/research.md.missing",
+      "level": "warn",
+      "message": "Missing prompt file \"commands/research.md\" in <CODEX_HOME>/prompts/supercodex.",
+      "fixable": true
+    },
+    {
+      "id": "prompts.commands/save.md.missing",
+      "level": "warn",
+      "message": "Missing prompt file \"commands/save.md\" in <CODEX_HOME>/prompts/supercodex.",
+      "fixable": true
+    },
+    {
+      "id": "prompts.commands/sc.md.missing",
+      "level": "warn",
+      "message": "Missing prompt file \"commands/sc.md\" in <CODEX_HOME>/prompts/supercodex.",
+      "fixable": true
+    },
+    {
+      "id": "prompts.commands/select-tool.md.missing",
+      "level": "warn",
+      "message": "Missing prompt file \"commands/select-tool.md\" in <CODEX_HOME>/prompts/supercodex.",
+      "fixable": true
+    },
+    {
+      "id": "prompts.commands/spawn.md.missing",
+      "level": "warn",
+      "message": "Missing prompt file \"commands/spawn.md\" in <CODEX_HOME>/prompts/supercodex.",
+      "fixable": true
+    },
+    {
+      "id": "prompts.commands/spec-panel.md.missing",
+      "level": "warn",
+      "message": "Missing prompt file \"commands/spec-panel.md\" in <CODEX_HOME>/prompts/supercodex.",
+      "fixable": true
+    },
+    {
+      "id": "prompts.commands/task.md.missing",
+      "level": "warn",
+      "message": "Missing prompt file \"commands/task.md\" in <CODEX_HOME>/prompts/supercodex.",
+      "fixable": true
+    },
+    {
+      "id": "prompts.commands/test.md.missing",
+      "level": "warn",
+      "message": "Missing prompt file \"commands/test.md\" in <CODEX_HOME>/prompts/supercodex.",
+      "fixable": true
+    },
+    {
+      "id": "prompts.commands/troubleshoot.md.missing",
+      "level": "warn",
+      "message": "Missing prompt file \"commands/troubleshoot.md\" in <CODEX_HOME>/prompts/supercodex.",
+      "fixable": true
+    },
+    {
+      "id": "prompts.commands/workflow.md.missing",
+      "level": "warn",
+      "message": "Missing prompt file \"commands/workflow.md\" in <CODEX_HOME>/prompts/supercodex.",
+      "fixable": true
+    },
+    {
+      "id": "prompts.debug.md.missing",
+      "level": "warn",
+      "message": "Missing prompt file \"debug.md\" in <CODEX_HOME>/prompts/supercodex.",
+      "fixable": true
+    },
+    {
+      "id": "prompts.framework/FLAGS.md.missing",
+      "level": "warn",
+      "message": "Missing prompt file \"framework/FLAGS.md\" in <CODEX_HOME>/prompts/supercodex.",
+      "fixable": true
+    },
+    {
+      "id": "prompts.framework/PRINCIPLES.md.missing",
+      "level": "warn",
+      "message": "Missing prompt file \"framework/PRINCIPLES.md\" in <CODEX_HOME>/prompts/supercodex.",
+      "fixable": true
+    },
+    {
+      "id": "prompts.framework/RULES.md.missing",
+      "level": "warn",
+      "message": "Missing prompt file \"framework/RULES.md\" in <CODEX_HOME>/prompts/supercodex.",
+      "fixable": true
+    },
+    {
+      "id": "prompts.modes/balanced.md.missing",
+      "level": "warn",
+      "message": "Missing prompt file \"modes/balanced.md\" in <CODEX_HOME>/prompts/supercodex.",
+      "fixable": true
+    },
+    {
+      "id": "prompts.modes/brainstorming.md.missing",
+      "level": "warn",
+      "message": "Missing prompt file \"modes/brainstorming.md\" in <CODEX_HOME>/prompts/supercodex.",
+      "fixable": true
+    },
+    {
+      "id": "prompts.modes/business-panel.md.missing",
+      "level": "warn",
+      "message": "Missing prompt file \"modes/business-panel.md\" in <CODEX_HOME>/prompts/supercodex.",
+      "fixable": true
+    },
+    {
+      "id": "prompts.modes/deep-research.md.missing",
+      "level": "warn",
+      "message": "Missing prompt file \"modes/deep-research.md\" in <CODEX_HOME>/prompts/supercodex.",
+      "fixable": true
+    },
+    {
+      "id": "prompts.modes/deep.md.missing",
+      "level": "warn",
+      "message": "Missing prompt file \"modes/deep.md\" in <CODEX_HOME>/prompts/supercodex.",
+      "fixable": true
+    },
+    {
+      "id": "prompts.modes/fast.md.missing",
+      "level": "warn",
+      "message": "Missing prompt file \"modes/fast.md\" in <CODEX_HOME>/prompts/supercodex.",
+      "fixable": true
+    },
+    {
+      "id": "prompts.modes/introspection.md.missing",
+      "level": "warn",
+      "message": "Missing prompt file \"modes/introspection.md\" in <CODEX_HOME>/prompts/supercodex.",
+      "fixable": true
+    },
+    {
+      "id": "prompts.modes/orchestration.md.missing",
+      "level": "warn",
+      "message": "Missing prompt file \"modes/orchestration.md\" in <CODEX_HOME>/prompts/supercodex.",
+      "fixable": true
+    },
+    {
+      "id": "prompts.modes/safe.md.missing",
+      "level": "warn",
+      "message": "Missing prompt file \"modes/safe.md\" in <CODEX_HOME>/prompts/supercodex.",
+      "fixable": true
+    },
+    {
+      "id": "prompts.modes/task-management.md.missing",
+      "level": "warn",
+      "message": "Missing prompt file \"modes/task-management.md\" in <CODEX_HOME>/prompts/supercodex.",
+      "fixable": true
+    },
+    {
+      "id": "prompts.modes/token-efficiency.md.missing",
+      "level": "warn",
+      "message": "Missing prompt file \"modes/token-efficiency.md\" in <CODEX_HOME>/prompts/supercodex.",
+      "fixable": true
+    },
+    {
+      "id": "prompts.personas/architect.md.missing",
+      "level": "warn",
+      "message": "Missing prompt file \"personas/architect.md\" in <CODEX_HOME>/prompts/supercodex.",
+      "fixable": true
+    },
+    {
+      "id": "prompts.personas/reviewer.md.missing",
+      "level": "warn",
+      "message": "Missing prompt file \"personas/reviewer.md\" in <CODEX_HOME>/prompts/supercodex.",
+      "fixable": true
+    },
+    {
+      "id": "prompts.plan.md.missing",
+      "level": "warn",
+      "message": "Missing prompt file \"plan.md\" in <CODEX_HOME>/prompts/supercodex.",
+      "fixable": true
+    },
+    {
+      "id": "prompts.refactor.md.missing",
+      "level": "warn",
+      "message": "Missing prompt file \"refactor.md\" in <CODEX_HOME>/prompts/supercodex.",
+      "fixable": true
+    },
+    {
+      "id": "prompts.review.md.missing",
+      "level": "warn",
+      "message": "Missing prompt file \"review.md\" in <CODEX_HOME>/prompts/supercodex.",
+      "fixable": true
+    },
+    {
+      "id": "prompts.skills/confidence-check/SKILL.md.missing",
+      "level": "warn",
+      "message": "Missing prompt file \"skills/confidence-check/SKILL.md\" in <CODEX_HOME>/prompts/supercodex.",
+      "fixable": true
+    },
+    {
+      "id": "framework.PRINCIPLES.md.missing",
+      "level": "warn",
+      "message": "Missing framework file \"PRINCIPLES.md\" in <CODEX_HOME>/prompts/supercodex/framework.",
+      "fixable": true
+    },
+    {
+      "id": "framework.RULES.md.missing",
+      "level": "warn",
+      "message": "Missing framework file \"RULES.md\" in <CODEX_HOME>/prompts/supercodex/framework.",
+      "fixable": true
+    },
+    {
+      "id": "framework.FLAGS.md.missing",
+      "level": "warn",
+      "message": "Missing framework file \"FLAGS.md\" in <CODEX_HOME>/prompts/supercodex/framework.",
+      "fixable": true
+    },
+    {
+      "id": "safety.deterministic_logging",
+      "level": "warn",
+      "message": "Deterministic logging configured: Metrics logging path is missing or disabled in [supercodex.metrics]. Set [supercodex.metrics].enabled=true and a stable path for deterministic logs.",
+      "fixable": false,
+      "path": "supercodex.safety.deterministic_logging"
+    },
+    {
+      "id": "safety.replay",
+      "level": "warn",
+      "message": "Deterministic replay inputs configured: Session memory path is missing or disabled in [supercodex.memory]. Enable memory path to support reproducible replay context.",
+      "fixable": false,
+      "path": "supercodex.safety.replay"
+    }
+  ],
+  "summary": {
+    "errors": 0,
+    "warnings": 73,
+    "info": 0,
+    "fixable": 71
+  },
+  "recommended_actions": [
+    "supercodex doctor --fix",
+    "supercodex start --yes",
+    "supercodex verify --strict"
+  ],
+  "best_next_command": "supercodex doctor --fix",
+  "next_commands": [
+    "supercodex doctor --fix",
+    "supercodex start --yes",
+    "supercodex verify --strict"
+  ],
+  "quick_actions": [
+    {
+      "id": "recommended_1",
+      "label": "Best next command",
+      "command": "supercodex doctor --fix"
+    },
+    {
+      "id": "recommended_2",
+      "label": "Recommended action",
+      "command": "supercodex start --yes"
+    },
+    {
+      "id": "recommended_3",
+      "label": "Recommended action",
+      "command": "supercodex verify --strict"
+    }
+  ],
+  "mcp_health": {
+    "summary": {
+      "healthy": 0,
+      "degraded": 0,
+      "failing": 0
+    },
+    "servers": []
+  },
+  "fix_plan": [
+    {
+      "id": "install.patch",
+      "title": "Create/repair managed SuperCodex config",
+      "applies_to": [
+        "config.missing",
+        "supercodex.missing"
+      ],
+      "command_preview": "supercodex doctor --fix",
+      "before": "config.toml is missing or [supercodex] section is not present.",
+      "after": "Config includes managed [supercodex] runtime section and prompt pack path.",
+      "rollback_hint": "Restore latest backup under <CODEX_HOME>/supercodex/backups or run supercodex uninstall to remove managed entries."
+    },
+    {
+      "id": "prompts",
+      "title": "Reinstall missing prompt files",
+      "applies_to": [
+        "prompts.agents/accessibility-engineer.md.missing",
+        "prompts.agents/backend-architect.md.missing",
+        "prompts.agents/data-engineer.md.missing",
+        "prompts.agents/database-architect.md.missing",
+        "prompts.agents/deep-research.md.missing",
+        "prompts.agents/devops-engineer.md.missing",
+        "prompts.agents/frontend-architect.md.missing",
+        "prompts.agents/incident-responder.md.missing",
+        "prompts.agents/ml-engineer.md.missing",
+        "prompts.agents/mobile-architect.md.missing",
+        "prompts.agents/performance-engineer.md.missing",
+        "prompts.agents/pm.md.missing",
+        "prompts.agents/qa-engineer.md.missing",
+        "prompts.agents/security-engineer.md.missing",
+        "prompts.agents/system-architect.md.missing",
+        "prompts.agents/tech-writer.md.missing",
+        "prompts.commands/analyze.md.missing",
+        "prompts.commands/brainstorm.md.missing",
+        "prompts.commands/build.md.missing",
+        "prompts.commands/business-panel.md.missing",
+        "prompts.commands/cleanup.md.missing",
+        "prompts.commands/design.md.missing",
+        "prompts.commands/document.md.missing",
+        "prompts.commands/estimate.md.missing",
+        "prompts.commands/explain.md.missing",
+        "prompts.commands/git.md.missing",
+        "prompts.commands/help.md.missing",
+        "prompts.commands/implement.md.missing",
+        "prompts.commands/improve.md.missing",
+        "prompts.commands/index-repo.md.missing",
+        "prompts.commands/index.md.missing",
+        "prompts.commands/load.md.missing",
+        "prompts.commands/pm.md.missing",
+        "prompts.commands/recommend.md.missing",
+        "prompts.commands/reflect.md.missing",
+        "prompts.commands/research.md.missing",
+        "prompts.commands/save.md.missing",
+        "prompts.commands/sc.md.missing",
+        "prompts.commands/select-tool.md.missing",
+        "prompts.commands/spawn.md.missing",
+        "prompts.commands/spec-panel.md.missing",
+        "prompts.commands/task.md.missing",
+        "prompts.commands/test.md.missing",
+        "prompts.commands/troubleshoot.md.missing",
+        "prompts.commands/workflow.md.missing",
+        "prompts.debug.md.missing",
+        "prompts.framework/FLAGS.md.missing",
+        "prompts.framework/PRINCIPLES.md.missing",
+        "prompts.framework/RULES.md.missing",
+        "prompts.modes/balanced.md.missing",
+        "prompts.modes/brainstorming.md.missing",
+        "prompts.modes/business-panel.md.missing",
+        "prompts.modes/deep-research.md.missing",
+        "prompts.modes/deep.md.missing",
+        "prompts.modes/fast.md.missing",
+        "prompts.modes/introspection.md.missing",
+        "prompts.modes/orchestration.md.missing",
+        "prompts.modes/safe.md.missing",
+        "prompts.modes/task-management.md.missing",
+        "prompts.modes/token-efficiency.md.missing",
+        "prompts.personas/architect.md.missing",
+        "prompts.personas/reviewer.md.missing",
+        "prompts.plan.md.missing",
+        "prompts.refactor.md.missing",
+        "prompts.review.md.missing",
+        "prompts.skills/confidence-check/SKILL.md.missing"
+      ],
+      "command_preview": "supercodex doctor --fix",
+      "before": "One or more bundled prompts are missing from the installed prompt pack.",
+      "after": "Prompt pack is synchronized with bundled command/workflow prompt files.",
+      "rollback_hint": "Reinstall a previous package version, then restore prompts from your backup directory if needed."
+    },
+    {
+      "id": "manual.followup",
+      "title": "Manual remediation required",
+      "applies_to": [
+        "framework.FLAGS.md.missing",
+        "framework.PRINCIPLES.md.missing",
+        "framework.RULES.md.missing"
+      ],
+      "command_preview": "supercodex doctor --strict",
+      "before": "Doctor detected fixable issues without an automated fixer mapping.",
+      "after": "Run strict doctor and follow listed remediation commands.",
+      "rollback_hint": "No automated rollback needed because no write action is planned."
+    }
+  ]
+}

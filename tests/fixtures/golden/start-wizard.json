@@ -1,0 +1,143 @@
+{
+  "status": "ok",
+  "readiness_score": 100,
+  "recommended_action": "supercodex spec <goal>",
+  "best_next_command": "supercodex spec <goal>",
+  "checks": [
+    {
+      "id": "supercodex.section",
+      "status": "ok",
+      "details": "SuperCodex section is present in config."
+    },
+    {
+      "id": "prompt.pack",
+      "status": "ok",
+      "details": "Prompt pack is installed."
+    },
+    {
+      "id": "interactive.wrappers",
+      "status": "ok",
+      "details": "50 interactive wrappers installed."
+    },
+    {
+      "id": "workflow.smoke",
+      "status": "ok",
+      "details": "Workflow resolution works (research -> <CODEX_HOME>/prompts/supercodex/commands/research.md)."
+    }
+  ],
+  "next_commands": [
+    "supercodex spec <goal>",
+    "supercodex profile show core",
+    "supercodex spec",
+    "supercodex implement",
+    "supercodex test",
+    "supercodex review",
+    "supercodex refactor",
+    "supercodex document",
+    "supercodex security",
+    "supercodex save",
+    "supercodex doctor",
+    "supercodex guide <intent>"
+  ],
+  "quick_actions": [
+    {
+      "id": "best_next",
+      "label": "Best next command",
+      "command": "supercodex spec <goal>"
+    },
+    {
+      "id": "next_1",
+      "label": "Continue with",
+      "command": "supercodex profile show core"
+    },
+    {
+      "id": "next_2",
+      "label": "Then run",
+      "command": "supercodex spec"
+    },
+    {
+      "id": "next_3",
+      "label": "Then run",
+      "command": "supercodex implement"
+    },
+    {
+      "id": "next_4",
+      "label": "Then run",
+      "command": "supercodex test"
+    },
+    {
+      "id": "next_5",
+      "label": "Then run",
+      "command": "supercodex review"
+    },
+    {
+      "id": "next_6",
+      "label": "Then run",
+      "command": "supercodex refactor"
+    },
+    {
+      "id": "next_7",
+      "label": "Then run",
+      "command": "supercodex document"
+    },
+    {
+      "id": "next_8",
+      "label": "Then run",
+      "command": "supercodex security"
+    },
+    {
+      "id": "next_9",
+      "label": "Then run",
+      "command": "supercodex save"
+    },
+    {
+      "id": "next_10",
+      "label": "Then run",
+      "command": "supercodex doctor"
+    },
+    {
+      "id": "next_11",
+      "label": "Then run",
+      "command": "supercodex guide <intent>"
+    }
+  ],
+  "quick_start": {
+    "context": "terminal",
+    "terminal_command": "supercodex spec <goal>",
+    "prompt_command": "/prompts:supercodex-research <topic>"
+  },
+  "core_profile": {
+    "id": "core",
+    "recommended_agents": [
+      {
+        "agent_id": "pm",
+        "command": "supercodex agent show pm",
+        "reason": "Core onboarding default agent.",
+        "score": 6
+      },
+      {
+        "agent_id": "backend-architect",
+        "command": "supercodex agent show backend-architect",
+        "reason": "Core onboarding default agent.",
+        "score": 5
+      },
+      {
+        "agent_id": "qa-engineer",
+        "command": "supercodex agent show qa-engineer",
+        "reason": "Core onboarding default agent.",
+        "score": 4
+      }
+    ],
+    "recommended_modes": [
+      "fast",
+      "safe",
+      "deep",
+      "deep-research"
+    ]
+  },
+  "repaired": true,
+  "wizard": {
+    "enabled": true,
+    "interactive": false
+  }
+}

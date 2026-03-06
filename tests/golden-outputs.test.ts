@@ -16,6 +16,14 @@ interface GoldenCase {
   format: "json" | "plain";
 }
 
+const STABLE_ENV: Record<string, string> = {
+  CODEX_SANDBOX_MODE: "workspace-write",
+  CODEX_APPROVAL_POLICY: "on-request",
+  OPENAI_API_KEY: "test-openai-key",
+  SANDBOX_MODE: "",
+  APPROVAL_POLICY: ""
+};
+
 const CASES: GoldenCase[] = [
   {
     name: "run-analyze.json",
@@ -35,6 +43,21 @@ const CASES: GoldenCase[] = [
   {
     name: "guide-security.json",
     args: ["guide", "security review for auth flow", "--json"],
+    format: "json"
+  },
+  {
+    name: "start-wizard.json",
+    args: ["start", "--wizard", "--json"],
+    format: "json"
+  },
+  {
+    name: "doctor-explain.json",
+    args: ["doctor", "--json", "--explain"],
+    format: "json"
+  },
+  {
+    name: "verify-safety-gates.json",
+    args: ["verify", "--json", "--safety-gates"],
     format: "json"
   },
   {
@@ -88,6 +111,8 @@ async function createCodexHome(): Promise<string> {
 async function runCapturedCli(args: string[]): Promise<{ code: number; stdout: string; stderr: string }> {
   const logs: string[] = [];
   const errors: string[] = [];
+  const previousEnvValues = snapshotEnv(STABLE_ENV);
+  applyEnv(STABLE_ENV);
 
   const originalLog = console.log;
   const originalError = console.error;
@@ -111,6 +136,7 @@ async function runCapturedCli(args: string[]): Promise<{ code: number; stdout: s
       stderr: errors.join("\n")
     };
   } finally {
+    restoreEnv(previousEnvValues);
     console.log = originalLog;
     console.error = originalError;
     console.warn = originalWarn;
@@ -182,4 +208,28 @@ async function assertGoldenFixture(name: string, actual: string): Promise<void> 
 
   const expected = await readFile(fixturePath, "utf8");
   expect(actual).toBe(expected.trimEnd());
+}
+
+function snapshotEnv(values: Record<string, string>): Record<string, string | undefined> {
+  const snapshot: Record<string, string | undefined> = {};
+  for (const key of Object.keys(values)) {
+    snapshot[key] = process.env[key];
+  }
+  return snapshot;
+}
+
+function applyEnv(values: Record<string, string>): void {
+  for (const [key, value] of Object.entries(values)) {
+    process.env[key] = value;
+  }
+}
+
+function restoreEnv(snapshot: Record<string, string | undefined>): void {
+  for (const [key, value] of Object.entries(snapshot)) {
+    if (value === undefined) {
+      delete process.env[key];
+      continue;
+    }
+    process.env[key] = value;
+  }
 }

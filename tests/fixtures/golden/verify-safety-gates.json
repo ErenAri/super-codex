@@ -1,0 +1,57 @@
+{
+  "ok": true,
+  "strict": false,
+  "status": "warn",
+  "score": 92,
+  "lock_path": "<PROJECT_ROOT>/.supercodex.lock.json",
+  "best_next_command": "supercodex verify --strict",
+  "next_commands": [
+    "supercodex verify --strict"
+  ],
+  "quick_actions": [
+    {
+      "id": "verify",
+      "label": "Re-run strict verification",
+      "command": "supercodex verify --strict"
+    }
+  ],
+  "checks": [
+    {
+      "id": "registry",
+      "title": "Registry and command mapping",
+      "status": "pass",
+      "details": []
+    },
+    {
+      "id": "command_quality",
+      "title": "Command prompt quality",
+      "status": "pass",
+      "details": [
+        "score=100",
+        "errors=0",
+        "warnings=0"
+      ]
+    },
+    {
+      "id": "policy",
+      "title": "Policy checks",
+      "status": "pass",
+      "details": []
+    },
+    {
+      "id": "lockfile",
+      "title": "Lock file consistency",
+      "status": "pass",
+      "details": []
+    },
+    {
+      "id": "safety_gates",
+      "title": "Runtime safety gates",
+      "status": "warn",
+      "details": [
+        "[warn] deterministic_logging: Metrics logging path is missing or disabled in [supercodex.metrics]. Set [supercodex.metrics].enabled=true and a stable path for deterministic logs.",
+        "[warn] replay: Session memory path is missing or disabled in [supercodex.memory]. Enable memory path to support reproducible replay context."
+      ]
+    }
+  ]
+}
