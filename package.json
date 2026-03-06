@@ -30,7 +30,9 @@
     "bench:smoke:check": "tsx benchmarks/scorecard.ts --enforce-thresholds --thresholds benchmarks/thresholds.smoke.json",
     "bench:tune-thresholds": "tsx benchmarks/tune-thresholds.ts",
     "bench:tune-thresholds:last5": "tsx benchmarks/tune-thresholds.ts --last=5",
-    "bench:tune-thresholds:last5:write": "tsx benchmarks/tune-thresholds.ts --last=5 --write"
+    "bench:tune-thresholds:last5:write": "tsx benchmarks/tune-thresholds.ts --last=5 --write",
+    "release:notes": "tsx scripts/generate-release-notes.ts",
+    "release:notes:check": "tsx scripts/generate-release-notes.ts --check"
   },
   "keywords": [
     "codex",

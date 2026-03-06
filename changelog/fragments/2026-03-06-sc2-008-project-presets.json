@@ -1,0 +1,13 @@
+{
+  "id": "SC2-008",
+  "type": "feat",
+  "summary": "Added reusable project presets for init workflow.",
+  "details": "Supports api-service, web-app, library, and monorepo with additive config merge behavior.",
+  "commands": [
+    "supercodex init --list-presets",
+    "supercodex init --preset api-service --refresh-lock"
+  ],
+  "issues": [
+    "SC2-008"
+  ]
+}

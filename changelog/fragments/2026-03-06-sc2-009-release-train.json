@@ -1,0 +1,13 @@
+{
+  "id": "SC2-009",
+  "type": "feat",
+  "summary": "Added release-train workflow for dispatch-driven canary and stable tag orchestration.",
+  "details": "Release notes are now generated from structured changelog fragments before release tagging.",
+  "commands": [
+    "npm run release:notes -- --version 2.0.0-beta.2",
+    "npm run release:notes:check -- --version 2.0.0-beta.2"
+  ],
+  "issues": [
+    "SC2-009"
+  ]
+}

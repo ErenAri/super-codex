@@ -51,6 +51,49 @@ npm dist-tag ls supercodex
 - `latest`: one stable release every 2-4 weeks
 - `next`: 1-2 pre-releases per week for risky/new command changes
 
+## Automated Release Train
+
+Workflow: `.github/workflows/release-train.yml`
+
+- Weekly canary readiness runs every Monday (build + test + strict verify + generated canary notes artifact).
+- Manual dispatch supports two lanes:
+  - `canary` (requires prerelease version such as `2.0.0-beta.2`)
+  - `stable` (requires stable version such as `2.0.0`)
+- Dispatch preflight gates:
+  - `npm run build`
+  - `npm test`
+  - `npm run verify:consistency`
+- Tag push from release-train triggers publish workflow, which publishes to:
+  - `next` for prerelease tags
+  - `latest` for stable tags
+
+### Dispatch Inputs
+
+- `release_channel`: `canary` or `stable`
+- `version`: semver without leading `v`
+- `release_date`: optional override (`YYYY-MM-DD`)
+- `push_tag`: whether to create/push git tag
+- `create_github_release`: whether to create GitHub Release
+- `fragments_dir`: structured changelog fragment directory
+
+## Structured Changelog Fragments
+
+Release notes are generated from JSON fragments under `changelog/fragments`.
+
+Generate notes:
+
+```bash
+npm run release:notes -- --version 2.0.0-beta.2
+```
+
+Check notes are current:
+
+```bash
+npm run release:notes:check -- --version 2.0.0-beta.2
+```
+
+Fragment format reference: `changelog/fragments/README.md`
+
 ## PR Benchmark Smoke Gate
 
 - Add the `benchmark-smoke` label to a pull request to run the smoke benchmark gate in CI.

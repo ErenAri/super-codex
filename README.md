@@ -404,6 +404,13 @@ npm publish --access public --tag next
 
 Full guide: [docs/RELEASE_CHANNELS.md](docs/RELEASE_CHANNELS.md)
 
+Release-note generation from structured fragments:
+
+```bash
+npm run release:notes -- --version 2.0.0-beta.2
+npm run release:notes:check -- --version 2.0.0-beta.2
+```
+
 ## Benchmarking :chart_with_upwards_trend:
 
 Run evaluation harness and scorecards:

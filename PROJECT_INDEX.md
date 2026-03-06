@@ -25,6 +25,7 @@ This file is a fast map for new sessions and contributors to locate core impleme
 - [`content/agents/`](content/agents): agent prompt definitions.
 - [`content/personas/`](content/personas): persona overlays.
 - [`content/framework/`](content/framework): principles/rules/flags references.
+- [`changelog/fragments/`](changelog/fragments): structured release-note fragments consumed by release automation.
 
 ## Benchmarks and Quality Gates
 
@@ -37,8 +38,10 @@ This file is a fast map for new sessions and contributors to locate core impleme
 
 - [`.github/workflows/ci.yml`](.github/workflows/ci.yml): build/test/verify and benchmark workflows.
 - [`.github/workflows/publish.yml`](.github/workflows/publish.yml): npm trusted publish pipeline.
+- [`.github/workflows/release-train.yml`](.github/workflows/release-train.yml): weekly canary readiness + dispatch-driven release tagging.
 - [`scripts/sync-metadata.ts`](scripts/sync-metadata.ts): README/docs metadata synchronization.
 - [`scripts/update-golden.ts`](scripts/update-golden.ts): golden fixture refresh runner.
+- [`scripts/generate-release-notes.ts`](scripts/generate-release-notes.ts): generate release notes from changelog fragments.
 
 ## Key Docs
 

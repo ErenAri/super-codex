@@ -1,0 +1,246 @@
+name: Release Train
+
+on:
+  workflow_dispatch:
+    inputs:
+      release_channel:
+        description: "Release lane"
+        required: true
+        type: choice
+        options:
+          - canary
+          - stable
+      version:
+        description: "Release version without leading v (example: 2.0.0-beta.2 or 2.0.0)"
+        required: true
+        type: string
+      release_date:
+        description: "Release date override (YYYY-MM-DD)"
+        required: false
+        default: ""
+        type: string
+      push_tag:
+        description: "Create and push git tag"
+        required: true
+        default: true
+        type: boolean
+      create_github_release:
+        description: "Create GitHub release with generated notes"
+        required: true
+        default: true
+        type: boolean
+      fragments_dir:
+        description: "Changelog fragments directory"
+        required: false
+        default: "changelog/fragments"
+        type: string
+  schedule:
+    - cron: "0 15 * * 1"
+
+permissions:
+  contents: write
+
+jobs:
+  weekly_canary_readiness:
+    if: github.event_name == 'schedule'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - name: Install dependencies
+        run: npm ci
+      - name: Build
+        run: npm run build
+      - name: Test
+        run: npm test
+      - name: Verify consistency
+        run: npm run verify:consistency
+      - name: Generate weekly canary readiness notes
+        shell: bash
+        run: |
+          pkg_version=$(node -p "require('./package.json').version")
+          canary_version="${pkg_version}-canary.$(date +%Y%m%d)"
+          npm run release:notes -- --version "$canary_version"
+          echo "## Weekly Canary Readiness" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Candidate version: \`$canary_version\`" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Notes generated at: \`docs/releases/v$canary_version.md\`" >> "$GITHUB_STEP_SUMMARY"
+          echo "- To publish canary, run this workflow manually with release_channel=canary." >> "$GITHUB_STEP_SUMMARY"
+      - name: Upload weekly readiness artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: weekly-canary-readiness
+          path: |
+            docs/releases/v*-canary.*.md
+
+  validate_inputs:
+    if: github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    outputs:
+      tag: ${{ steps.meta.outputs.tag }}
+      npm_channel: ${{ steps.meta.outputs.npm_channel }}
+    steps:
+      - name: Validate release inputs
+        id: meta
+        shell: bash
+        run: |
+          version="${{ github.event.inputs.version }}"
+          lane="${{ github.event.inputs.release_channel }}"
+          push_tag="${{ github.event.inputs.push_tag }}"
+          create_release="${{ github.event.inputs.create_github_release }}"
+          if [ -z "$version" ]; then
+            echo "Version is required." >&2
+            exit 1
+          fi
+
+          if [[ "$version" == v* ]]; then
+            echo "Use version without leading v (received: $version)." >&2
+            exit 1
+          fi
+
+          if [[ "$lane" == "canary" ]]; then
+            if [[ "$version" != *-* ]]; then
+              echo "Canary lane requires pre-release version (example: 2.0.0-beta.2)." >&2
+              exit 1
+            fi
+            npm_channel="next"
+          else
+            if [[ "$version" == *-* ]]; then
+              echo "Stable lane requires stable version (example: 2.0.0)." >&2
+              exit 1
+            fi
+            npm_channel="latest"
+          fi
+
+          if [[ "$create_release" == "true" && "$push_tag" != "true" ]]; then
+            echo "create_github_release=true requires push_tag=true so the release tag exists." >&2
+            exit 1
+          fi
+
+          echo "tag=v$version" >> "$GITHUB_OUTPUT"
+          echo "npm_channel=$npm_channel" >> "$GITHUB_OUTPUT"
+
+  preflight:
+    if: github.event_name == 'workflow_dispatch'
+    needs: [validate_inputs]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - name: Show release context
+        shell: bash
+        run: |
+          echo "Release lane: ${{ github.event.inputs.release_channel }}"
+          echo "Version: ${{ github.event.inputs.version }}"
+          echo "Tag: ${{ needs.validate_inputs.outputs.tag }}"
+          echo "Expected npm dist-tag: ${{ needs.validate_inputs.outputs.npm_channel }}"
+      - name: Install dependencies
+        run: npm ci
+      - name: Build
+        run: npm run build
+      - name: Test
+        run: npm test
+      - name: Verify consistency (strict gate)
+        run: npm run verify:consistency
+
+  release_notes:
+    if: github.event_name == 'workflow_dispatch'
+    needs: [validate_inputs, preflight]
+    runs-on: ubuntu-latest
+    outputs:
+      notes_path: ${{ steps.notes.outputs.path }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - name: Install dependencies
+        run: npm ci
+      - name: Generate release notes from changelog fragments
+        id: notes
+        shell: bash
+        run: |
+          version="${{ github.event.inputs.version }}"
+          args=(--version "$version" --fragments-dir "${{ github.event.inputs.fragments_dir }}")
+          if [ -n "${{ github.event.inputs.release_date }}" ]; then
+            args+=(--date "${{ github.event.inputs.release_date }}")
+          fi
+          npm run release:notes -- "${args[@]}"
+          echo "path=docs/releases/v$version.md" >> "$GITHUB_OUTPUT"
+      - name: Upload release notes artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-notes-${{ github.event.inputs.version }}
+          path: ${{ steps.notes.outputs.path }}
+
+  tag_and_release:
+    if: github.event_name == 'workflow_dispatch'
+    needs: [validate_inputs, preflight, release_notes]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - name: Install dependencies
+        run: npm ci
+      - name: Regenerate release notes
+        shell: bash
+        run: |
+          version="${{ github.event.inputs.version }}"
+          args=(--version "$version" --fragments-dir "${{ github.event.inputs.fragments_dir }}")
+          if [ -n "${{ github.event.inputs.release_date }}" ]; then
+            args+=(--date "${{ github.event.inputs.release_date }}")
+          fi
+          npm run release:notes -- "${args[@]}"
+      - name: Create and push tag
+        if: github.event.inputs.push_tag == 'true'
+        shell: bash
+        run: |
+          tag="${{ needs.validate_inputs.outputs.tag }}"
+          if git rev-parse -q --verify "refs/tags/$tag" > /dev/null; then
+            echo "Tag already exists locally: $tag" >&2
+            exit 1
+          fi
+          if git ls-remote --tags --exit-code origin "refs/tags/$tag" > /dev/null; then
+            echo "Tag already exists on origin: $tag" >&2
+            exit 1
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git tag "$tag" "${GITHUB_SHA}"
+          git push origin "$tag"
+      - name: Create GitHub release
+        if: github.event.inputs.create_github_release == 'true'
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ needs.validate_inputs.outputs.tag }}
+          name: ${{ needs.validate_inputs.outputs.tag }}
+          body_path: ${{ needs.release_notes.outputs.notes_path }}
+          prerelease: ${{ github.event.inputs.release_channel == 'canary' }}
+      - name: Release checklist summary
+        shell: bash
+        run: |
+          echo "## Release Train Checklist" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "- [x] Build passed" >> "$GITHUB_STEP_SUMMARY"
+          echo "- [x] Tests passed" >> "$GITHUB_STEP_SUMMARY"
+          echo "- [x] Strict verification passed" >> "$GITHUB_STEP_SUMMARY"
+          echo "- [x] Notes generated from structured changelog fragments" >> "$GITHUB_STEP_SUMMARY"
+          if [ "${{ github.event.inputs.push_tag }}" = "true" ]; then
+            echo "- [x] Tag pushed: \`${{ needs.validate_inputs.outputs.tag }}\`" >> "$GITHUB_STEP_SUMMARY"
+            echo "- [x] Publish workflow will run on tag push with npm dist-tag \`${{ needs.validate_inputs.outputs.npm_channel }}\`." >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "- [ ] Tag push skipped by input (push_tag=false)" >> "$GITHUB_STEP_SUMMARY"
+          fi
